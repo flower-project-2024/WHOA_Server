@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 ROOT_PATH="/home/ubuntu/spring-github-action"
 JAR="$ROOT_PATH/application.jar"
