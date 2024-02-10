@@ -38,5 +38,5 @@ out/
 .vscode/
 
 ## key files ###
-/src/main/resources/application-db.yml
+/src/main/resources/application-rds.yml
 /src/main/resources/application-credentials.yml
