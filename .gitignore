@@ -36,3 +36,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+## key files ###
+/src/main/resources/application-aws.yml
+/src/main/resources/application-db.yml
