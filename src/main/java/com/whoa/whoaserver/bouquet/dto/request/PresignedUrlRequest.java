@@ -1,7 +1,7 @@
 package com.whoa.whoaserver.bouquet.dto.request;
 
 public record PresignedUrlRequest(
-    long contentLength,
+    Long contentLength,
     String extension
 ) {
     
