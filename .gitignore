@@ -40,3 +40,4 @@ out/
 ## key files ###
 /src/main/resources/application-rds.yml
 /src/main/resources/application-credentials.yml
+/src/main/resources/application-testdb.yml
