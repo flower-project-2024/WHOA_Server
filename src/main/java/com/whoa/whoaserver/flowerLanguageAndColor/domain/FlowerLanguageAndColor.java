@@ -1,8 +1,8 @@
 package com.whoa.whoaserver.flowerLanguageAndColor.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.whoa.whoaserver.flower.domain.Flower;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +25,11 @@ public class FlowerLanguageAndColor {
     private String flowerColor;
 
     private String flowerLanguage;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)  // 다대일 단방향 관계, user 삭제되면 이벤트도 삭제
+    @JoinColumn(name = "flowerId")
+    private Flower flower;
 
     public FlowerLanguageAndColor(
             final String flowerColor,

@@ -1,5 +1,7 @@
 package com.whoa.whoaserver.flower.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.whoa.whoaserver.flowerLanguageAndColor.domain.FlowerLanguageAndColor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +31,10 @@ public class Flower {
     private String flowerImage;
 
     private List<String> bouquetImage;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "flowerLCId")
+    private List<FlowerLanguageAndColor> flowerLanguageAndColors = new ArrayList<>();
 
     public Flower(
             final String flowerName,
