@@ -1,13 +1,10 @@
 package com.whoa.whoaserver.flower.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.whoa.whoaserver.flowerLanguageAndColor.domain.FlowerLanguageAndColor;
+import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.yaml.snakeyaml.events.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
+@ToString
 @DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
@@ -30,21 +28,25 @@ public class Flower {
 
     private String flowerImage;
 
+    @ElementCollection
     private List<String> bouquetImage;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "flowerLCId")
-    private List<FlowerLanguageAndColor> flowerLanguageAndColors = new ArrayList<>();
+    //@JsonIgnore
+    @OneToMany(mappedBy = "flower",  cascade = CascadeType.ALL)
+    private List<FlowerExpression> flowerExpressions = new ArrayList<>();
 
+    @Builder(toBuilder = true)
     public Flower(
             final String flowerName,
             final String flowerDescription,
             final String flowerImage,
+            final List<FlowerExpression> flowerExpressions,
             final List<String> bouquetImage
     ) {
         this.flowerName = flowerName;
         this.flowerDescription = flowerDescription;
         this.flowerImage = flowerImage;
+        this.flowerExpressions = (flowerExpressions != null) ? new ArrayList<>(flowerExpressions) : new ArrayList<>();
         this.bouquetImage = bouquetImage;
     }
 }
