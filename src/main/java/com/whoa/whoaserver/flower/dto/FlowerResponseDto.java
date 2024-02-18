@@ -19,6 +19,10 @@ public class FlowerResponseDto {
     private final String flowerName;
     private final String flowerDescription;
     private final String flowerImage;
+    private final String birthFlower;
+    private final String comtemplationPeriod;
+    private final String managementMethod;
+    private final String storageMethod;
     private final List<String> boquetImage;
     private final List<FlowerExpressionResponseDto> flowerExpressions;
 
@@ -31,6 +35,10 @@ public class FlowerResponseDto {
                 flower.getFlowerName(),
                 flower.getFlowerDescription(),
                 flower.getFlowerImage(),
+                flower.getBirthFlower(),
+                flower.getComtemplationPeriod(),
+                flower.getManagementMethod(),
+                flower.getStorageMethod(),
                 flower.getBouquetImage(),
                 expressionResponseDtos
         );
