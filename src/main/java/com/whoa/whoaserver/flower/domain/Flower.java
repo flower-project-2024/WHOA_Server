@@ -28,6 +28,8 @@ public class Flower {
 
     private String flowerImage;
 
+    private String recommandDate;
+
     @ElementCollection
     private List<String> bouquetImage;
 
