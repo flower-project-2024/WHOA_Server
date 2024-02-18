@@ -12,8 +12,8 @@ public enum ExceptionCode {
     EXIST_MEMBER(1002, "존재하는 회원입니다."),
     INVALID_MEMBER(1003, "존재하지 않는 회원입니다."),
 
-    INVALID_EXERCISE(2001, "존재하지 않는 운동입니다."),
-    INVALID_EXERCISE_CATEGORY(2002, "존재하지 않는 운동 카테고리입니다.");
+    IMAGE_SIZE_LIMIT_ERROR(3000, "이미지의 크기가 기준을 초과합니다."),
+    IMAGE_EXTENSION_NOT_SUPPORTED(3001, "지원하지 않는 이미지 파일 형식입니다.");
 
     private final int code;
     private final String message;
