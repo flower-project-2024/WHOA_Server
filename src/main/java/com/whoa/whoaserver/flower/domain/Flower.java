@@ -30,6 +30,14 @@ public class Flower {
 
     private String recommandDate;
 
+    private String birthFlower;
+
+    private String comtemplationPeriod;
+
+    private String managementMethod;
+
+    private String storageMethod;
+
     @ElementCollection
     private List<String> bouquetImage;
 
