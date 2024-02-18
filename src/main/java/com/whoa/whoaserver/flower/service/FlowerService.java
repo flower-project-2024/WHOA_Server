@@ -22,7 +22,7 @@ public class FlowerService {
     @Transactional
     public FlowerResponseDto getRecommendFlower(final int month, final int date){
         String recommendDate = month + "/" + date;
-        Flower recommendFlower = flowerRepository.findByRecommendDate(recommendDate);
+        Flower recommendFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
         return FlowerResponseDto.of(recommendFlower);
     }
 }
