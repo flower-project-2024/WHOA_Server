@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FlowerRepository extends JpaRepository<Flower, Long> {
 
     Flower findByFlowerId(final Long flowerId);
+    
+    Flower findFlowerByRecommendDate(String recommendDate);
 }

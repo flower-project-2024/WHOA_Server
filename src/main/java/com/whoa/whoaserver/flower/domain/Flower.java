@@ -30,7 +30,7 @@ public class Flower {
 
     private String flowerImage;
 
-    private String recommandDate;
+    private String recommendDate;
 
     private String birthFlower;
 
@@ -57,12 +57,20 @@ public class Flower {
             final String flowerName,
             final String flowerDescription,
             final String flowerImage,
+            final String birthFlower,
+            final String comtemplationPeriod,
+            final String managementMethod,
+            final String storageMethod,
             final List<FlowerExpression> flowerExpressions,
             final List<String> bouquetImage
     ) {
         this.flowerName = flowerName;
         this.flowerDescription = flowerDescription;
         this.flowerImage = flowerImage;
+        this.birthFlower = birthFlower;
+        this.comtemplationPeriod = comtemplationPeriod;
+        this.managementMethod = managementMethod;
+        this.storageMethod = storageMethod;
         this.flowerExpressions = (flowerExpressions != null) ? new ArrayList<>(flowerExpressions) : new ArrayList<>();
         this.bouquetImage = bouquetImage;
     }

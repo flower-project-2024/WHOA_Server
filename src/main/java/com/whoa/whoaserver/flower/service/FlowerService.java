@@ -18,4 +18,11 @@ public class FlowerService {
         Flower flower = flowerRepository.findByFlowerId(flowerId);
         return FlowerResponseDto.of(flower);
     }
+
+    @Transactional
+    public FlowerResponseDto getRecommendFlower(final int month, final int date){
+        String recommendDate = month + "/" + date;
+        Flower recommendFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
+        return FlowerResponseDto.of(recommendFlower);
+    }
 }
