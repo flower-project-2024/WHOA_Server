@@ -2,9 +2,11 @@ package com.whoa.whoaserver.flower.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
+import com.whoa.whoaserver.keyword.domain.Keyword;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.data.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,11 @@ public class Flower {
     //@JsonIgnore
     @OneToMany(mappedBy = "flower",  cascade = CascadeType.ALL)
     private List<FlowerExpression> flowerExpressions = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "keywordId")
+    private Keyword keyword;
 
     @Builder(toBuilder = true)
     public Flower(
