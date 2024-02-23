@@ -23,17 +23,17 @@ public class Bouquet {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private int purpose;
+    private Integer purpose;
     private String colorType;
     private String flowerType;
     private String wrappingType;
-    private int price;
+    private Integer  price;
     private String requirement;
     private String imagePath;
 
     @Builder
-    public Bouquet(Member member, int purpose, String colorType, String flowerType,
-                   String wrappingType, int price, String requirement, String imagePath) {
+    public Bouquet(Member member, Integer  purpose, String colorType, String flowerType,
+                   String wrappingType, Integer  price, String requirement, String imagePath) {
         this.member = member;
         this.purpose = purpose;
         this.colorType = colorType;
@@ -55,6 +55,28 @@ public class Bouquet {
             throw new BadRequestException(EXIST_MEMBER);
         }
     }
+
+    public static Bouquet orderBouquet(
+        Member member,
+        Integer  purpose,
+        String colorType,
+        String flowerType,
+        String wrappingType,
+        Integer  price,
+        String requirement) {
+        return Bouquet.builder()
+                    .member(member)
+                    .purpose(purpose)
+                    .colorType(colorType)
+                    .flowerType(flowerType)
+                    .wrappingType(wrappingType)
+                    .price(price)
+                    .requirement(requirement)
+                    .build();
+        
+    }
+
+    
     
     
 }
