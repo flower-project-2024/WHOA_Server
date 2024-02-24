@@ -9,6 +9,8 @@ import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.service.BouquetCustomizingService;
 import com.whoa.whoaserver.global.annotation.DeviceUser;
 import com.whoa.whoaserver.global.dto.UserContext;
+import com.whoa.whoaserver.global.dto.UserContext;
+import org.springframework.http.HttpStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -32,10 +34,11 @@ public class BouquetCustomizingController {
     @PostMapping("/customizing")
     @Operation(summary = "꽃다발 제작", description = "꽃다발 주문 등록")
 
-    public void registerBouquet(@RequestBody BouquetCustomizingRequest request) { 
-        Long memberId = request.id();
+    public ResponseEntity<String> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request) { 
+        Long memberId = userContext.id();
         logger.info("member id : {} ", memberId);
         bouquetCustomizingService.registerBouquet(request, memberId);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
     }
     
 }
