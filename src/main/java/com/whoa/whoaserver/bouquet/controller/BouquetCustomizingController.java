@@ -31,7 +31,7 @@ public class BouquetCustomizingController {
 
 
     @PostMapping("/customizing")
-    @Operation(summary = "꽃다발 제작", description = "꽃다발 주문 등록")
+    @Operation(summary = "꽃다발 제작", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청하면 꽃다발 주문을 등록합니다.")
 
     public ResponseEntity<String> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request) { 
         Long memberId = userContext.id();
