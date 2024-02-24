@@ -22,11 +22,8 @@ import org.slf4j.LoggerFactory;
 public class BouquetCustomizingService {
     private final MemberRepository memberRepository;
     private final BouquetRepository bouquetRepository;
-    private final Logger logger = LoggerFactory.getLogger(BouquetCustomizingService.class);
 
     public void registerBouquet(BouquetCustomizingRequest request, Long memberId) {
-        logger.info("request colorType {}", request.colorType());
-        logger.info("request wrappingType {}", request.wrappingType());
 
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(ExceptionCode.INVALID_MEMBER));
 

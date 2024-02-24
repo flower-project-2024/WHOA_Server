@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 public class BouquetCustomizingController {
 
     private final BouquetCustomizingService bouquetCustomizingService;
-    private final Logger logger = LoggerFactory.getLogger(BouquetCustomizingController.class);
 
 
     @PostMapping("/customizing")
@@ -36,7 +35,6 @@ public class BouquetCustomizingController {
 
     public ResponseEntity<String> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request) { 
         Long memberId = userContext.id();
-        logger.info("member id : {} ", memberId);
         bouquetCustomizingService.registerBouquet(request, memberId);
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
