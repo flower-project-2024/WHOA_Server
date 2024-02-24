@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.member.domain;
 
+import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.global.exception.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.EXIST_MEMBER;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "members")
@@ -22,6 +26,9 @@ public class Member {
     private String deviceId;
     private boolean registered;
     private boolean deleted;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bouquet> bouquet = new ArrayList<>();
 
     @Builder
     private Member(String deviceId, boolean registered, boolean deleted) {
