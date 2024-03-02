@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.bouquet.controller;
 
+import com.whoa.whoaserver.bouquet.dto.request.BouquetUpdateRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +29,18 @@ public class BouquetCustomizingController {
     private final BouquetCustomizingService bouquetCustomizingService;
 
     @PostMapping("/customizing")
-    @Operation(summary = "꽃다발 제작", description = " 꽃다발 주문을 등록합니다.")
+    @Operation(summary = "꽃다발 제작", description = "꽃다발 주문을 등록합니다.")
     public ResponseEntity<BouquetCustomizingResponse> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request) { 
         Long memberId = userContext.id();
         BouquetCustomizingResponse response = bouquetCustomizingService.registerBouquet(request, memberId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/customizing")
+    @Operation(summary = "꽃다발 수정", description = "유저의 꽃다발 주문서를 수정합니다.")
+    public ResponseEntity<BouquetCustomizingResponse> updateBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetUpdateRequest request) {
+        Long memberId = userContext.id();
+        BouquetCustomizingResponse response = bouquetCustomizingService.updateBouquet(request, memberId);
         return ResponseEntity.ok(response);
     }
 
