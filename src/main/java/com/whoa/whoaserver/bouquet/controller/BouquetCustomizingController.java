@@ -1,6 +1,5 @@
 package com.whoa.whoaserver.bouquet.controller;
 
-import com.whoa.whoaserver.bouquet.dto.request.BouquetUpdateRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +15,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Tag(name = "Bouquet Customizing", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청해주세요.")
 @RestController
@@ -36,11 +32,11 @@ public class BouquetCustomizingController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/customizing")
+    @PutMapping("/customizing/{bouquetId}")
     @Operation(summary = "꽃다발 수정", description = "유저의 꽃다발 주문서를 수정합니다.")
-    public ResponseEntity<BouquetCustomizingResponse> updateBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetUpdateRequest request) {
+    public ResponseEntity<BouquetCustomizingResponse> updateBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request, @PathVariable("bouquetId") final Long bouquetId) {
         Long memberId = userContext.id();
-        BouquetCustomizingResponse response = bouquetCustomizingService.updateBouquet(request, memberId);
+        BouquetCustomizingResponse response = bouquetCustomizingService.updateBouquet(request, memberId, bouquetId);
         return ResponseEntity.ok(response);
     }
 

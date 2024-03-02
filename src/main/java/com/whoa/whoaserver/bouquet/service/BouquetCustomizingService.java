@@ -1,6 +1,5 @@
 package com.whoa.whoaserver.bouquet.service;
 
-import com.whoa.whoaserver.bouquet.dto.request.BouquetUpdateRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import org.springframework.stereotype.Service;
@@ -15,9 +14,6 @@ import com.whoa.whoaserver.member.domain.MemberRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,10 +51,10 @@ public class BouquetCustomizingService {
         );
     }
 
-    public BouquetCustomizingResponse updateBouquet(BouquetUpdateRequest request, Long memberId) {
+    public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId) {
         Member member = getMemberByMemberId(memberId);
 
-        Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, request.bouquetId());
+        Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
         if (!existingBouquet.getMember().equals(member)) {
             throw new BadRequestException(NOT_MEMBER_BOUQUET);
