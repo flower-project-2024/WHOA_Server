@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.bouquet.service;
 
+import com.whoa.whoaserver.bouquet.dto.request.BouquetUpdateRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import com.whoa.whoaserver.bouquet.domain.BouquetRepository;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponse;
 import com.whoa.whoaserver.global.exception.BadRequestException;
-import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.member.domain.Member;
 import com.whoa.whoaserver.member.domain.MemberRepository;
 
@@ -55,6 +55,32 @@ public class BouquetCustomizingService {
         );
     }
 
+    public BouquetCustomizingResponse updateBouquet(BouquetUpdateRequest request, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+
+        Bouquet existingBouquet = bouquetRepository.findByMemberIdAndId(memberId, request.bouquetId())
+                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+
+        if (!existingBouquet.getMember().equals(member)) {
+            throw new BadRequestException(NOT_MEMBER_BOUQUET);
+        }
+
+        existingBouquet.changeBouquet(
+                request.purpose(),
+                request.colorType(),
+                request.flowerType(),
+                request.wrappingType(),
+                request.price(),
+                request.requirement(),
+                request.imgPath()
+        );
+
+        bouquetRepository.save(existingBouquet);
+
+        return BouquetCustomizingResponse.of(existingBouquet);
+    }
+
     public void deleteBouquet(Long memberId, Long bouquetId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
@@ -71,7 +97,8 @@ public class BouquetCustomizingService {
     }
 
     public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
-        List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId).orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+        List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
 
         return memberBouquets.stream()
                 .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getImagePath()))
