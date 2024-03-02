@@ -23,23 +23,34 @@ public class Bouquet {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private Integer purpose;
+    @Column(nullable = false)
+    private String purpose;
+
+    @Column(nullable = false)
     private String colorType;
+
+    @Column(nullable = false)
     private String flowerType;
+
     private String wrappingType;
-    private Integer  price;
+
+    @Column(nullable = false)
+    private String priceRange;
+
     private String requirement;
+
+    @Column(nullable = false)
     private String imagePath;
 
     @Builder
-    public Bouquet(Member member, Integer  purpose, String colorType, String flowerType,
-                   String wrappingType, Integer  price, String requirement, String imagePath) {
+    public Bouquet(Member member, String purpose, String colorType, String flowerType,
+                   String wrappingType, String priceRange, String requirement, String imagePath) {
         this.member = member;
         this.purpose = purpose;
         this.colorType = colorType;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
-        this.price = price;
+        this.priceRange = priceRange;
         this.requirement = requirement;
         this.imagePath = imagePath;
     }
@@ -58,11 +69,11 @@ public class Bouquet {
 
     public static Bouquet orderBouquet(
         Member member,
-        Integer  purpose,
+        String purpose,
         String colorType,
         String flowerType,
         String wrappingType,
-        Integer  price,
+        String priceRange,
         String requirement) {
         return Bouquet.builder()
                     .member(member)
@@ -70,7 +81,7 @@ public class Bouquet {
                     .colorType(colorType)
                     .flowerType(flowerType)
                     .wrappingType(wrappingType)
-                    .price(price)
+                    .priceRange(priceRange)
                     .requirement(requirement)
                     .build();
         
