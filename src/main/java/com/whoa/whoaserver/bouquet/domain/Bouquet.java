@@ -39,7 +39,6 @@ public class Bouquet {
 
     private String requirement;
 
-    @Column(nullable = false)
     private String imagePath;
 
     @Builder
@@ -66,7 +65,8 @@ public class Bouquet {
         String flowerType,
         String wrappingType,
         String priceRange,
-        String requirement) {
+        String requirement,
+        String imagePath) {
         return Bouquet.builder()
                     .member(member)
                     .purpose(purpose)
@@ -75,6 +75,7 @@ public class Bouquet {
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
                     .requirement(requirement)
+                    .imagePath(imagePath)
                     .build();
         
     }
