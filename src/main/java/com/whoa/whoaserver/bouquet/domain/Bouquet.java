@@ -59,14 +59,6 @@ public class Bouquet {
         return id;
     }
 
-    public void setMember(Member member) {
-        if (this.member == null) {
-            this.member = member;
-        } else if (!this.member.equals(member)) {
-            throw new BadRequestException(EXIST_MEMBER);
-        }
-    }
-
     public static Bouquet orderBouquet(
         Member member,
         String purpose,
