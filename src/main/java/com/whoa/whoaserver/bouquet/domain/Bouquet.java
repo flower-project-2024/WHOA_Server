@@ -39,6 +39,7 @@ public class Bouquet {
 
     private String requirement;
 
+    @Column(nullable = false)
     private String imagePath;
 
     @Builder
@@ -52,10 +53,6 @@ public class Bouquet {
         this.priceRange = priceRange;
         this.requirement = requirement;
         this.imagePath = imagePath;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public static Bouquet orderBouquet(

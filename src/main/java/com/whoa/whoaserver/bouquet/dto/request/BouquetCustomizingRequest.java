@@ -10,6 +10,6 @@ public record BouquetCustomizingRequest(
     @Nullable String wrappingType,
     @NotNull String price,
     @Nullable String requirement,
-    @Nullable String imgPath
+    @NotNull String imgPath
 ) {}
 
