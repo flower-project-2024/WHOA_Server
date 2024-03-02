@@ -1,8 +1,5 @@
 package com.whoa.whoaserver.bouquet.domain;
 
-import static com.whoa.whoaserver.global.exception.ExceptionCode.EXIST_MEMBER;
-
-import com.whoa.whoaserver.global.exception.BadRequestException;
 import com.whoa.whoaserver.member.domain.Member;
 
 import jakarta.persistence.*;
@@ -77,6 +74,22 @@ public class Bouquet {
         
     }
 
+    public void changeBouquet(
+            String purpose,
+            String colorType,
+            String flowerType,
+            String wrappingType,
+            String priceRange,
+            String requirement,
+            String imagePath) {
+        this.purpose = purpose;
+        this.colorType = colorType;
+        this.flowerType = flowerType;
+        this.wrappingType = wrappingType;
+        this.priceRange = priceRange;
+        this.requirement = requirement;
+        this.imagePath = imagePath;
+    };
     
     
     
