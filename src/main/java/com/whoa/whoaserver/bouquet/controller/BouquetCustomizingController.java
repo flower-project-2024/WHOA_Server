@@ -1,9 +1,7 @@
 package com.whoa.whoaserver.bouquet.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponse;
@@ -30,14 +28,19 @@ public class BouquetCustomizingController {
 
     private final BouquetCustomizingService bouquetCustomizingService;
 
-
     @PostMapping("/customizing")
     @Operation(summary = "꽃다발 제작", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청하면 꽃다발 주문을 등록합니다.")
-
     public ResponseEntity<BouquetCustomizingResponse> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request) { 
         Long memberId = userContext.id();
         BouquetCustomizingResponse response = bouquetCustomizingService.registerBouquet(request, memberId);
         return ResponseEntity.ok(response);
     }
-    
+
+    @DeleteMapping("/{bouquetId}")
+    @Operation(summary = "꽃다발 주문서 단건 삭제", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청하면 꽃다발 주문서를 삭제합니다.")
+    public ResponseEntity<Void> deleteBouquet(@DeviceUser UserContext userContext, @PathVariable("bouquetId") final Long bouquetId) {
+        Long memberId = userContext.id();
+        bouquetCustomizingService.deleteBouquet(memberId, bouquetId);
+        return ResponseEntity.ok().build();
+    }
 }
