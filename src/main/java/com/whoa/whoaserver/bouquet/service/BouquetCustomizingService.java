@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class BouquetCustomizingService {
 
     public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(ExceptionCode.INVALID_MEMBER));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
 
         Bouquet bouquet = createBouquetEntity(request, member);
 
@@ -38,12 +40,28 @@ public class BouquetCustomizingService {
     private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
         return Bouquet.orderBouquet(
             member, 
-            request.purpose(), 
+            request.purpose(),
             request.colorType(), 
             request.flowerType(), 
             request.wrappingType(), 
             request.price(), 
-            request.requirement()
+            request.requirement(),
+            request.imgPath()
         );
+    }
+
+    public void deleteBouquet(Long memberId, Long bouquetId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+
+        Bouquet bouquetToDelete = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
+                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+
+        if (!bouquetToDelete.getMember().equals(member)) {
+            throw new BadRequestException(NOT_MEMBER_BOUQUET);
+        }
+
+        member.getBouquet().remove(bouquetToDelete);
+        bouquetRepository.delete(bouquetToDelete);
     }
 }
