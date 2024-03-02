@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.bouquet.service;
 
+import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 
@@ -63,5 +67,13 @@ public class BouquetCustomizingService {
 
         member.getBouquet().remove(bouquetToDelete);
         bouquetRepository.delete(bouquetToDelete);
+    }
+
+    public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
+        List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId).orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+
+        return memberBouquets.stream()
+                .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getImagePath()))
+                .collect(Collectors.toList());
     }
 }
