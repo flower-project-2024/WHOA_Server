@@ -43,4 +43,10 @@ public class BouquetCustomizingController {
         bouquetCustomizingService.deleteBouquet(memberId, bouquetId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/all")
+    @Operation(summary = "개인의 꽃다발 주문서 전체 조회", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청하면 모든 주문서를 반환합니다.")
+    public ResponseEntity<?> getAllBouquets(@DeviceUser UserContext userContext) {
+        return ResponseEntity.ok().body(bouquetCustomizingService.getAllBouquets(userContext.id()));
+    }
 }
