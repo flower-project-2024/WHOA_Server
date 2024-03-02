@@ -33,7 +33,7 @@ public class BouquetCustomizingService {
 
     public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+        Member member = getMemberByMemberId(memberId);
 
         Bouquet bouquet = createBouquetEntity(request, member);
 
@@ -56,11 +56,9 @@ public class BouquetCustomizingService {
     }
 
     public BouquetCustomizingResponse updateBouquet(BouquetUpdateRequest request, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+        Member member = getMemberByMemberId(memberId);
 
-        Bouquet existingBouquet = bouquetRepository.findByMemberIdAndId(memberId, request.bouquetId())
-                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+        Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, request.bouquetId());
 
         if (!existingBouquet.getMember().equals(member)) {
             throw new BadRequestException(NOT_MEMBER_BOUQUET);
@@ -82,11 +80,9 @@ public class BouquetCustomizingService {
     }
 
     public void deleteBouquet(Long memberId, Long bouquetId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+        Member member = getMemberByMemberId(memberId);
 
-        Bouquet bouquetToDelete = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
-                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+        Bouquet bouquetToDelete = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
         if (!bouquetToDelete.getMember().equals(member)) {
             throw new BadRequestException(NOT_MEMBER_BOUQUET);
@@ -111,4 +107,18 @@ public class BouquetCustomizingService {
 
         return BouquetInfoDetailResponse.of(bouquetToRead);
     }
+
+    private Member getMemberByMemberId(Long memberId) {
+        Member targetMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+        return targetMember;
+    }
+
+    private Bouquet getBouquetByMemberIdAndBouquetId(Long memberId, Long bouquetId) {
+        Bouquet targetBouquet = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
+                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+        return targetBouquet;
+    }
+
+
 }
