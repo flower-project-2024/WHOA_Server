@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.bouquet.service;
 
+import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import org.springframework.stereotype.Service;
 
@@ -75,5 +76,12 @@ public class BouquetCustomizingService {
         return memberBouquets.stream()
                 .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getImagePath()))
                 .collect(Collectors.toList());
+    }
+
+    public BouquetInfoDetailResponse getBouquetDetails(Long memberId, Long bouquetId) {
+        Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
+                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+
+        return BouquetInfoDetailResponse.of(bouquetToRead);
     }
 }
