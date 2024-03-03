@@ -50,3 +50,14 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+processResources.dependsOn('copySecret')
+
+tasks.register('copySecret', Copy) {
+    description = 'Copy submodules to project'
+
+    from('./src/main/resources/secret') {
+        include('*.yml')
+    }
+    into('src/main/resources')
+}

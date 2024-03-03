@@ -1,0 +1,3 @@
+[submodule "cicdSecret"]
+	path = src/main/resources/secret
+	url = https://github.com/flower-project-2024/secret.git
