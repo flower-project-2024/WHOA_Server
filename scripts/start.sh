@@ -16,6 +16,9 @@ if [ -f "$JAR_SOURCE" ]; then
   echo "[$NOW] $JAR_SOURCE 복사" >> $START_LOG
   cp "$JAR_SOURCE" "$JAR"
 
+  # .gitignore 처리된 파일들 복사
+  cp "$ROOT_PATH/build/libs/application-*.yml" "$ROOT_PATH/"
+
   # JAR 파일 실행
   echo "[$NOW] > $JAR 실행" >> $START_LOG
   nohup java -jar "$JAR" > "$APP_LOG" 2> "$ERROR_LOG" &
