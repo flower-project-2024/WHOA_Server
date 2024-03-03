@@ -42,8 +42,6 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
         aws-access-key-id: ${{ secrets.CICD_ACCESS_KEY }}
         aws-secret-access-key: ${{ secrets.CICD_SECRET_KEY }}
-    - name: .gitignore을 build directory에 복사
-      run: cp src/main/resources/application-*.yml build/libs/
     - name: S3에 업로드
       run: aws deploy push --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --ignore-hidden-files --s3-location s3://$AWS_S3_BUCKET/cicdwhoa/$GITHUB_SHA.zip --source .
     - name: EC2에 배포
