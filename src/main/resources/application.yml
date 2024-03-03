@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    include: credentials, rds, s3
+
+logging:
+  level:
+    com.whoa.whoaserver: DEBUG
