@@ -12,6 +12,9 @@ public enum ExceptionCode {
     EXIST_MEMBER(1002, "존재하는 회원입니다."),
     INVALID_MEMBER(1003, "존재하지 않는 회원입니다."),
 
+    NOT_REGISTER_BOUQUET(2000, "등록되지 않은 꽃다발 주문서입니다."),
+    NOT_MEMBER_BOUQUET(2001, "해당 유저가 주문한 꽃다발이 아닙니다."),
+
     IMAGE_SIZE_LIMIT_ERROR(3000, "이미지의 크기가 기준을 초과합니다."),
     IMAGE_EXTENSION_NOT_SUPPORTED(3001, "지원하지 않는 이미지 파일 형식입니다.");
 

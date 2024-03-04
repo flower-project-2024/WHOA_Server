@@ -23,9 +23,11 @@ jobs:
   build-with-gradle:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout main branch
+    - name: Checkout-source code
       uses: actions/checkout@v3
       with:
+        token: ${{ secrets.PRIVATE_REPO_ACCESS_TOKEN }}
+        submodules: true
         ref: main
     - name: JDK 17 설치
       uses: actions/setup-java@v3
