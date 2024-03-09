@@ -1,20 +1,19 @@
 package com.whoa.whoaserver.member.domain;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
-import com.whoa.whoaserver.global.exception.BadRequestException;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.whoa.whoaserver.global.exception.ExceptionCode.EXIST_MEMBER;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "members")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Member {
 
@@ -23,6 +22,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column(nullable = false)
     private String deviceId;
     private boolean registered;
     private boolean deleted;
@@ -30,19 +30,18 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bouquet> bouquet = new ArrayList<>();
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private Member(String deviceId, boolean registered, boolean deleted) {
         this.deviceId = deviceId;
         this.registered = registered;
         this.deleted = deleted;
     }
 
-    public void init(String deviceId) {
-        if (registered) {
-            throw new BadRequestException(EXIST_MEMBER);
-        }
-        this.registered = true;
-        this.deviceId = deviceId;
+    public static Member createInitMemberStatus(String deviceId) {
+        return Member.builder()
+                .registered(true)
+                .deviceId(deviceId)
+                .build();
     }
 
     public Long getId() {

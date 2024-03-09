@@ -30,11 +30,14 @@ public class MemberService {
             throw new BadRequestException(EXIST_MEMBER);
         }
 
-        Member newMember = new Member();
-        newMember.init(request.deviceId());
+        Member newMember = registerMember(request.deviceId());
 
         memberRepository.save(newMember);
         
         return MemberInfo.of(newMember);
+    }
+
+    private Member registerMember(String deviceId) {
+        return Member.createInitMemberStatus(deviceId);
     }
 }
