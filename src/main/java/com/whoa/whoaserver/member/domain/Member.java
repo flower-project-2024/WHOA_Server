@@ -30,7 +30,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bouquet> bouquet = new ArrayList<>();
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private Member(String deviceId, boolean registered, boolean deleted) {
         this.deviceId = deviceId;
         this.registered = registered;
