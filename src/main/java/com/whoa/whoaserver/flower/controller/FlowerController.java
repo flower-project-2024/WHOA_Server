@@ -26,4 +26,9 @@ public class FlowerController {
     public ResponseEntity<?> getRecommentFlower(@PathVariable("month") final int month, @PathVariable("date") final int date){
         return ResponseEntity.ok().body(flowerService.getRecommendFlower(month, date));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> getAllFlowers() {
+        return ResponseEntity.ok().body(flowerService.getAllFlowers());
+    }
 }
