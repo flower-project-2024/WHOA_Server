@@ -30,9 +30,9 @@ public class BouquetImageController {
 
     @PostMapping("/presigned_url")
     @Operation(summary = "이미지 등록 주소", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청하면 S3 이미지 저장을 위한 주소를 반환합니다.")
-    public ResponseEntity<PresignedUrlResponse> providePresignedUrl(@DeviceUser UserContext userContext) {
+    public ResponseEntity<PresignedUrlResponse> providePresignedUrl(@DeviceUser UserContext userContext, @RequestBody PresignedUrlRequest request) {
         
-        URL presignedUrl = bouquetImageService.createPresignedUrl(userContext);
+        URL presignedUrl = bouquetImageService.createPresignedUrl(userContext, request);
 
         return ResponseEntity.ok(PresignedUrlResponse.create(presignedUrl));
     }
