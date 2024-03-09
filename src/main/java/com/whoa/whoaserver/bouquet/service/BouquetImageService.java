@@ -7,6 +7,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.function.Consumer;
 
+import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.BouquetImageRepository;
@@ -33,11 +34,19 @@ public class BouquetImageService {
     private final S3Properties s3Properties;
     private final S3Presigner s3Presigner;
 
-    public URL createPresignedUrl(UserContext userContext) {
-        Long memberId = userContext.id();
-        Long contentLength = 123L;
+    public static final String DELIMITER = ".";
 
-        String fileName = generateFileName(memberId);
+    public URL createPresignedUrl(UserContext userContext, PresignedUrlRequest request) {
+        Long memberId = userContext.id();
+        Long contentLength = request.contentLength();
+
+        if (contentLength > s3Properties.imgMaxContentLength()) {
+            throw new BadRequestException(IMAGE_SIZE_LIMIT_ERROR);
+        }
+
+        validateExtension(request.extension());
+
+        String fileName = generateFileName(memberId, request.imgName());
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r -> 
             r.signatureDuration(Duration.ofSeconds(s3Properties.presignedExpires()))
                 .putObjectRequest(createPutObjectRequest(contentLength, fileName)));
@@ -58,9 +67,11 @@ public class BouquetImageService {
         }
     }
 
-    private String generateFileName(Long memberId) {
+    private String generateFileName(Long memberId, String imgName) {
+        String s3FileName = memberId + DELIMITER + imgName;
 
-        return memberId.toString();
+        bouquetImageRepository.save(BouquetImage.create(s3FileName));
+        return s3FileName;
     }
 
     private Consumer<Builder> createPutObjectRequest(long contentLength, String fileName) {
