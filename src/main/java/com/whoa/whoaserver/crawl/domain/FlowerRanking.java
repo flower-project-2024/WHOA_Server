@@ -21,24 +21,24 @@ public class FlowerRanking {
 
     private String flowerRankingName;
 
-    private String flowerRankingLanguage;
+    private String flowerRankingDescription;
 
     private String flowerRankingPrize;
 
     @Builder(toBuilder = true)
     public FlowerRanking(
             final String flowerRankingName,
-            final String flowerRankingLanguage,
+            final String flowerRankingDescription,
             final String flowerRankingPrize
     ) {
         this.flowerRankingName = flowerRankingName;
-        this.flowerRankingLanguage = flowerRankingLanguage;
+        this.flowerRankingDescription = flowerRankingDescription;
         this.flowerRankingPrize = flowerRankingPrize;
     }
 
-    public void update(String flowerRankingName, String flowerRankingLanguage, String flowerRankingPrize){
+    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrize){
         this.flowerRankingName = flowerRankingName;
-        this.flowerRankingLanguage = flowerRankingLanguage;
+        this.flowerRankingDescription = flowerRankingDescription;
         this.flowerRankingPrize = flowerRankingPrize;
     }
 }
