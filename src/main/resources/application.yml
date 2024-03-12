@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: credentials, rds, s3
+    include: credentials, rds, s3, crawl
 
 logging:
   level:
