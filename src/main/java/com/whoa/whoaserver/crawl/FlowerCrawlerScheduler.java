@@ -1,5 +1,7 @@
 package com.whoa.whoaserver.crawl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.crawl.domain.FlowerRanking;
@@ -11,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
@@ -25,7 +28,8 @@ public class FlowerCrawlerScheduler {
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정마다 실행
     public void crawlFlowerData() {
-        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey=sample&baseDate=2018-08-13&flowerGubn=1&countPerPage=999&dataType=json";
+        String date = String.valueOf(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey=E00CA6C600BD43C8AFEBD01DAF0AB712&baseDate=" + date + "&flowerGubn=1&dataType=json";
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -35,38 +39,46 @@ public class FlowerCrawlerScheduler {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(jsonResult);
 
-                JsonNode itemsNode = rootNode.path("response").path("items");
-                Iterator<JsonNode> items = itemsNode.elements();
+                JsonNode responseNode = rootNode.path("response");
+                String resultMsg = responseNode.path("resultMsg").asText();
+                int numOfRows = responseNode.path("numOfRows").asInt();
 
-                List<Map<String, String>> flowerDataList = new ArrayList<>();
+                if ("OK".equals(resultMsg) && numOfRows >= 3) {
+                    JsonNode itemsNode = responseNode.path("items");
+                    Iterator<JsonNode> items = itemsNode.elements();
 
-                while (items.hasNext()) {
-                    JsonNode item = items.next();
-                    Map<String, String> flowerData = new HashMap<>();
+                    List<Map<String, String>> flowerDataList = new ArrayList<>();
 
-                    flowerData.put("pumName", item.path("pumName").asText());
-                    flowerData.put("avgAmt", item.path("avgAmt").asText());
+                    while (items.hasNext()) {
+                        JsonNode item = items.next();
+                        Map<String, String> flowerData = new HashMap<>();
 
-                    flowerDataList.add(flowerData);
+                        flowerData.put("pumName", item.path("pumName").asText());
+                        flowerData.put("avgAmt", item.path("avgAmt").asText());
+
+                        flowerDataList.add(flowerData);
+                    }
+
+                    flowerDataList.sort(Comparator.comparingInt(data -> Integer.parseInt(data.get("avgAmt"))));
+
+                    for (int i = 0; i < Math.min(3, flowerDataList.size()); i++) {
+                        Map<String, String> flowerData = flowerDataList.get(i);
+                        long flowerRankingId = i + 1;
+                        String flowerName = flowerData.get("pumName");
+                        String flowerPrize = flowerData.get("avgAmt");
+
+                        flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrize, date);
+                    }
+                } else {
+                    System.out.println("Failed to fetch flower data from the API.");
                 }
 
-                flowerDataList.sort(Comparator.comparingInt(data -> Integer.parseInt(data.get("avgAmt"))));
-
-                for (int i = 0; i < Math.min(3, flowerDataList.size()); i++) {
-                    Map<String, String> flowerData = flowerDataList.get(i);
-                    long flowerRankingId = i + 1;
-                    String flowerName = flowerData.get("pumName");
-                    String flowerPrize = flowerData.get("avgAmt");
-
-                    flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrize);
-                }
-            }else {
-                System.out.println("Failed to fetch flower data from the API.");
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-
     }
 }
