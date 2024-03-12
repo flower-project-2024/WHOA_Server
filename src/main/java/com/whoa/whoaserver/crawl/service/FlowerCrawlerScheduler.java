@@ -1,14 +1,11 @@
-package com.whoa.whoaserver.crawl;
+package com.whoa.whoaserver.crawl.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.whoa.whoaserver.crawl.domain.FlowerRanking;
-import com.whoa.whoaserver.crawl.service.FlowerRankingService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -19,17 +16,21 @@ import java.util.*;
 @Component
 public class FlowerCrawlerScheduler {
 
-    @Autowired
+    @Value("${crawl.service-key}")
+    private String serviceKey;
+
     private final FlowerRankingService flowerRankingService;
 
-    public FlowerCrawlerScheduler(FlowerRankingService flowerRankingService) {
+    @Autowired
+    public FlowerCrawlerScheduler(@Value("${crawl.service-key}") String serviceKey, FlowerRankingService flowerRankingService) {
+        this.serviceKey = serviceKey;
         this.flowerRankingService = flowerRankingService;
     }
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정마다 실행
     public void crawlFlowerData() {
         String date = String.valueOf(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey=E00CA6C600BD43C8AFEBD01DAF0AB712&baseDate=" + date + "&flowerGubn=1&dataType=json";
+        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey="+serviceKey+"&baseDate=" + date + "&flowerGubn=1&dataType=json";
 
         try {
             RestTemplate restTemplate = new RestTemplate();
