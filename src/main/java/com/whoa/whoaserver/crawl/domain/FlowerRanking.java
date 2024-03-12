@@ -25,20 +25,25 @@ public class FlowerRanking {
 
     private String flowerRankingPrize;
 
+    private String flowerRankingDate;
+
     @Builder(toBuilder = true)
     public FlowerRanking(
             final String flowerRankingName,
             final String flowerRankingDescription,
-            final String flowerRankingPrize
+            final String flowerRankingPrize,
+            final String flowerRankingDate
     ) {
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
         this.flowerRankingPrize = flowerRankingPrize;
+        this.flowerRankingDate = flowerRankingDate;
     }
 
-    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrize){
+    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrize, String flowerRankingDate){
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
         this.flowerRankingPrize = flowerRankingPrize;
+        this.flowerRankingDate = flowerRankingDate;
     }
 }
