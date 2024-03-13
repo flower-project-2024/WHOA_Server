@@ -5,6 +5,7 @@ import com.whoa.whoaserver.crawl.domain.FlowerRanking;
 import com.whoa.whoaserver.crawl.dto.FlowerRankingResponseDto;
 import com.whoa.whoaserver.crawl.repository.FlowerRankingRepository;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
+import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +19,12 @@ import java.util.Optional;
 public class FlowerRankingService {
 
     final FlowerRankingRepository flowerRankingRepository;
+    final FlowerRepository flowerRepository;
 
     @Transactional
     public FlowerRankingResponseDto saveFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
         FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
-        Optional<String> flowerRankingDescription = flowerRankingRepository.findFlowerDescriptionByFlowerRankingName(pumName);
+        Optional<String> flowerRankingDescription = flowerRepository.findFlowerDescriptionByFlowerName(pumName);
         if (flowerRankingDescription.isPresent()){
             flowerRanking.update(pumName, String.valueOf(flowerRankingDescription), avgAmt, date);
             return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrize(), flowerRanking.getFlowerRankingDate());
