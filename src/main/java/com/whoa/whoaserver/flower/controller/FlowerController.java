@@ -33,6 +33,7 @@ public class FlowerController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "꽃 검색", description = "꽃 검색을 위해 모든 꽃 종류를 반환합니다.")
     public ResponseEntity<?> getAllFlowers() {
         return ResponseEntity.ok().body(flowerService.getAllFlowers());
     }
