@@ -8,5 +8,4 @@ import java.util.Optional;
 public interface FlowerRankingRepository extends JpaRepository<FlowerRanking, Long> {
     FlowerRanking findByFlowerRankingId(final Long flowerRankingId);
 
-    Optional<String> findFlowerDescriptionByFlowerRankingName(final String flowerName);
 }
