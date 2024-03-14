@@ -1,12 +1,9 @@
 package com.whoa.whoaserver.global.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@Getter
-@RequiredArgsConstructor
-public class ExceptionResponse {
+public record ExceptionResponse(String errorType, String message) {
 
-    private final int code;
-    private final String message;
+    public static ExceptionResponse of(String errorType, String message) {
+        return new ExceptionResponse(errorType, message);
+    }
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.whoa.whoaserver.global.exception.BadRequestException;
+import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.member.domain.Member;
 import com.whoa.whoaserver.member.domain.MemberRepository;
 import com.whoa.whoaserver.member.dto.request.MemberRegisterRequest;
@@ -27,7 +27,7 @@ public class MemberService {
         Optional<Member> optionalMember = memberRepository.findByDeviceId(request.deviceId());
 
         if (optionalMember.isPresent()) {
-            throw new BadRequestException(EXIST_MEMBER);
+            throw new WhoaException(EXIST_MEMBER);
         }
 
         Member newMember = registerMember(request.deviceId());
