@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.whoa.whoaserver.bouquet.domain.BouquetImageRepository;
 import com.whoa.whoaserver.bouquet.dto.request.PresignedUrlRequest;
 import com.whoa.whoaserver.global.dto.UserContext;
-import com.whoa.whoaserver.global.exception.BadRequestException;
+import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.global.properties.S3Properties;
 import com.whoa.whoaserver.global.extension.Extension;
 
@@ -22,9 +22,6 @@ import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest.Builder;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
@@ -41,7 +38,7 @@ public class BouquetImageService {
         Long contentLength = request.contentLength();
 
         if (contentLength > s3Properties.imgMaxContentLength()) {
-            throw new BadRequestException(IMAGE_SIZE_LIMIT_ERROR);
+            throw new WhoaException(IMAGE_SIZE_LIMIT_ERROR);
         }
 
         validateExtension(request.extension());
@@ -60,10 +57,10 @@ public class BouquetImageService {
             Extension extension = Extension.valueOf(extensionValue.toUpperCase());
 
             if (!extension.isImageType()) {
-                throw new BadRequestException(IMAGE_EXTENSION_NOT_SUPPORTED);
+                throw new WhoaException(IMAGE_EXTENSION_NOT_SUPPORTED);
             }
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException(IMAGE_EXTENSION_NOT_SUPPORTED);
+            throw new WhoaException(IMAGE_EXTENSION_NOT_SUPPORTED);
         }
     }
 

@@ -3,11 +3,11 @@ package com.whoa.whoaserver.global.exception;
 import lombok.Getter;
 
 @Getter
-public class BadRequestException extends RuntimeException {
+public class WhoaException extends RuntimeException {
 
     private final ExceptionCode exceptionCode;
 
-    public BadRequestException(final ExceptionCode exceptionCode) {
+    public WhoaException(final ExceptionCode exceptionCode) {
         super(exceptionCode.getMessage());
         this.exceptionCode = exceptionCode;
     }

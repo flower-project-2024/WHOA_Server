@@ -1,13 +1,11 @@
 package com.whoa.whoaserver.global.exception;
 
 import com.whoa.whoaserver.global.dto.common.CommonResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
@@ -25,8 +23,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).body(response);
     }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<CommonResponse> handleBadRequestException(final BadRequestException e) {
+    @ExceptionHandler(WhoaException.class)
+    public ResponseEntity<CommonResponse> handleWhoaException(final WhoaException e) {
         final ExceptionCode exceptionCode = e.getExceptionCode();
         final ExceptionResponse exceptionResponse = ExceptionResponse.of(exceptionCode.name(), exceptionCode.getMessage());
         final CommonResponse response = CommonResponse.fail(exceptionCode.getStatus().value(), exceptionResponse);

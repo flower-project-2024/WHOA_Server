@@ -8,7 +8,7 @@ import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.bouquet.domain.BouquetRepository;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponse;
-import com.whoa.whoaserver.global.exception.BadRequestException;
+import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.member.domain.Member;
 import com.whoa.whoaserver.member.domain.MemberRepository;
 
@@ -57,7 +57,7 @@ public class BouquetCustomizingService {
         Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
         if (!existingBouquet.getMember().equals(member)) {
-            throw new BadRequestException(NOT_MEMBER_BOUQUET);
+            throw new WhoaException(NOT_MEMBER_BOUQUET);
         }
 
         existingBouquet.changeBouquet(
@@ -81,7 +81,7 @@ public class BouquetCustomizingService {
         Bouquet bouquetToDelete = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
         if (!bouquetToDelete.getMember().equals(member)) {
-            throw new BadRequestException(NOT_MEMBER_BOUQUET);
+            throw new WhoaException(NOT_MEMBER_BOUQUET);
         }
 
         member.getBouquet().remove(bouquetToDelete);
@@ -90,7 +90,7 @@ public class BouquetCustomizingService {
 
     public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
         List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
         return memberBouquets.stream()
                 .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getImagePath()))
@@ -99,20 +99,20 @@ public class BouquetCustomizingService {
 
     public BouquetInfoDetailResponse getBouquetDetails(Long memberId, Long bouquetId) {
         Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
-                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
         return BouquetInfoDetailResponse.of(bouquetToRead);
     }
 
     private Member getMemberByMemberId(Long memberId) {
         Member targetMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BadRequestException(INVALID_MEMBER));
+                .orElseThrow(() -> new WhoaException(INVALID_MEMBER));
         return targetMember;
     }
 
     private Bouquet getBouquetByMemberIdAndBouquetId(Long memberId, Long bouquetId) {
         Bouquet targetBouquet = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
-                .orElseThrow(() -> new BadRequestException(NOT_REGISTER_BOUQUET));
+                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
         return targetBouquet;
     }
 
