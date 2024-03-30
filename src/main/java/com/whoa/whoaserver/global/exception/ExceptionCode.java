@@ -11,6 +11,7 @@ public enum ExceptionCode {
     EXIST_MEMBER(HttpStatus.CONFLICT, "이미 존재하는 회원입니다."),
     INVALID_MEMBER(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
 
+    INVALID_FLOWER_AND_EXPRESSION(HttpStatus.NOT_FOUND, "꽃에 대응되는 꽃말이 없습니다."),
     NOT_REGISTER_BOUQUET(HttpStatus.NOT_FOUND, "등록되지 않은 꽃다발 주문서입니다."),
     NOT_MEMBER_BOUQUET(HttpStatus.CONFLICT, "해당 유저가 주문한 꽃다발이 아닙니다."),
 
