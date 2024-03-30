@@ -1,8 +1,5 @@
 package com.whoa.whoaserver.bouquet.service;
 
-import static com.whoa.whoaserver.global.exception.ExceptionCode.IMAGE_EXTENSION_NOT_SUPPORTED;
-import static com.whoa.whoaserver.global.exception.ExceptionCode.IMAGE_SIZE_LIMIT_ERROR;
-
 import java.net.URL;
 import java.time.Duration;
 import java.util.function.Consumer;
@@ -22,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest.Builder;
+
+import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 
 @Service
 @Transactional
@@ -44,12 +43,12 @@ public class BouquetImageService {
         validateExtension(request.extension());
 
         String fileName = generateFileName(memberId, request.imgName());
-        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r -> 
-            r.signatureDuration(Duration.ofSeconds(s3Properties.presignedExpires()))
-                .putObjectRequest(createPutObjectRequest(contentLength, fileName)));
-        
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r ->
+                r.signatureDuration(Duration.ofSeconds(s3Properties.presignedExpires()))
+                        .putObjectRequest(createPutObjectRequest(contentLength, fileName)));
+
         return presignedRequest.url();
-        
+
     }
 
     private void validateExtension(String extensionValue) {
@@ -67,14 +66,18 @@ public class BouquetImageService {
     private String generateFileName(Long memberId, String imgName) {
         String s3FileName = memberId + DELIMITER + imgName;
 
+        if (bouquetImageRepository.existsByFileName(s3FileName)) {
+            throw new WhoaException(DUPLICATED_FILE_NAME);
+        }
+
         bouquetImageRepository.save(BouquetImage.create(s3FileName));
         return s3FileName;
     }
 
     private Consumer<Builder> createPutObjectRequest(long contentLength, String fileName) {
         return objectRequest -> objectRequest.bucket(s3Properties.bucket())
-            .contentLength(contentLength)
-            .key(fileName);
+                .contentLength(contentLength)
+                .key(fileName);
     }
-    
+
 }
