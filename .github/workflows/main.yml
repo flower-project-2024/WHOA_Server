@@ -62,7 +62,7 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           sudo docker rm -f $(docker ps -qa)
-          sudo docker pull ${{ secrets.DOCKER_REPO }}/${{ secrets.DOCKER_SERVICE_REPO }}
-          sudo docker pull ${{ secrets.DOCKER_REPO }}/${{ secrets.DOCKER_NGINX_REPO }}
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }}
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX_REPO }}
           docker-compose up -d
           docker image prune -f
