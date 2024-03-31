@@ -70,7 +70,7 @@ public class Bouquet {
         String requirement) {
         return Bouquet.builder()
                     .member(member)
-                    .bouquetName(member.getId().toString())
+                    .bouquetName(bouquetName)
                     .purpose(purpose)
                     .colorType(colorType)
                     .flowerType(flowerType)
