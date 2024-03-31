@@ -4,7 +4,9 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.function.Consumer;
 
+import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.bouquet.domain.BouquetImage;
+import com.whoa.whoaserver.bouquet.domain.BouquetRepository;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.BouquetImageRepository;
@@ -26,6 +28,7 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 @Transactional
 @RequiredArgsConstructor
 public class BouquetImageService {
+    private final BouquetRepository bouquetRepository;
     private final BouquetImageRepository bouquetImageRepository;
     private final S3Properties s3Properties;
     private final S3Presigner s3Presigner;
@@ -42,7 +45,7 @@ public class BouquetImageService {
 
         validateExtension(request.extension());
 
-        String fileName = generateFileName(memberId, request.imgName());
+        String fileName = generateFileName(memberId, request.imgName(), request.bouquetName());
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(r ->
                 r.signatureDuration(Duration.ofSeconds(s3Properties.presignedExpires()))
                         .putObjectRequest(createPutObjectRequest(contentLength, fileName)));
@@ -63,14 +66,17 @@ public class BouquetImageService {
         }
     }
 
-    private String generateFileName(Long memberId, String imgName) {
+    private String generateFileName(Long memberId, String imgName, String bouquetName) {
         String s3FileName = memberId + DELIMITER + imgName;
 
         if (bouquetImageRepository.existsByFileName(s3FileName)) {
             throw new WhoaException(DUPLICATED_FILE_NAME);
         }
 
-        bouquetImageRepository.save(BouquetImage.create(s3FileName));
+        Bouquet bouquet = bouquetRepository.findByMemberIdAndBouquetName(memberId, bouquetName)
+                        .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+
+        bouquetImageRepository.save(BouquetImage.create(bouquet, s3FileName));
         return s3FileName;
     }
 
