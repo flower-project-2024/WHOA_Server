@@ -40,14 +40,14 @@ public class BouquetCustomizingService {
 
     private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
         return Bouquet.orderBouquet(
-            member, 
+            member,
+            request.bouquetName(),
             request.purpose(),
             request.colorType(), 
             request.flowerType(), 
             request.wrappingType(), 
             request.price(), 
-            request.requirement(),
-            request.imgPath()
+            request.requirement()
         );
     }
 
@@ -61,13 +61,13 @@ public class BouquetCustomizingService {
         }
 
         existingBouquet.changeBouquet(
+                request.bouquetName(),
                 request.purpose(),
                 request.colorType(),
                 request.flowerType(),
                 request.wrappingType(),
                 request.price(),
-                request.requirement(),
-                request.imgPath()
+                request.requirement()
         );
 
         bouquetRepository.save(existingBouquet);
@@ -93,7 +93,9 @@ public class BouquetCustomizingService {
                 .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
         return memberBouquets.stream()
-                .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getImagePath()))
+                .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getBouquetName(), bouquet.getImages().stream()
+                        .map(bouquetImage -> bouquetImage.getFileName())
+                        .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
