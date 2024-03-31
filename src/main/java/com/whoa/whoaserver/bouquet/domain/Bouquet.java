@@ -5,6 +5,9 @@ import com.whoa.whoaserver.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "bouquet")
 @Getter
@@ -19,6 +22,9 @@ public class Bouquet {
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Column(nullable = true)
+    private String bouquetName;
 
     @Column(nullable = false)
     private String purpose;
@@ -36,59 +42,60 @@ public class Bouquet {
 
     private String requirement;
 
-    @Column(nullable = false)
-    private String imagePath;
+    @OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BouquetImage> images = new ArrayList<>();
+
 
     @Builder
-    public Bouquet(Member member, String purpose, String colorType, String flowerType,
-                   String wrappingType, String priceRange, String requirement, String imagePath) {
+    public Bouquet(Member member, String bouquetName, String purpose, String colorType, String flowerType,
+                   String wrappingType, String priceRange, String requirement) {
         this.member = member;
+        this.bouquetName = bouquetName;
         this.purpose = purpose;
         this.colorType = colorType;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
         this.requirement = requirement;
-        this.imagePath = imagePath;
     }
 
     public static Bouquet orderBouquet(
         Member member,
+        String bouquetName,
         String purpose,
         String colorType,
         String flowerType,
         String wrappingType,
         String priceRange,
-        String requirement,
-        String imagePath) {
+        String requirement) {
         return Bouquet.builder()
                     .member(member)
+                    .bouquetName(member.getId().toString())
                     .purpose(purpose)
                     .colorType(colorType)
                     .flowerType(flowerType)
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
                     .requirement(requirement)
-                    .imagePath(imagePath)
                     .build();
         
     }
 
     public void changeBouquet(
+            String bouquetName,
             String purpose,
             String colorType,
             String flowerType,
             String wrappingType,
             String priceRange,
-            String requirement,
-            String imagePath) {
+            String requirement) {
+        this.bouquetName = bouquetName;
         this.purpose = purpose;
         this.colorType = colorType;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
         this.requirement = requirement;
-        this.imagePath = imagePath;
     };
     
     

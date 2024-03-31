@@ -16,6 +16,10 @@ public class BouquetImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bouquet_id")
+    private Bouquet bouquet;
+
     @Column(unique = true, nullable = false)
     private String fileName;
 
@@ -25,15 +29,17 @@ public class BouquetImage {
     private boolean used;
 
     @Builder
-    private BouquetImage(String fileName, boolean used) {
+    private BouquetImage(Bouquet bouquet, String fileName, boolean used) {
         this.fileName = fileName;
         this.used = used;
+        this.bouquet = bouquet;
     }
 
-    public static BouquetImage create(String fileName) {
+    public static BouquetImage create(Bouquet bouquet, String fileName) {
         return BouquetImage.builder()
                 .fileName(fileName)
                 .used(false)
+                .bouquet(bouquet)
                 .build();
     }
 }
