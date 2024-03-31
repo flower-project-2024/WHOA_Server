@@ -52,8 +52,8 @@ jobs:
     - name: web docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -t ${{ secrets.DOCKER_REPO }}/whoa-docker-web .
-        docker push ${{ secrets.DOCKER_REPO }}/whoa-docker-web
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }} .
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }}
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
@@ -62,7 +62,7 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           sudo docker rm -f $(docker ps -qa)
-          sudo docker pull ${{ secrets.DOCKER_REPO }}/whoa-docker-web
-          sudo docker pull ${{ secrets.DOCKER_REPO }}/whoa-docker-nginx
+          sudo docker pull ${{ secrets.DOCKER_REPO }}/${{ secrets.DOCKER_SERVICE_REPO }}
+          sudo docker pull ${{ secrets.DOCKER_REPO }}/${{ secrets.DOCKER_NGINX_REPO }}
           docker-compose up -d
           docker image prune -f
