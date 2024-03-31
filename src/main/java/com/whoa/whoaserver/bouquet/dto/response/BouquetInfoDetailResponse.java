@@ -2,6 +2,9 @@ package com.whoa.whoaserver.bouquet.dto.response;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public record BouquetInfoDetailResponse(
         Long id,
         String purpose,
@@ -10,7 +13,7 @@ public record BouquetInfoDetailResponse(
         String wrappingType,
         String priceRange,
         String requirement,
-        String imagePath
+        List<String> imagePaths
 
 ) {
     public static BouquetInfoDetailResponse of(Bouquet bouquet) {
@@ -22,7 +25,8 @@ public record BouquetInfoDetailResponse(
                 bouquet.getWrappingType(),
                 bouquet.getPriceRange(),
                 bouquet.getRequirement(),
-                bouquet.getImagePath()
+                bouquet.getImages().stream().map(bouquetImage -> bouquetImage.getFileName())
+                        .collect(Collectors.toList())
         );
     }
 }
