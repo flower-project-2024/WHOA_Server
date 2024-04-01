@@ -13,12 +13,6 @@ on:
  pull_request:
    branches: [ "main" ]
 
-#env:
-#  AWS_REGION: ap-northeast-2
-#  AWS_S3_BUCKET: whoa-bucket
-#  AWS_CODE_DEPLOY_APPLICATION: WHOA-Server
-#  AWS_CODE_DEPLOY_GROUP: WHOA-Server-group
-  
 jobs:
   build-with-gradle:
     runs-on: ubuntu-latest
@@ -38,16 +32,6 @@ jobs:
       run: chmod +x ./gradlew
     - name: 프로젝트 빌드
       run: ./gradlew clean build -x test
-#    - name: AWS credential 설정
-#      uses: aws-actions/configure-aws-credentials@v1
-#      with:
-#        aws-region: ${{ env.AWS_REGION }}
-#        aws-access-key-id: ${{ secrets.CICD_ACCESS_KEY }}
-#        aws-secret-access-key: ${{ secrets.CICD_SECRET_KEY }}
-#    - name: S3에 업로드
-#      run: aws deploy push --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --ignore-hidden-files --s3-location s3://$AWS_S3_BUCKET/cicdwhoa/$GITHUB_SHA.zip --source .
-#    - name: EC2에 배포
-#      run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} --s3-location bucket=$AWS_S3_BUCKET,key=cicdwhoa/$GITHUB_SHA.zip,bundleType=zip
 
     - name: web docker build and push
       run: |
