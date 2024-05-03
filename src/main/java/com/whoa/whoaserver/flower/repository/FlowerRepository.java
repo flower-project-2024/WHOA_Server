@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface FlowerRepository extends JpaRepository<Flower, Long> {
 
     Flower findByFlowerId(final Long flowerId);
+
+    Flower findByFlowerName(String flowerName);
     
     Flower findFlowerByRecommendDate(String recommendDate);
 
