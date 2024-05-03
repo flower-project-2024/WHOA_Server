@@ -23,7 +23,7 @@ public record BouquetInfoDetailResponse(
         List<List<String>> flowerInfoList // Flower Name, Flower Image, Keyword Name
 
 ) {
-    public static BouquetInfoDetailResponse of(Bouquet bouquet, FlowerRepository flowerRepository, FlowerKeywordRepository flowerKeywordRepository) {
+    public static BouquetInfoDetailResponse of(Bouquet bouquet, FlowerRepository flowerRepository) {
 
         List<String> flowerTypes = FlowerUtils.parseFlowerType(bouquet.getFlowerType());
         List<List<String>> flowerInfoList = new ArrayList<>();

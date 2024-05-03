@@ -29,7 +29,6 @@ public class BouquetCustomizingService {
     private final MemberRepository memberRepository;
     private final BouquetRepository bouquetRepository;
     private final FlowerRepository flowerRepository;
-    private final FlowerKeywordRepository flowerKeywordRepository;
 
     public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
@@ -109,7 +108,7 @@ public class BouquetCustomizingService {
         Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
                 .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
-        return BouquetInfoDetailResponse.of(bouquetToRead, flowerRepository, flowerKeywordRepository);
+        return BouquetInfoDetailResponse.of(bouquetToRead, flowerRepository);
     }
 
     private Member getMemberByMemberId(Long memberId) {
