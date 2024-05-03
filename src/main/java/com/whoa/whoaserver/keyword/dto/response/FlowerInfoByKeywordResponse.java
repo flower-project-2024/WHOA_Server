@@ -5,7 +5,7 @@ import java.util.List;
 public record FlowerInfoByKeywordResponse(
         String flowerName,
         String flowerImage,
-        List<String> flowerKeyword
+        String flowerKeyword
 ) {
 
 }
