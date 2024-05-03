@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.bouquet.domain;
 
+import com.whoa.whoaserver.bouquet.domain.type.colorTypeOption;
 import com.whoa.whoaserver.member.domain.Member;
 
 import jakarta.persistence.*;
@@ -29,8 +30,12 @@ public class Bouquet {
     @Column(nullable = false)
     private String purpose;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String colorType;
+    private colorTypeOption colorType;
+
+    @Column(nullable = false)
+    private String colorName;
 
     @Column(nullable = false)
     private String flowerType;
@@ -47,12 +52,13 @@ public class Bouquet {
 
 
     @Builder
-    public Bouquet(Member member, String bouquetName, String purpose, String colorType, String flowerType,
+    public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String flowerType,
                    String wrappingType, String priceRange, String requirement) {
         this.member = member;
         this.bouquetName = bouquetName;
         this.purpose = purpose;
         this.colorType = colorType;
+        this.colorName = colorName;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
@@ -63,7 +69,8 @@ public class Bouquet {
         Member member,
         String bouquetName,
         String purpose,
-        String colorType,
+        colorTypeOption colorType,
+        String colorName,
         String flowerType,
         String wrappingType,
         String priceRange,
@@ -73,6 +80,7 @@ public class Bouquet {
                     .bouquetName(bouquetName)
                     .purpose(purpose)
                     .colorType(colorType)
+                    .colorName(colorName)
                     .flowerType(flowerType)
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
@@ -84,7 +92,8 @@ public class Bouquet {
     public void changeBouquet(
             String bouquetName,
             String purpose,
-            String colorType,
+            colorTypeOption colorType,
+            String colorName,
             String flowerType,
             String wrappingType,
             String priceRange,
@@ -92,6 +101,7 @@ public class Bouquet {
         this.bouquetName = bouquetName;
         this.purpose = purpose;
         this.colorType = colorType;
+        this.colorName = colorName;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;

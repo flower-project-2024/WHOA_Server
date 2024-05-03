@@ -9,6 +9,7 @@ public record BouquetInfoDetailResponse(
         Long id,
         String purpose,
         String colorType,
+        String colorName,
         String flowerType,
         String wrappingType,
         String priceRange,
@@ -20,7 +21,8 @@ public record BouquetInfoDetailResponse(
         return new BouquetInfoDetailResponse(
                 bouquet.getId(),
                 bouquet.getPurpose(),
-                bouquet.getColorType(),
+                bouquet.getColorType().getValue(),
+                bouquet.getColorName(),
                 bouquet.getFlowerType(),
                 bouquet.getWrappingType(),
                 bouquet.getPriceRange(),
