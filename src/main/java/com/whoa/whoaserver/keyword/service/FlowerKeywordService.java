@@ -21,6 +21,7 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_FLOWER_
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FlowerKeywordService {
+    private static final int TOTAL_FLOWER_INFORMATION = 0;
 
     private final FlowerKeywordRepository flowerKeywordRepository;
     private final FlowerRepository flowerRepository;
@@ -29,7 +30,7 @@ public class FlowerKeywordService {
     @Transactional
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
         List<FlowerExpression> expressionCandidates;
-        if (keywordId == 0) {
+        if (keywordId == TOTAL_FLOWER_INFORMATION) {
             expressionCandidates = getAllFlowerExpressions();
         } else {
             expressionCandidates = getExpressionsByKeyword(keywordId);
@@ -58,7 +59,7 @@ public class FlowerKeywordService {
         return new FlowerInfoByKeywordResponse(
                 flower.getFlowerName(),
                 flower.getFlowerImage(),
-                List.of(flowerExpression.getFlowerLanguage())
+                flower.getKeyword().getKeywordName()
         );
     }
 }

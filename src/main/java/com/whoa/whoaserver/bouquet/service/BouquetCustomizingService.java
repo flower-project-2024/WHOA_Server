@@ -2,6 +2,8 @@ package com.whoa.whoaserver.bouquet.service;
 
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
+import com.whoa.whoaserver.flower.repository.FlowerRepository;
+import com.whoa.whoaserver.keyword.repository.FlowerKeywordRepository;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
@@ -26,6 +28,7 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 public class BouquetCustomizingService {
     private final MemberRepository memberRepository;
     private final BouquetRepository bouquetRepository;
+    private final FlowerRepository flowerRepository;
 
     public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
@@ -43,7 +46,8 @@ public class BouquetCustomizingService {
             member,
             request.bouquetName(),
             request.purpose(),
-            request.colorType(), 
+            request.colorType(),
+            request.colorName(),
             request.flowerType(), 
             request.wrappingType(), 
             request.price(), 
@@ -64,6 +68,7 @@ public class BouquetCustomizingService {
                 request.bouquetName(),
                 request.purpose(),
                 request.colorType(),
+                request.colorName(),
                 request.flowerType(),
                 request.wrappingType(),
                 request.price(),
@@ -103,7 +108,7 @@ public class BouquetCustomizingService {
         Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
                 .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
-        return BouquetInfoDetailResponse.of(bouquetToRead);
+        return BouquetInfoDetailResponse.of(bouquetToRead, flowerRepository);
     }
 
     private Member getMemberByMemberId(Long memberId) {
