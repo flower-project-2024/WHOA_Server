@@ -17,4 +17,8 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
 
     @Query("SELECT f.flowerDescription FROM Flower f WHERE f.flowerName = :flowerName")
     Optional<String> findFlowerDescriptionByFlowerName(@Param("flowerName") String flowerName);
+
+    @Query("SELECT f FROM Flower f JOIN FETCH f.flowerExpressions fe JOIN FETCH f.keyword WHERE f.flowerId = :flowerId")
+    Optional<Flower> findFlowerByIdWithExpressionsAndKeyword(@Param("flowerId") Long flowerId);
+
 }

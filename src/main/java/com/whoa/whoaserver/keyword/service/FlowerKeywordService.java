@@ -3,11 +3,8 @@ package com.whoa.whoaserver.keyword.service;
 import com.whoa.whoaserver.flower.domain.Flower;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
-import com.whoa.whoaserver.flowerExpression.repository.FlowerExpressionRepository;
 import com.whoa.whoaserver.global.exception.WhoaException;
-import com.whoa.whoaserver.keyword.domain.Keyword;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
-import com.whoa.whoaserver.keyword.repository.FlowerKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +20,7 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_FLOWER_
 public class FlowerKeywordService {
     private static final int TOTAL_FLOWER_INFORMATION = 0;
 
-    private final FlowerKeywordRepository flowerKeywordRepository;
     private final FlowerRepository flowerRepository;
-    private final FlowerExpressionRepository flowerExpressionRepository;
 
     @Transactional
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
@@ -44,14 +39,15 @@ public class FlowerKeywordService {
     private List<FlowerExpression> getAllFlowerExpressions() {
         List<Flower> flowers = flowerRepository.findAll();
         return flowers.stream()
-                .map(flower -> flowerExpressionRepository.findById(flower.getFlowerId())
-                        .orElseThrow(() -> new WhoaException(INVALID_FLOWER_AND_EXPRESSION)))
+                .flatMap(flower -> flower.getFlowerExpressions().stream())
                 .collect(Collectors.toList());
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
-        Keyword targetKeyword = flowerKeywordRepository.findByKeywordId(keywordId);
-        return flowerExpressionRepository.findByFlowerLanguageContaining(targetKeyword.getKeywordName());
+        Flower flowerWithExpressionsAndKeyword = flowerRepository.findFlowerByIdWithExpressionsAndKeyword(keywordId)
+                .orElseThrow(() -> new WhoaException(INVALID_FLOWER_AND_EXPRESSION));
+        return flowerWithExpressionsAndKeyword.getFlowerExpressions();
+
     }
 
     private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
