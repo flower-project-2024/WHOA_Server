@@ -27,23 +27,35 @@ public class FlowerRanking {
 
     private String flowerRankingDate;
 
+    private String flowerImage;
+
+    private Long flowerId;
+
+
     @Builder(toBuilder = true)
     public FlowerRanking(
             final String flowerRankingName,
             final String flowerRankingDescription,
             final String flowerRankingPrize,
-            final String flowerRankingDate
+            final String flowerRankingDate,
+            final String flowerImage,
+            final Long flowerId
     ) {
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
         this.flowerRankingPrize = flowerRankingPrize;
         this.flowerRankingDate = flowerRankingDate;
+        this.flowerImage = flowerImage;
+        this.flowerId = flowerId;
     }
 
-    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrize, String flowerRankingDate){
+    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrize, String flowerRankingDate, final String flowerImage,
+                       final Long flowerId){
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
         this.flowerRankingPrize = flowerRankingPrize;
         this.flowerRankingDate = flowerRankingDate;
+        this.flowerImage = flowerImage;
+        this.flowerId = flowerId;
     }
 }
