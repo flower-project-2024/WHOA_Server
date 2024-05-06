@@ -14,14 +14,18 @@ public class FlowerRankingResponseDto {
     private final String flowerRankingLanguage;
     private final String flowerRankingPrize;
     private final String flowerRankingDate;
+    private final String flowerImage;
+    private final Long flowerId;
 
     @Builder
-    public FlowerRankingResponseDto(Long flowerRankingId, String flowerRankingName, String flowerRankingLanguage, String flowerRankingPrize, String flowerRankingDate){
+    public FlowerRankingResponseDto(Long flowerRankingId, String flowerRankingName, String flowerRankingLanguage, String flowerRankingPrize, String flowerRankingDate, String flowerImage, Long flowerId){
         this.flowerRankingId = flowerRankingId;
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingLanguage = flowerRankingLanguage;
         this.flowerRankingPrize = flowerRankingPrize;
         this.flowerRankingDate = flowerRankingDate;
+        this.flowerImage = flowerImage;
+        this.flowerId = flowerId;
     }
 }
 
