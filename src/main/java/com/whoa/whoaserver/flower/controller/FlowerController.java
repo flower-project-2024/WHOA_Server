@@ -26,7 +26,7 @@ public class FlowerController {
         return ResponseEntity.ok().body(flowerService.getFlower(flowerId));
     }
 
-    @GetMapping("recommend/{month}/{date}")
+    @GetMapping("recommand/{month}/{date}")
     @Operation(summary = "오늘의 꽃 추천", description = "오늘의 꽃을 추천합니다.")
     public ResponseEntity<?> getRecommentFlower(@PathVariable("month") final int month, @PathVariable("date") final int date){
         return ResponseEntity.ok().body(flowerService.getRecommendFlower(month, date));
