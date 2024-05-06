@@ -4,6 +4,7 @@ package com.whoa.whoaserver.crawl.service;
 import com.whoa.whoaserver.crawl.domain.FlowerRanking;
 import com.whoa.whoaserver.crawl.dto.FlowerRankingResponseDto;
 import com.whoa.whoaserver.crawl.repository.FlowerRankingRepository;
+import com.whoa.whoaserver.flower.domain.Flower;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +25,13 @@ public class FlowerRankingService {
     @Transactional
     public FlowerRankingResponseDto saveFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
         FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
-        Optional<String> flowerRankingDescription = flowerRepository.findFlowerDescriptionByFlowerName(pumName);
-        if (flowerRankingDescription.isPresent()){
-            flowerRanking.update(pumName, String.valueOf(flowerRankingDescription), avgAmt, date);
-            return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrize(), flowerRanking.getFlowerRankingDate());
-        } else{
-            flowerRanking.update(pumName, null, avgAmt, date);
-            return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrize(), flowerRanking.getFlowerRankingDate());
-        }
+        Flower findFlower = flowerRepository.findByFlowerName(pumName);
+        String findFlowerDescription = findFlower.getFlowerDescription();
+        String findFlowerImage = findFlower.getFlowerImage();
+        Long findFlowerId = findFlower.getFlowerId();
+        flowerRanking.update(pumName, findFlowerDescription, avgAmt, date, findFlowerImage, findFlowerId );
+            return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), flowerRanking.getFlowerImage(), flowerRanking.getFlowerId());
+
     }
 
     @Transactional
@@ -39,7 +39,7 @@ public class FlowerRankingService {
         List<FlowerRankingResponseDto> flowerRankings = new ArrayList<>();
         for (long i=0; i<3; i++){
             FlowerRanking flowerRankingOne = flowerRankingRepository.findByFlowerRankingId(i+1);
-            FlowerRankingResponseDto flowerRankingResponseDtoOne = new FlowerRankingResponseDto(flowerRankingOne.getFlowerRankingId(), flowerRankingOne.getFlowerRankingName(), flowerRankingOne.getFlowerRankingDescription(), flowerRankingOne.getFlowerRankingPrize(), flowerRankingOne.getFlowerRankingDate());
+            FlowerRankingResponseDto flowerRankingResponseDtoOne = new FlowerRankingResponseDto(flowerRankingOne.getFlowerRankingId(), flowerRankingOne.getFlowerRankingName(), flowerRankingOne.getFlowerRankingDescription(), flowerRankingOne.getFlowerRankingPrice(), flowerRankingOne.getFlowerRankingDate(), flowerRankingOne.getFlowerImage(), flowerRankingOne.getFlowerId());
             flowerRankings.add(flowerRankingResponseDtoOne);
         }
         return flowerRankings;
