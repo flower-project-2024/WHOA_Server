@@ -23,7 +23,7 @@ public class FlowerRanking {
 
     private String flowerRankingDescription;
 
-    private String flowerRankingPrize;
+    private String flowerRankingPrice;
 
     private String flowerRankingDate;
 
@@ -36,24 +36,24 @@ public class FlowerRanking {
     public FlowerRanking(
             final String flowerRankingName,
             final String flowerRankingDescription,
-            final String flowerRankingPrize,
+            final String flowerRankingPrice,
             final String flowerRankingDate,
             final String flowerImage,
             final Long flowerId
     ) {
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
-        this.flowerRankingPrize = flowerRankingPrize;
+        this.flowerRankingPrice = flowerRankingPrice;
         this.flowerRankingDate = flowerRankingDate;
         this.flowerImage = flowerImage;
         this.flowerId = flowerId;
     }
 
-    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrize, String flowerRankingDate, final String flowerImage,
+    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrice, String flowerRankingDate, final String flowerImage,
                        final Long flowerId){
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
-        this.flowerRankingPrize = flowerRankingPrize;
+        this.flowerRankingPrice = flowerRankingPrice;
         this.flowerRankingDate = flowerRankingDate;
         this.flowerImage = flowerImage;
         this.flowerId = flowerId;
