@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.flower.service;
 
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flower.dto.FlowerRecommandResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerSearchResponseDto;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
@@ -24,10 +25,10 @@ public class FlowerService {
     }
 
     @Transactional
-    public FlowerResponseDto getRecommendFlower(final int month, final int date){
+    public FlowerRecommandResponseDto getRecommendFlower(final int month, final int date){
         String recommendDate = month + "/" + date;
         Flower recommendFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
-        return FlowerResponseDto.of(recommendFlower);
+        return FlowerRecommandResponseDto.of(recommendFlower);
     }
 
     @Transactional
