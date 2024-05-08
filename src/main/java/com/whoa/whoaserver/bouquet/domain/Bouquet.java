@@ -52,7 +52,7 @@ public class Bouquet extends BaseEntity {
     private List<BouquetImage> images = new ArrayList<>();
 
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String flowerType,
                    String wrappingType, String priceRange, String requirement) {
         this.member = member;

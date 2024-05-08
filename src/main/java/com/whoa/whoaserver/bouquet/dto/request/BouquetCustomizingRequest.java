@@ -3,7 +3,9 @@ package com.whoa.whoaserver.bouquet.dto.request;
 import com.whoa.whoaserver.bouquet.domain.type.colorTypeOption;
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record BouquetCustomizingRequest(
     @Nullable String bouquetName,
     @NotNull String purpose,
