@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.bouquet.domain;
 
 import com.whoa.whoaserver.bouquet.domain.type.colorTypeOption;
+import com.whoa.whoaserver.global.common.BaseEntity;
 import com.whoa.whoaserver.member.domain.Member;
 
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(name = "bouquet")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bouquet {
+public class Bouquet extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
