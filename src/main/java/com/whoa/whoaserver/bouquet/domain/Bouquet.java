@@ -76,6 +76,9 @@ public class Bouquet extends BaseEntity {
         String wrappingType,
         String priceRange,
         String requirement) {
+        if (wrappingType == null) {
+            wrappingType = "아니요, 사장님께 맡길게요";
+        }
         return Bouquet.builder()
                     .member(member)
                     .bouquetName(bouquetName)
