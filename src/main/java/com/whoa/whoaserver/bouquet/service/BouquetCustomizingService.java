@@ -98,9 +98,15 @@ public class BouquetCustomizingService {
                 .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
         return memberBouquets.stream()
-                .map(bouquet -> new BouquetOrderResponse(bouquet.getId(), bouquet.getBouquetName(), bouquet.getImages().stream()
-                        .map(bouquetImage -> bouquetImage.getFileName())
-                        .collect(Collectors.toList())))
+                .map(bouquet -> new BouquetOrderResponse(
+                        bouquet.getId(),
+                        bouquet.getBouquetName(),
+                        bouquet.getCreatedAt().toString().substring(0, 10),
+                        bouquet.getImages().stream()
+                            .map(bouquetImage -> bouquetImage.getFileName())
+                        .collect(Collectors.toList())
+                        )
+                )
                 .collect(Collectors.toList());
     }
 
