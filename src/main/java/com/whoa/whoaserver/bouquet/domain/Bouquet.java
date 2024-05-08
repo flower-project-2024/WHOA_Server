@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.bouquet.domain;
 
 import com.whoa.whoaserver.bouquet.domain.type.colorTypeOption;
+import com.whoa.whoaserver.global.common.BaseEntity;
 import com.whoa.whoaserver.member.domain.Member;
 
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(name = "bouquet")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bouquet {
+public class Bouquet extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +52,7 @@ public class Bouquet {
     private List<BouquetImage> images = new ArrayList<>();
 
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String flowerType,
                    String wrappingType, String priceRange, String requirement) {
         this.member = member;
@@ -75,6 +76,9 @@ public class Bouquet {
         String wrappingType,
         String priceRange,
         String requirement) {
+        if (wrappingType == null) {
+            wrappingType = "아니요, 사장님께 맡길게요";
+        }
         return Bouquet.builder()
                     .member(member)
                     .bouquetName(bouquetName)
