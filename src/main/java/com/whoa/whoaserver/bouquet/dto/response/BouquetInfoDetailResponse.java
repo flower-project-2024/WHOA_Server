@@ -8,6 +8,7 @@ import com.whoa.whoaserver.keyword.domain.Keyword;
 import com.whoa.whoaserver.keyword.repository.FlowerKeywordRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,26 +21,26 @@ public record BouquetInfoDetailResponse(
         String priceRange,
         String requirement,
         List<String> imagePaths,
-        List<List<String>> flowerInfoList // Flower Name, Flower Image, Keyword Name
+        List<HashMap<String, String>> flowerInfoList // Flower Name, Flower Image, Keyword Name
 
 ) {
     public static BouquetInfoDetailResponse of(Bouquet bouquet, FlowerRepository flowerRepository) {
 
         List<String> flowerTypes = FlowerUtils.parseFlowerType(bouquet.getFlowerType());
-        List<List<String>> flowerInfoList = new ArrayList<>();
+        List<HashMap<String, String>> flowerInfoList = new ArrayList<>();
 
         for (String flowerType : flowerTypes) {
             Flower flower = flowerRepository.findByFlowerName(flowerType);
-            List<String> flowerInfo = new ArrayList<>();
+            HashMap<String, String> flowerInfo = new HashMap<>();
 
             if (flower != null) {
-                flowerInfo.add(flower.getFlowerName());
-                flowerInfo.add(flower.getFlowerImage());
+                flowerInfo.put("name", flower.getFlowerName());
+                flowerInfo.put("imageUrl", flower.getFlowerImage());
 
                 Keyword keyword = flower.getKeyword();
 
                 if (keyword != null) {
-                    flowerInfo.add(keyword.getKeywordName());
+                    flowerInfo.put("flowerLanguage", keyword.getKeywordName());
                 }
             }
             flowerInfoList.add(flowerInfo);
