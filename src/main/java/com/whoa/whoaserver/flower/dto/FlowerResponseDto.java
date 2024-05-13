@@ -19,7 +19,7 @@ public class FlowerResponseDto {
     private final String flowerName;
     private final String flowerDescription;
     private final String flowerOneLineDescription;
-    private final String flowerImage;
+    private final List<String> flowerImages;
     private final String birthFlower;
     private final String managementMethod;
     private final String storageMethod;
@@ -34,7 +34,7 @@ public class FlowerResponseDto {
                 flower.getFlowerName(),
                 flower.getFlowerDescription(),
                 flower.getFlowerOneLineDescription(),
-                flower.getFlowerImage(),
+                flower.getFlowerImages(),
                 flower.getBirthFlower(),
                 flower.getManagementMethod(),
                 flower.getStorageMethod(),

@@ -35,7 +35,7 @@ public record BouquetInfoDetailResponse(
 
             if (flower != null) {
                 flowerInfo.put("name", flower.getFlowerName());
-                flowerInfo.put("imageUrl", flower.getFlowerImage());
+                flowerInfo.put("imageUrl", flower.getFlowerImages().get(0));
 
                 Keyword keyword = flower.getKeyword();
 

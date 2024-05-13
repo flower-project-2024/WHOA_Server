@@ -58,7 +58,7 @@ public class FlowerKeywordService {
         Flower flower = flowerExpression.getFlower();
         return new FlowerInfoByKeywordResponse(
                 flower.getFlowerName(),
-                flower.getFlowerImage(),
+                flower.getFlowerImages().get(0),
                 flower.getKeyword().getKeywordName()
         );
     }
