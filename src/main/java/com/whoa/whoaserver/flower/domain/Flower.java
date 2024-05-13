@@ -30,8 +30,6 @@ public class Flower {
 
     private String flowerDescription;
 
-    private String flowerImage;
-
     private String recommendDate;
 
     private String birthFlower;
@@ -43,7 +41,7 @@ public class Flower {
     private String storageMethod;
 
     @ElementCollection
-    private List<String> bouquetImage;
+    private List<String> flowerImages;
 
     //@JsonIgnore
     @OneToMany(mappedBy = "flower",  cascade = CascadeType.ALL)
@@ -59,16 +57,16 @@ public class Flower {
             final String flowerName,
             final String flowerDescription,
             final String flowerOneLineDescription,
-            final String flowerImage,
             final String birthFlower,
             final String managementMethod,
             final String storageMethod,
+            final List<String> flowerImages,
             final List<FlowerExpression> flowerExpressions
     ) {
         this.flowerName = flowerName;
         this.flowerDescription = flowerDescription;
         this.flowerOneLineDescription = flowerOneLineDescription;
-        this.flowerImage = flowerImage;
+        this.flowerImages = flowerImages;
         this.birthFlower = birthFlower;
         this.managementMethod = managementMethod;
         this.storageMethod = storageMethod;

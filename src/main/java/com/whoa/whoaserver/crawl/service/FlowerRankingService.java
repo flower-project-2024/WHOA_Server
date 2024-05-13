@@ -27,7 +27,7 @@ public class FlowerRankingService {
         FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
         Flower findFlower = flowerRepository.findByFlowerName(pumName);
         String findFlowerDescription = findFlower.getFlowerDescription();
-        String findFlowerImage = findFlower.getFlowerImage();
+        String findFlowerImage = findFlower.getFlowerImages().get(0);
         Long findFlowerId = findFlower.getFlowerId();
         flowerRanking.update(pumName, findFlowerDescription, avgAmt, date, findFlowerImage, findFlowerId );
             return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), flowerRanking.getFlowerImage(), flowerRanking.getFlowerId());
