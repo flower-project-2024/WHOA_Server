@@ -15,7 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class FlowerRecommandResponseDto {
     private final Long flowerId;
     private final String flowerName;
-    private final String flowerDescription;
+    private final String flowerOneLineDescription;
     private final String flowerImage;
     private final List<FlowerExpressionResponseDto> flowerExpressions;
 
@@ -26,7 +26,7 @@ public class FlowerRecommandResponseDto {
         return new FlowerRecommandResponseDto(
                 flower.getFlowerId(),
                 flower.getFlowerName(),
-                flower.getFlowerDescription(),
+                flower.getFlowerOneLineDescription(),
                 flower.getFlowerImage(),
                 expressionResponseDtos
         );
