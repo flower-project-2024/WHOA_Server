@@ -26,6 +26,8 @@ public class Flower {
 
     private String flowerName;
 
+    private String flowerOneLineDescription;
+
     private String flowerDescription;
 
     private String flowerImage;
@@ -56,23 +58,21 @@ public class Flower {
     public Flower(
             final String flowerName,
             final String flowerDescription,
+            final String flowerOneLineDescription,
             final String flowerImage,
             final String birthFlower,
-            final String comtemplationPeriod,
             final String managementMethod,
             final String storageMethod,
-            final List<FlowerExpression> flowerExpressions,
-            final List<String> bouquetImage
+            final List<FlowerExpression> flowerExpressions
     ) {
         this.flowerName = flowerName;
         this.flowerDescription = flowerDescription;
+        this.flowerOneLineDescription = flowerOneLineDescription;
         this.flowerImage = flowerImage;
         this.birthFlower = birthFlower;
-        this.comtemplationPeriod = comtemplationPeriod;
         this.managementMethod = managementMethod;
         this.storageMethod = storageMethod;
         this.flowerExpressions = (flowerExpressions != null) ? new ArrayList<>(flowerExpressions) : new ArrayList<>();
-        this.bouquetImage = bouquetImage;
     }
 }
 
