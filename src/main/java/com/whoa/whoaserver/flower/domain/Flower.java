@@ -15,6 +15,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
+@Setter
 @ToString
 @DynamicInsert
 @AllArgsConstructor
@@ -57,6 +58,7 @@ public class Flower {
             final String flowerName,
             final String flowerDescription,
             final String flowerOneLineDescription,
+            final String recommendDate,
             final String birthFlower,
             final String managementMethod,
             final String storageMethod,
@@ -67,6 +69,7 @@ public class Flower {
         this.flowerDescription = flowerDescription;
         this.flowerOneLineDescription = flowerOneLineDescription;
         this.flowerImages = flowerImages;
+        this.recommendDate = recommendDate;
         this.birthFlower = birthFlower;
         this.managementMethod = managementMethod;
         this.storageMethod = storageMethod;

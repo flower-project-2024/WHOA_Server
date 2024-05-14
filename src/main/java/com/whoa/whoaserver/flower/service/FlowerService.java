@@ -1,14 +1,17 @@
 package com.whoa.whoaserver.flower.service;
 
 import com.whoa.whoaserver.flower.domain.Flower;
-import com.whoa.whoaserver.flower.dto.FlowerRecommandResponseDto;
+import com.whoa.whoaserver.flower.dto.FlowerRecommendResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerSearchResponseDto;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +20,19 @@ import java.util.stream.Collectors;
 public class FlowerService {
 
     final FlowerRepository flowerRepository;
+    final S3Uploader s3Uploader;
+
+    @Transactional
+    public FlowerResponseDto postFlower(final List<MultipartFile> flowerImages, final Long flowerId) throws IOException {
+        Flower flower = flowerRepository.findByFlowerId(flowerId);
+        List<String> storedFileNames = new ArrayList<>();
+        for (MultipartFile flowerImage : flowerImages) {
+            String storedFileName = s3Uploader.saveFileExceptUser(flowerImage, "flower");
+            storedFileNames.add(storedFileName);
+        }
+        flower.setFlowerImages(storedFileNames);
+        return FlowerResponseDto.of(flower);
+    }
 
     @Transactional
     public FlowerResponseDto getFlower(final Long flowerId){
@@ -25,10 +41,10 @@ public class FlowerService {
     }
 
     @Transactional
-    public FlowerRecommandResponseDto getRecommendFlower(final int month, final int date){
+    public FlowerRecommendResponseDto getRecommendFlower(final int month, final int date){
         String recommendDate = month + "/" + date;
         Flower recommendFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
-        return FlowerRecommandResponseDto.of(recommendFlower);
+        return FlowerRecommendResponseDto.of(recommendFlower);
     }
 
     @Transactional
