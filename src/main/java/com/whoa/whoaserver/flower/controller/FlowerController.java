@@ -1,15 +1,17 @@
 package com.whoa.whoaserver.flower.controller;
 
+import com.whoa.whoaserver.flower.dto.FlowerRequestDto;
 import com.whoa.whoaserver.flower.service.FlowerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @Tag(name = "Flower Detail&Recommend", description = "PathVariable 필요")
 @RestController
@@ -20,15 +22,21 @@ public class FlowerController {
     @Autowired
     private final FlowerService flowerService;
 
+    @PostMapping()
+    @Operation(summary = "꽃 사진 등록", description = "데이터 저장용 API입니다.")
+    public ResponseEntity<?> postFlower(List<MultipartFile> flowerImages, @PathVariable final Long flowerId) throws IOException {
+        return ResponseEntity.ok().body(flowerService.postFlower(flowerImages, flowerId));
+    }
+
     @GetMapping("detail/{flowerId}")
     @Operation(summary = "꽃 상세 조회", description = "꽃을 상세 조회 합니다.")
     public ResponseEntity<?> getFlower(@PathVariable("flowerId") final Long flowerId){
         return ResponseEntity.ok().body(flowerService.getFlower(flowerId));
     }
 
-    @GetMapping("recommand/{month}/{date}")
+    @GetMapping("recommend/{month}/{date}")
     @Operation(summary = "오늘의 꽃 추천", description = "오늘의 꽃을 추천합니다.")
-    public ResponseEntity<?> getRecommentFlower(@PathVariable("month") final int month, @PathVariable("date") final int date){
+    public ResponseEntity<?> getRecommendFlower(@PathVariable("month") final int month, @PathVariable("date") final int date){
         return ResponseEntity.ok().body(flowerService.getRecommendFlower(month, date));
     }
 
