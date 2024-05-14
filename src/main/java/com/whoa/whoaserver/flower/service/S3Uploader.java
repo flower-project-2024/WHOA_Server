@@ -41,4 +41,16 @@ public class S3Uploader {
         amazonS3Client.putObject(bucket, newFilename, multipartFile.getInputStream(), metadata);
         return amazonS3Client.getUrl(bucket, newFilename).toString();
     }
+
+    public String saveFileExceptUser(MultipartFile multipartFile, String dirName) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+        String newFilename = dirName + "/" + UUID.randomUUID() + originalFilename;
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        amazonS3Client.putObject(bucket, newFilename, multipartFile.getInputStream(), metadata);
+        return amazonS3Client.getUrl(bucket, newFilename).toString();
+    }
 }

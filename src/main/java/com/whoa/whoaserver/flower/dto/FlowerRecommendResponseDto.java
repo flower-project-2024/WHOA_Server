@@ -12,18 +12,18 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 @RequiredArgsConstructor(access=PRIVATE)
-public class FlowerRecommandResponseDto {
+public class FlowerRecommendResponseDto {
     private final Long flowerId;
     private final String flowerName;
     private final String flowerOneLineDescription;
     private final String flowerImage;
     private final List<FlowerExpressionResponseDto> flowerExpressions;
 
-    public static FlowerRecommandResponseDto of(Flower flower) {
+    public static FlowerRecommendResponseDto of(Flower flower) {
         List<FlowerExpressionResponseDto> expressionResponseDtos = flower.getFlowerExpressions().stream()
                 .map(FlowerExpressionResponseDto::of)
                 .collect(Collectors.toList());
-        return new FlowerRecommandResponseDto(
+        return new FlowerRecommendResponseDto(
                 flower.getFlowerId(),
                 flower.getFlowerName(),
                 flower.getFlowerOneLineDescription(),
