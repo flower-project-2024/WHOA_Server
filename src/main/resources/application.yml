@@ -1,6 +1,15 @@
 spring:
   profiles:
-    include: credentials, rds, s3, crawl
+    group:
+      dev: "dev, rds, s3, crawl"
+      prod: "prod, rds, s3, crawl"
+    include:
+      - credentials
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 logging:
   level:
