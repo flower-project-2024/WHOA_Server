@@ -31,14 +31,14 @@ jobs:
         cd ./src/main/resources
         
         touch ./application.yml
-        touch ./application-dev.yml
+        touch ./application-prod.yml
         touch ./application-credentials.yml
         touch ./application-rds.yml
         touch ./application-s3.yml
         touch ./application-crawl.yml
         
         echo "$APPLICATION" > ./application.yml
-        echo "$APPLICATION_DEV" > ./application-dev.yml
+        echo "$APPLICATION_PROD" > ./application-prod.yml
         echo "$APPLICATION_CREDENTIALS" > ./application-credentials.yml
         echo "$APPLICATION_RDS" > ./application-rds.yml
         echo "$APPLICATION_S3" > ./application-s3.yml
@@ -46,7 +46,7 @@ jobs:
 
       env:
         APPLICATION: ${{ secrets.APPLICATION }}
-        APPLICATION_DEV: ${{ secrets.APPLICATION_PROD }}
+        APPLICATION_PROD: ${{ secrets.APPLICATION_PROD }}
         APPLICATION_CREDENTIALS: ${{ secrets.APPLICATION_CREDENTIALS }}
         APPLICATION_RDS: ${{ secrets.APPLICATION_RDS }}
         APPLICATION_S3: ${{ secrets.APPLICATION_S3 }}
