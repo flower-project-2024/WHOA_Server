@@ -46,7 +46,7 @@ jobs:
 
       env:
         APPLICATION: ${{ secrets.APPLICATION }}
-        APPLICATION_DEV: ${{ secrets.APPLICATION_DEV }}
+        APPLICATION_DEV: ${{ secrets.APPLICATION_PROD }}
         APPLICATION_CREDENTIALS: ${{ secrets.APPLICATION_CREDENTIALS }}
         APPLICATION_RDS: ${{ secrets.APPLICATION_RDS }}
         APPLICATION_S3: ${{ secrets.APPLICATION_S3 }}
