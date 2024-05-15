@@ -44,14 +44,14 @@ jobs:
         echo "$APPLICATION_S3" > ./application-s3.yml
         echo "$APPLICATION_CRAWL" > ./application-crawl.yml
 
-        env:
-          APPLICATION: ${{ secrets.APPLICATION }}
-          APPLICATION_DEV: ${{ secrets.APPLICATION_DEV }}
-          APPLICATION_CREDENTIALS: ${{ secrets.APPLICATION_CREDENTIALS }}
-          APPLICATION_RDS: ${{ secrets.APPLICATION_RDS }}
-          APPLICATION_S3: ${{ secrets.APPLICATION_S3 }}
-          APPLICATION_CRAWL: ${{ secrets.APPLICATION_CRAWL }}
-        shell: bash
+      env:
+        APPLICATION: ${{ secrets.APPLICATION }}
+        APPLICATION_DEV: ${{ secrets.APPLICATION_DEV }}
+        APPLICATION_CREDENTIALS: ${{ secrets.APPLICATION_CREDENTIALS }}
+        APPLICATION_RDS: ${{ secrets.APPLICATION_RDS }}
+        APPLICATION_S3: ${{ secrets.APPLICATION_S3 }}
+        APPLICATION_CRAWL: ${{ secrets.APPLICATION_CRAWL }}
+      shell: bash
         
 
     - name: gradlew에 실행 권한 부여
