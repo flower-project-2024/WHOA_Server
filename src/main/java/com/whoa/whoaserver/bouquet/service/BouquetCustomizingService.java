@@ -34,6 +34,9 @@ public class BouquetCustomizingService {
 
         Member member = getMemberByMemberId(memberId);
 
+        Bouquet existingBouquet = bouquetRepository.findByBouquetName(request.bouquetName())
+                .orElseThrow(() -> new WhoaException(DUPLICATED_BOUQUET_NAME));
+
         Bouquet bouquet = createBouquetEntity(request, member);
 
         bouquetRepository.save(bouquet);
