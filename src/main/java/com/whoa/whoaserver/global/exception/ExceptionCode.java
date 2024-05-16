@@ -14,6 +14,7 @@ public enum ExceptionCode {
     INVALID_FLOWER_AND_EXPRESSION(HttpStatus.NOT_FOUND, "꽃에 대응되는 꽃말이 없습니다."),
     NOT_REGISTER_BOUQUET(HttpStatus.NOT_FOUND, "등록되지 않은 꽃다발 주문서입니다."),
     NOT_MEMBER_BOUQUET(HttpStatus.CONFLICT, "해당 유저가 주문한 꽃다발이 아닙니다."),
+    DUPLICATED_BOUQUET_NAME(HttpStatus.CONFLICT, "이미 존재하는 꽃다발 주문서 이름입니다."),
 
     DUPLICATED_FILE_NAME(HttpStatus.CONFLICT, "이미 존재하는 파일 이름입니다."),
     IMAGE_SIZE_LIMIT_ERROR(HttpStatus.FORBIDDEN, "이미지의 크기가 기준을 초과합니다."),
