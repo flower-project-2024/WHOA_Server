@@ -1,5 +1,6 @@
-package com.whoa.whoaserver.bouquet.domain;
+package com.whoa.whoaserver.bouquet.repository;
 
+import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

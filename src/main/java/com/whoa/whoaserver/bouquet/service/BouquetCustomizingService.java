@@ -6,7 +6,7 @@ import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
-import com.whoa.whoaserver.bouquet.domain.BouquetRepository;
+import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponse;
 import com.whoa.whoaserver.global.exception.WhoaException;

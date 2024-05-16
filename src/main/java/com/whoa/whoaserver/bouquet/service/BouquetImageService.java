@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.bouquet.domain.BouquetImage;
-import com.whoa.whoaserver.bouquet.domain.BouquetRepository;
+import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
 import org.springframework.stereotype.Service;
 
-import com.whoa.whoaserver.bouquet.domain.BouquetImageRepository;
+import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.bouquet.dto.request.PresignedUrlRequest;
 import com.whoa.whoaserver.global.dto.UserContext;
 import com.whoa.whoaserver.global.exception.WhoaException;
