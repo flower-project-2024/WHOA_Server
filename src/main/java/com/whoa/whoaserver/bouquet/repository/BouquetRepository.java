@@ -1,5 +1,6 @@
-package com.whoa.whoaserver.bouquet.domain;
+package com.whoa.whoaserver.bouquet.repository;
 
+import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface BouquetRepository extends JpaRepository<Bouquet, Long>{
     Optional<List<Bouquet>> findByMemberId(Long memberId);
 
     Optional<Bouquet> findByMemberIdAndBouquetName(Long memberId, String bouquetName);
+
+    Optional<Bouquet> findByBouquetName(String bouquetName);
 }

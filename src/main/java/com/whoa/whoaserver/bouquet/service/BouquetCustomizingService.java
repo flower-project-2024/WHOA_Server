@@ -3,11 +3,10 @@ package com.whoa.whoaserver.bouquet.service;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
-import com.whoa.whoaserver.keyword.repository.FlowerKeywordRepository;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
-import com.whoa.whoaserver.bouquet.domain.BouquetRepository;
+import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponse;
 import com.whoa.whoaserver.global.exception.WhoaException;
@@ -18,6 +17,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
@@ -33,6 +33,12 @@ public class BouquetCustomizingService {
     public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
         Member member = getMemberByMemberId(memberId);
+
+        Optional<Bouquet> existingBouquetOptional = bouquetRepository.findByBouquetName(request.bouquetName());
+
+        if (existingBouquetOptional.isPresent()) {
+            throw new WhoaException(DUPLICATED_BOUQUET_NAME);
+        }
 
         Bouquet bouquet = createBouquetEntity(request, member);
 
