@@ -52,18 +52,22 @@ jobs:
         APPLICATION_S3: ${{ secrets.APPLICATION_S3 }}
         APPLICATION_CRAWL: ${{ secrets.APPLICATION_CRAWL }}
       shell: bash
-        
 
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./gradlew
+
     - name: 프로젝트 빌드
       run: ./gradlew clean build -x test
+
+    - name: 빌드 결과 확인
+      run: ls -l build/libs
 
     - name: web docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }} .
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }}
+
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
