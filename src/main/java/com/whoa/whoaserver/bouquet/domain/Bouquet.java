@@ -53,6 +53,7 @@ public class Bouquet extends BaseEntity {
     @OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BouquetImage> images = new ArrayList<>();
 
+    public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
     @Builder(access = AccessLevel.PRIVATE)
     public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String pointColor,
@@ -81,7 +82,7 @@ public class Bouquet extends BaseEntity {
         String priceRange,
         String requirement) {
         if (wrappingType == null) {
-            wrappingType = "아니요, 사장님께 맡길게요";
+            wrappingType = DEFAULT_WRAPPING_TYPE;
         }
         return Bouquet.builder()
                     .member(member)
