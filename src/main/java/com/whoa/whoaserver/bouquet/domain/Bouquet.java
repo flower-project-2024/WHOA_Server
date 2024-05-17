@@ -38,6 +38,8 @@ public class Bouquet extends BaseEntity {
     @Column(nullable = false)
     private String colorName;
 
+    private String pointColor;
+
     @Column(nullable = false)
     private String flowerType;
 
@@ -51,15 +53,17 @@ public class Bouquet extends BaseEntity {
     @OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BouquetImage> images = new ArrayList<>();
 
+    public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String flowerType,
-                   String wrappingType, String priceRange, String requirement) {
+    public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String pointColor,
+                   String flowerType, String wrappingType, String priceRange, String requirement) {
         this.member = member;
         this.bouquetName = bouquetName;
         this.purpose = purpose;
         this.colorType = colorType;
         this.colorName = colorName;
+        this.pointColor = pointColor;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
@@ -72,12 +76,13 @@ public class Bouquet extends BaseEntity {
         String purpose,
         colorTypeOption colorType,
         String colorName,
+        String pointColor,
         String flowerType,
         String wrappingType,
         String priceRange,
         String requirement) {
         if (wrappingType == null) {
-            wrappingType = "아니요, 사장님께 맡길게요";
+            wrappingType = DEFAULT_WRAPPING_TYPE;
         }
         return Bouquet.builder()
                     .member(member)
@@ -85,6 +90,7 @@ public class Bouquet extends BaseEntity {
                     .purpose(purpose)
                     .colorType(colorType)
                     .colorName(colorName)
+                    .pointColor(pointColor)
                     .flowerType(flowerType)
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
@@ -98,6 +104,7 @@ public class Bouquet extends BaseEntity {
             String purpose,
             colorTypeOption colorType,
             String colorName,
+            String pointColor,
             String flowerType,
             String wrappingType,
             String priceRange,
@@ -106,6 +113,7 @@ public class Bouquet extends BaseEntity {
         this.purpose = purpose;
         this.colorType = colorType;
         this.colorName = colorName;
+        this.pointColor = pointColor;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
