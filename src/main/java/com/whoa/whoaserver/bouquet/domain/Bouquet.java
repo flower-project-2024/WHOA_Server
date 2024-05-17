@@ -38,6 +38,8 @@ public class Bouquet extends BaseEntity {
     @Column(nullable = false)
     private String colorName;
 
+    private String pointColor;
+
     @Column(nullable = false)
     private String flowerType;
 
@@ -53,13 +55,14 @@ public class Bouquet extends BaseEntity {
 
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String flowerType,
-                   String wrappingType, String priceRange, String requirement) {
+    public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String pointColor,
+                   String flowerType, String wrappingType, String priceRange, String requirement) {
         this.member = member;
         this.bouquetName = bouquetName;
         this.purpose = purpose;
         this.colorType = colorType;
         this.colorName = colorName;
+        this.pointColor = pointColor;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
@@ -72,6 +75,7 @@ public class Bouquet extends BaseEntity {
         String purpose,
         colorTypeOption colorType,
         String colorName,
+        String pointColor,
         String flowerType,
         String wrappingType,
         String priceRange,
@@ -85,6 +89,7 @@ public class Bouquet extends BaseEntity {
                     .purpose(purpose)
                     .colorType(colorType)
                     .colorName(colorName)
+                    .pointColor(pointColor)
                     .flowerType(flowerType)
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
@@ -98,6 +103,7 @@ public class Bouquet extends BaseEntity {
             String purpose,
             colorTypeOption colorType,
             String colorName,
+            String pointColor,
             String flowerType,
             String wrappingType,
             String priceRange,
@@ -106,6 +112,7 @@ public class Bouquet extends BaseEntity {
         this.purpose = purpose;
         this.colorType = colorType;
         this.colorName = colorName;
+        this.pointColor = pointColor;
         this.flowerType = flowerType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
