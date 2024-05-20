@@ -34,7 +34,7 @@ public class BouquetCustomizingService {
 
         Member member = getMemberByMemberId(memberId);
 
-        Optional<Bouquet> existingBouquetOptional = bouquetRepository.findByBouquetName(request.bouquetName());
+        Optional<Bouquet> existingBouquetOptional = bouquetRepository.findByMemberIdAndBouquetName(memberId, request.bouquetName());
 
         if (existingBouquetOptional.isPresent()) {
             throw new WhoaException(DUPLICATED_BOUQUET_NAME);
