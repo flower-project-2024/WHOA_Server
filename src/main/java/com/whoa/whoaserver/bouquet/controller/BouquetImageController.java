@@ -16,7 +16,7 @@ import com.whoa.whoaserver.global.annotation.DeviceUser;
 import com.whoa.whoaserver.global.dto.UserContext;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
