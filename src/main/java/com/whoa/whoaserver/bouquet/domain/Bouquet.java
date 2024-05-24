@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.bouquet.domain;
 
 import com.whoa.whoaserver.bouquet.domain.type.colorTypeOption;
+import com.whoa.whoaserver.bouquet.domain.type.flowerSubstitutionTypeOption;
 import com.whoa.whoaserver.global.common.BaseEntity;
 import com.whoa.whoaserver.member.domain.Member;
 
@@ -43,6 +44,10 @@ public class Bouquet extends BaseEntity {
     @Column(nullable = false)
     private String flowerType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private flowerSubstitutionTypeOption subsitutionType;
+
     private String wrappingType;
 
     @Column(nullable = false)
@@ -57,7 +62,7 @@ public class Bouquet extends BaseEntity {
 
     @Builder(access = AccessLevel.PRIVATE)
     public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String pointColor,
-                   String flowerType, String wrappingType, String priceRange, String requirement) {
+                   String flowerType, flowerSubstitutionTypeOption subsitutionType, String wrappingType, String priceRange, String requirement) {
         this.member = member;
         this.bouquetName = bouquetName;
         this.purpose = purpose;
@@ -65,6 +70,7 @@ public class Bouquet extends BaseEntity {
         this.colorName = colorName;
         this.pointColor = pointColor;
         this.flowerType = flowerType;
+        this.subsitutionType = subsitutionType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
         this.requirement = requirement;
@@ -78,6 +84,7 @@ public class Bouquet extends BaseEntity {
         String colorName,
         String pointColor,
         String flowerType,
+        flowerSubstitutionTypeOption subsitutionType,
         String wrappingType,
         String priceRange,
         String requirement) {
@@ -92,6 +99,7 @@ public class Bouquet extends BaseEntity {
                     .colorName(colorName)
                     .pointColor(pointColor)
                     .flowerType(flowerType)
+                    .subsitutionType(subsitutionType)
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
                     .requirement(requirement)
@@ -106,6 +114,7 @@ public class Bouquet extends BaseEntity {
             String colorName,
             String pointColor,
             String flowerType,
+            flowerSubstitutionTypeOption subsitutionType,
             String wrappingType,
             String priceRange,
             String requirement) {
@@ -115,6 +124,7 @@ public class Bouquet extends BaseEntity {
         this.colorName = colorName;
         this.pointColor = pointColor;
         this.flowerType = flowerType;
+        this.subsitutionType = subsitutionType;
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
         this.requirement = requirement;
