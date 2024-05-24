@@ -55,7 +55,8 @@ public class BouquetCustomizingService {
             request.colorType(),
             request.colorName(),
             request.pointColor(),
-            request.flowerType(), 
+            request.flowerType(),
+            request.substitutionType(),
             request.wrappingType(), 
             request.price(), 
             request.requirement()
@@ -78,6 +79,7 @@ public class BouquetCustomizingService {
                 request.colorName(),
                 request.pointColor(),
                 request.flowerType(),
+                request.substitutionType(),
                 request.wrappingType(),
                 request.price(),
                 request.requirement()
