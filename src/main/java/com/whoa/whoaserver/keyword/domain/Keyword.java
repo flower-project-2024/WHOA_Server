@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.keyword.domain;
 
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class Keyword {
     private String keywordName;
 
     @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL)
-    private List<Flower> flowers;
+    private List<FlowerExpression> flowerExpressions;
 
     public Keyword(
             final String keywordName

@@ -2,6 +2,7 @@ package com.whoa.whoaserver.flowerExpression.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.keyword.domain.Keyword;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +29,14 @@ public class FlowerExpression {
     private String flowerLanguage;
 
     //@JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)  // 다대일 단방향 관계, user 삭제되면 이벤트도 삭제
+    @ManyToOne(fetch = FetchType.LAZY)  // 다대일 단방향 관계
     @JoinColumn(name = "flower_id")
     private Flower flower;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "keyword_id")
+    private Keyword keyword;
 
     @Builder
     public FlowerExpression(

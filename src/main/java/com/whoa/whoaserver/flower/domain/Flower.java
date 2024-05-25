@@ -48,11 +48,6 @@ public class Flower {
     @OneToMany(mappedBy = "flower",  cascade = CascadeType.ALL)
     private List<FlowerExpression> flowerExpressions = new ArrayList<>();
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keywordId")
-    private Keyword keyword;
-
     @Builder(toBuilder = true)
     public Flower(
             final String flowerName,
