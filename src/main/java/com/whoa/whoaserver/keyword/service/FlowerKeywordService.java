@@ -44,7 +44,7 @@ public class FlowerKeywordService {
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
-        Flower flowerWithExpressionsAndKeyword = flowerRepository.findFlowerByIdWithExpressionsAndKeyword(keywordId)
+        Flower flowerWithExpressionsAndKeyword = flowerRepository.findFlowerByIdWithExpressions(keywordId)
                 .orElseThrow(() -> new WhoaException(INVALID_FLOWER_AND_EXPRESSION));
         return flowerWithExpressionsAndKeyword.getFlowerExpressions();
 
@@ -55,7 +55,7 @@ public class FlowerKeywordService {
         return new FlowerInfoByKeywordResponse(
                 flower.getFlowerName(),
                 flower.getFlowerImages().get(0),
-                flower.getKeyword().getKeywordName()
+                flowerExpression.getKeyword().getKeywordName()
         );
     }
 }
