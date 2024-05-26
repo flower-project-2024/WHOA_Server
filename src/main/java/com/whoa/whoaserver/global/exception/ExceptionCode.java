@@ -18,7 +18,8 @@ public enum ExceptionCode {
 
     DUPLICATED_FILE_NAME(HttpStatus.CONFLICT, "이미 존재하는 파일 이름입니다."),
     IMAGE_SIZE_LIMIT_ERROR(HttpStatus.FORBIDDEN, "이미지의 크기가 기준을 초과합니다."),
-    IMAGE_EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 파일 형식입니다.");
+    IMAGE_EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 파일 형식입니다."),
+    NULL_INPUT_CONTENT(HttpStatus.CONFLICT, "이미지 파일이 null로 인식됩니다.");
 
     private final HttpStatus status;
     private final String message;
