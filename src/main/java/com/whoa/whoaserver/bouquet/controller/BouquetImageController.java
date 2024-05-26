@@ -1,13 +1,13 @@
 package com.whoa.whoaserver.bouquet.controller;
 
 import java.net.URL;
+import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.whoa.whoaserver.global.config.S3Config;
+import com.whoa.whoaserver.global.exception.ExceptionCode;
+import com.whoa.whoaserver.global.exception.WhoaException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.whoa.whoaserver.bouquet.dto.request.PresignedUrlRequest;
 import com.whoa.whoaserver.bouquet.dto.response.PresignedUrlResponse;
@@ -16,24 +16,38 @@ import com.whoa.whoaserver.global.annotation.DeviceUser;
 import com.whoa.whoaserver.global.dto.UserContext;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "Bouquet Image", description = "Bouquet Image API")
+@Tag(name = "Bouquet Image", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청해주세요.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
 public class BouquetImageController {
     
     private final BouquetImageService bouquetImageService;
+    private final S3Config s3Config;
 
     @PostMapping("/presigned_url")
-    @Operation(summary = "이미지 등록 주소", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청하면 S3 이미지 저장을 위한 주소를 반환합니다.")
+    @Operation(summary = "단일 이미지 등록을 위한 presignedUrl 주소 반환", description = "한 번에 하나의 이미지만 업로드할 수 있습니다.")
     public ResponseEntity<PresignedUrlResponse> providePresignedUrl(@DeviceUser UserContext userContext, @RequestBody PresignedUrlRequest request) {
         
         URL presignedUrl = bouquetImageService.createPresignedUrl(userContext, request);
 
         return ResponseEntity.ok(PresignedUrlResponse.create(presignedUrl));
     }
+
+    @PostMapping("/multipart-files")
+    @Operation(summary = "다중 이미지 업로드", description = "한 번에 여러 개의 이미지를 업로드할 수 있습니다.")
+    public String uploadMultipleFiles(@DeviceUser UserContext userContext, @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
+
+        if (multipartFiles == null) {
+            throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
+        }
+
+        List<String> imgPaths = s3Config.upload(multipartFiles);
+        return bouquetImageService.uploadMultipleFiles(userContext, imgPaths);
+    }
+
 }
