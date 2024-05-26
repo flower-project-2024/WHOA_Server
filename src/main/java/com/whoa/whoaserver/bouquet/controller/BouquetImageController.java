@@ -3,9 +3,11 @@ package com.whoa.whoaserver.bouquet.controller;
 import java.net.URL;
 import java.util.List;
 
+import com.whoa.whoaserver.bouquet.dto.request.MultipartFileUploadRequest;
 import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,14 +42,18 @@ public class BouquetImageController {
 
     @PostMapping("/multipart-files")
     @Operation(summary = "다중 이미지 업로드", description = "한 번에 여러 개의 이미지를 업로드할 수 있습니다.")
-    public String uploadMultipleFiles(@DeviceUser UserContext userContext, @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
+    public ResponseEntity<Void> uploadMultipleFiles(@DeviceUser UserContext userContext,
+                                                    @RequestPart("imgUrl") List<MultipartFile> multipartFiles,
+                                                    @Valid @RequestBody MultipartFileUploadRequest request) {
 
         if (multipartFiles == null) {
             throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
         }
 
         List<String> imgPaths = s3Config.upload(multipartFiles);
-        return bouquetImageService.uploadMultipleFiles(userContext, imgPaths);
+        bouquetImageService.uploadMultipleFiles(userContext, imgPaths, request);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
