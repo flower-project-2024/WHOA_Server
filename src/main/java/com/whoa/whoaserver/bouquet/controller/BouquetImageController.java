@@ -45,7 +45,7 @@ public class BouquetImageController {
     @Operation(summary = "다중 이미지 업로드", description = "한 번에 여러 개의 이미지를 업로드할 수 있습니다.")
     public ResponseEntity<MultipartFileUploadedUrlResponse> uploadMultipleFiles(@DeviceUser UserContext userContext,
                                                                                 @RequestPart("imgUrl") List<MultipartFile> multipartFiles,
-                                                                                @Valid @RequestPart MultipartFileUploadRequest request) {
+                                                                                @Valid @RequestPart("bouquetId") MultipartFileUploadRequest request) {
 
         if (multipartFiles == null) {
             throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
