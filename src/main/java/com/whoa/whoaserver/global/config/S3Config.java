@@ -14,6 +14,9 @@ import com.whoa.whoaserver.global.extension.Extension;
 import com.whoa.whoaserver.global.properties.S3Properties;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -30,13 +33,12 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(S3Properties.class)
 public class S3Config {
+
     @Value("${aws.access-key}")
     private String accessKey;
 
@@ -50,8 +52,6 @@ public class S3Config {
     private String bucket;
 
     private final S3Properties s3Properties;
-
-    private final AmazonS3 s3Client;
 
     @Bean
     public AmazonS3 amazonS3Client() {
@@ -81,8 +81,7 @@ public class S3Config {
 
     @Bean
     public S3Configuration prodS3Configuration() {
-        return S3Configuration.builder()
-            .build();
+        return S3Configuration.builder().build();
     }
 
     public List<String> upload(List<MultipartFile> multipartFiles) {
@@ -95,11 +94,11 @@ public class S3Config {
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
 
-            try(InputStream inputStream = file.getInputStream()) {
-                s3Client.putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3Client().putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(s3Client.getUrl(bucket + "/bouquet/image", fileName).toString());
-            } catch(IOException e) {
+                imgUrlList.add(amazonS3Client().getUrl(bucket + "/bouquet/image", fileName).toString());
+            } catch (IOException e) {
                 throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
             }
         }
@@ -129,6 +128,4 @@ public class S3Config {
 
         return "." + extension.toLowerCase();
     }
-
-
 }
