@@ -12,9 +12,16 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
     Flower findByFlowerId(final Long flowerId);
 
     Flower findByFlowerName(String flowerName);
-    
+
     Flower findFlowerByRecommendDate(String recommendDate);
 
     @Query("SELECT f.flowerDescription FROM Flower f WHERE f.flowerName = :flowerName")
     Optional<String> findFlowerDescriptionByFlowerName(@Param("flowerName") String flowerName);
+    
+    @Query("SELECT f FROM Flower f JOIN FETCH f.flowerExpressions fe WHERE f.flowerId = :flowerId")
+    Optional<Flower> findFlowerByIdWithExpressions(@Param("flowerId") Long flowerId);
+
+    @Query(value = "SELECT * FROM flower ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Flower findRandomFlower();
+
 }
