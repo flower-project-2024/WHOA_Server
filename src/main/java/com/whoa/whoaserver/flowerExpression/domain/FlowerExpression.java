@@ -3,12 +3,15 @@ package com.whoa.whoaserver.flowerExpression.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.whoa.whoaserver.flower.domain.Flower;
 import com.whoa.whoaserver.keyword.domain.Keyword;
+import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -28,15 +31,13 @@ public class FlowerExpression {
 
     private String flowerLanguage;
 
-    //@JsonIgnore
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)  // 다대일 단방향 관계
     @JoinColumn(name = "flower_id")
     private Flower flower;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyword_id")
-    private Keyword keyword;
+    @OneToMany(mappedBy = "flowerExpression", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FlowerExpressionKeyword> flowerExpressionKeywords;
 
     @Builder
     public FlowerExpression(

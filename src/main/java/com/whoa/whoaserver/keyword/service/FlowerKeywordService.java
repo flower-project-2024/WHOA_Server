@@ -52,10 +52,17 @@ public class FlowerKeywordService {
 
     private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
         Flower flower = flowerExpression.getFlower();
+
+        List<String> keywordNames = flowerExpression.getFlowerExpressionKeywords().stream()
+                .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
+                .collect(Collectors.toList());
+
+        String keywordNamesString = String.join(", ", keywordNames);
+
         return new FlowerInfoByKeywordResponse(
                 flower.getFlowerName(),
-                flower.getFlowerImages().get(0),
-                flowerExpression.getKeyword().getKeywordName()
+                flower.getFlowerImages().isEmpty() ? null : flower.getFlowerImages().get(0),
+                keywordNamesString
         );
     }
 }
