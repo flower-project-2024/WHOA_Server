@@ -39,13 +39,14 @@ public record BouquetInfoDetailResponse(
                 flowerInfo.put("name", flower.getFlowerName());
                 flowerInfo.put("imageUrl", flower.getFlowerImages().get(0));
 
-                List<Keyword> keywords = flower.getFlowerExpressions().stream()
-                        .map( flowerExpression ->  flowerExpression.getKeyword() )
-                        .collect(Collectors.toUnmodifiableList());
+                List<String> keywordNames = flower.getFlowerExpressions().stream()
+                        .flatMap(flowerExpression -> flowerExpression.getFlowerExpressionKeywords().stream())
+                        .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
+                        .collect(Collectors.toList());
 
-                if (keywords != null) {
-                    Keyword firstKeyword = keywords.get(0);
-                    flowerInfo.put("flowerLanguage", firstKeyword.getKeywordName());
+                if (keywordNames != null && !keywordNames.isEmpty()) {
+                    String keywordNamesString = String.join(", ", keywordNames);
+                    flowerInfo.put("flowerLanguage", keywordNamesString);
                 }
             }
             flowerInfoList.add(flowerInfo);
