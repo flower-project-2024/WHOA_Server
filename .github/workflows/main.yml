@@ -9,7 +9,9 @@ name: Spring Boot & Gradle CI/CD
 
 on:
  push:
-   branches: [ "main" ]
+   branches:
+     - main
+     - infra
  pull_request:
    branches: [ "main" ]
 
