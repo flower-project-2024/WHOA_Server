@@ -33,14 +33,14 @@ public class FlowerKeywordService {
 
         return expressionCandidates.stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private List<FlowerExpression> getAllFlowerExpressions() {
         List<Flower> flowers = flowerRepository.findAll();
         return flowers.stream()
                 .flatMap(flower -> flower.getFlowerExpressions().stream())
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
