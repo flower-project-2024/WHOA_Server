@@ -114,10 +114,10 @@ public class BouquetCustomizingService {
                         bouquet.getCreatedAt().toString().substring(0, 10),
                         bouquet.getImages().stream()
                             .map(bouquetImage -> bouquetImage.getFileName())
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toUnmodifiableList())
                         )
                 )
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public BouquetInfoDetailResponse getBouquetDetails(Long memberId, Long bouquetId) {
