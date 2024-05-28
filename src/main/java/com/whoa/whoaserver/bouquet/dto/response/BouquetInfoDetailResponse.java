@@ -61,7 +61,7 @@ public record BouquetInfoDetailResponse(
                 bouquet.getPriceRange(),
                 bouquet.getRequirement(),
                 bouquet.getImages().stream().map(bouquetImage -> bouquetImage.getFileName())
-                        .collect(Collectors.toList()),
+                        .collect(Collectors.toUnmodifiableList()),
                 flowerInfoList
         );
     }
