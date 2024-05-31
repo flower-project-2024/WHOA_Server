@@ -5,6 +5,8 @@ import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
+import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
+import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,48 +23,42 @@ public class FlowerKeywordService {
     private static final int TOTAL_FLOWER_INFORMATION = 0;
 
     private final FlowerRepository flowerRepository;
+    private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
 
     @Transactional
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
-        List<FlowerExpression> expressionCandidates;
+        List<FlowerExpression> flowerExpressionList; // 꽃말 테이블에서 꽃말-꽃 response 응답 처리 부분
         if (keywordId == TOTAL_FLOWER_INFORMATION) {
-            expressionCandidates = getAllFlowerExpressions();
+            flowerExpressionList = getAllFlowerExpressions();
         } else {
-            expressionCandidates = getExpressionsByKeyword(keywordId);
+            flowerExpressionList = getExpressionsByKeyword(keywordId);
         }
 
-        return expressionCandidates.stream()
+        return flowerExpressionList.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private List<FlowerExpression> getAllFlowerExpressions() {
-        List<Flower> flowers = flowerRepository.findAll();
-        return flowers.stream()
-                .flatMap(flower -> flower.getFlowerExpressions().stream())
+    private List<FlowerExpression> getAllFlowerExpressions() { // mapping 테이블에서 꽃말까지 끌고 오는 부분
+        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
+        return mapping.stream()
+                .map(flowerExpressionKeyword -> flowerExpressionKeyword.getFlowerExpression())
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
-        Flower flowerWithExpressionsAndKeyword = flowerRepository.findFlowerByIdWithExpressions(keywordId)
-                .orElseThrow(() -> new WhoaException(INVALID_FLOWER_AND_EXPRESSION));
-        return flowerWithExpressionsAndKeyword.getFlowerExpressions();
+    private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) { // 키워드에서 mapping 테이블 거쳐 꽃말까지 끌고 오는 부분
+        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAllByKeyword_KeywordId(keywordId);
 
+        return mapping.stream()
+                .map(FlowerExpressionKeyword::getFlowerExpression)
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
-        Flower flower = flowerExpression.getFlower();
-
+    private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) { // 꽃말 넘겨주고 각 꽃말에 대응되는 keyword 리스트까지 전달
         List<String> keywordNames = flowerExpression.getFlowerExpressionKeywords().stream()
                 .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
 
-        String keywordNamesString = String.join(", ", keywordNames);
-
-        return new FlowerInfoByKeywordResponse(
-                flower.getFlowerName(),
-                flower.getFlowerImages().isEmpty() ? null : flower.getFlowerImages().get(0),
-                keywordNamesString
-        );
+        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, keywordNames);
     }
 }
