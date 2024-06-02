@@ -2,13 +2,9 @@ package com.whoa.whoaserver.flowerExpression.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.whoa.whoaserver.flower.domain.Flower;
-import com.whoa.whoaserver.keyword.domain.Keyword;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
@@ -39,7 +35,7 @@ public class FlowerExpression {
     @OneToMany(mappedBy = "flowerExpression", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlowerExpressionKeyword> flowerExpressionKeywords;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public FlowerExpression(
             final String flowerColor,
             final String flowerLanguage,
