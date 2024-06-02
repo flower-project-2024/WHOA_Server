@@ -61,7 +61,7 @@ public class FlowerKeywordService {
 
         return new FlowerInfoByKeywordResponse(
                 flower.getFlowerName(),
-                flower.getFlowerImages().isEmpty() ? null : flower.getFlowerImages().get(0),
+                flower.getFlowerImages().isEmpty() ? null : flower.getFlowerImages().get(0).getImageUrl(),
                 keywordNamesString
         );
     }

@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.flower.dto;
 
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
@@ -25,10 +26,10 @@ public class FlowerRequestDto {
     private final String comtemplationPeriod;
     private final String managementMethod;
     private final String storageMethod;
-    private final List<String> flowerImages;
+    private final List<FlowerImage> flowerImages;
     private final List<FlowerExpression> flowerExpressions;
 
-    public Flower toEntity(List<String> flowerImageUrls){
+    public Flower toEntity(List<FlowerImage> flowerImageUrls){
         return Flower.builder()
                 .flowerName(flowerName)
                 .flowerOneLineDescription(flowerOneLineDescription)
