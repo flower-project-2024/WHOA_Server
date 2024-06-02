@@ -13,7 +13,7 @@ public record FlowerInfoByKeywordResponse(
     public static FlowerInfoByKeywordResponse fromFlowerExpressionAndKeyword(FlowerExpression flowerExpression, List<String> flowerKeyword) {
         return new FlowerInfoByKeywordResponse(
                 flowerExpression.getFlower().getFlowerName(),
-                flowerExpression.getFlower().getFlowerImages().get(0),
+                flowerExpression.getFlower().getFlowerImages().get(0).getImageUrl(),
                 flowerKeyword
         );
     }
