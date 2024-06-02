@@ -5,29 +5,40 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.whoa.whoaserver.global.exception.ExceptionCode;
+import com.whoa.whoaserver.global.exception.WhoaException;
+import com.whoa.whoaserver.global.extension.Extension;
 import com.whoa.whoaserver.global.properties.S3Properties;
 
 import lombok.RequiredArgsConstructor;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.regions.Region;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(S3Properties.class)
 public class S3Config {
+
     @Value("${aws.access-key}")
     private String accessKey;
 
@@ -36,6 +47,9 @@ public class S3Config {
 
     @Value("ap-northeast-2")
     private String region;
+
+    @Value("${s3.bucket}")
+    private String bucket;
 
     private final S3Properties s3Properties;
 
@@ -67,8 +81,51 @@ public class S3Config {
 
     @Bean
     public S3Configuration prodS3Configuration() {
-        return S3Configuration.builder()
-            .build();
+        return S3Configuration.builder().build();
     }
 
+    public List<String> upload(List<MultipartFile> multipartFiles) {
+        List<String> imgUrlList = new ArrayList<>();
+
+        for (MultipartFile file : multipartFiles) {
+            String fileName = createFileName(file.getOriginalFilename());
+
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
+
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3Client().putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                imgUrlList.add(amazonS3Client().getUrl(bucket + "/bouquet/image", fileName).toString());
+            } catch (IOException e) {
+                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+            }
+        }
+
+        return imgUrlList;
+    }
+
+    private String createFileName(String fileName) {
+        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
+    }
+
+    private String getFileExtension(String fileName) {
+        if (fileName.length() == 0) {
+            throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
+        }
+
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+
+        try {
+            Extension ext = Extension.valueOf(extension);
+            if (!ext.isImageType()) {
+                throw new WhoaException(ExceptionCode.IMAGE_EXTENSION_NOT_SUPPORTED);
+            }
+        } catch (IllegalArgumentException e) {
+            throw new WhoaException(ExceptionCode.IMAGE_EXTENSION_NOT_SUPPORTED);
+        }
+
+        return "." + extension.toLowerCase();
+    }
 }

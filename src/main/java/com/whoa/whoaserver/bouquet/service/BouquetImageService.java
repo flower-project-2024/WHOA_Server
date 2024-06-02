@@ -2,11 +2,16 @@ package com.whoa.whoaserver.bouquet.service;
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.bouquet.domain.BouquetImage;
+import com.whoa.whoaserver.bouquet.dto.request.MultipartFileUploadRequest;
+import com.whoa.whoaserver.bouquet.dto.response.MultipartFileUploadedUrlResponse;
 import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
+import com.whoa.whoaserver.global.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
@@ -85,5 +90,22 @@ public class BouquetImageService {
                 .contentLength(contentLength)
                 .key(fileName);
     }
+
+    public MultipartFileUploadedUrlResponse uploadMultipleFiles(UserContext userContext, List<String> imgPaths, MultipartFileUploadRequest request) {
+
+        Bouquet bouquetWithImg = bouquetRepository.findByMemberIdAndId(userContext.id(), request.bouquet_id())
+                .orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET));
+
+        List<String> imgList = new ArrayList<>();
+        for (String imgUrl : imgPaths) {
+            BouquetImage bouquetImage = BouquetImage.create(bouquetWithImg, imgUrl);
+            bouquetImageRepository.save(bouquetImage);
+            imgList.add(bouquetImage.getFileName());
+        }
+
+        return new MultipartFileUploadedUrlResponse(imgList);
+    }
+
+
 
 }

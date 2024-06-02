@@ -5,6 +5,8 @@ import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
+import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
+import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,49 +22,42 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_FLOWER_
 public class FlowerKeywordService {
     private static final int TOTAL_FLOWER_INFORMATION = 0;
 
-    private final FlowerRepository flowerRepository;
+    private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
 
     @Transactional
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
-        List<FlowerExpression> expressionCandidates;
+        List<FlowerExpression> flowerExpressionList;
         if (keywordId == TOTAL_FLOWER_INFORMATION) {
-            expressionCandidates = getAllFlowerExpressions();
+            flowerExpressionList = getAllFlowerExpressions();
         } else {
-            expressionCandidates = getExpressionsByKeyword(keywordId);
+            flowerExpressionList = getExpressionsByKeyword(keywordId);
         }
 
-        return expressionCandidates.stream()
+        return flowerExpressionList.stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private List<FlowerExpression> getAllFlowerExpressions() {
-        List<Flower> flowers = flowerRepository.findAll();
-        return flowers.stream()
-                .flatMap(flower -> flower.getFlowerExpressions().stream())
-                .collect(Collectors.toList());
+        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
+        return mapping.stream()
+                .map(flowerExpressionKeyword -> flowerExpressionKeyword.getFlowerExpression())
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
-        Flower flowerWithExpressionsAndKeyword = flowerRepository.findFlowerByIdWithExpressions(keywordId)
-                .orElseThrow(() -> new WhoaException(INVALID_FLOWER_AND_EXPRESSION));
-        return flowerWithExpressionsAndKeyword.getFlowerExpressions();
+        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAllByKeyword_KeywordId(keywordId);
 
+        return mapping.stream()
+                .map(FlowerExpressionKeyword::getFlowerExpression)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
-        Flower flower = flowerExpression.getFlower();
-
         List<String> keywordNames = flowerExpression.getFlowerExpressionKeywords().stream()
                 .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
-                .collect(Collectors.toList());
+                .collect(Collectors.toUnmodifiableList());
 
-        String keywordNamesString = String.join(", ", keywordNames);
-
-        return new FlowerInfoByKeywordResponse(
-                flower.getFlowerName(),
-                flower.getFlowerImages().isEmpty() ? null : flower.getFlowerImages().get(0).getImageUrl(),
-                keywordNamesString
-        );
+        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, keywordNames);
     }
 }
