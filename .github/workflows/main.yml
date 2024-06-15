@@ -71,7 +71,7 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }} .
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_SERVICE_REPO }}
         
-        docker build -f ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX_REPO }} .
+        docker build -f Dockerfile-nginx -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX_REPO }} .
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NGINX_REPO }}
 
     - name: executing remote ssh commands using password
