@@ -37,7 +37,7 @@ public record BouquetInfoDetailResponse(
 
             if (flower != null) {
                 flowerInfo.put("name", flower.getFlowerName());
-                flowerInfo.put("imageUrl", flower.getFlowerImages().get(0));
+                flowerInfo.put("imageUrl", flower.getFlowerImages().get(0).getImageUrl());
 
                 List<String> keywordNames = flower.getFlowerExpressions().stream()
                         .flatMap(flowerExpression -> flowerExpression.getFlowerExpressionKeywords().stream())

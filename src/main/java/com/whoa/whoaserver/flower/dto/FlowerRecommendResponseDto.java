@@ -27,7 +27,7 @@ public class FlowerRecommendResponseDto {
                 flower.getFlowerId(),
                 flower.getFlowerName(),
                 flower.getFlowerOneLineDescription(),
-                flower.getFlowerImages().get(0),
+                flower.getFlowerImages().get(0).getImageUrl(),
                 expressionResponseDtos
         );
     }

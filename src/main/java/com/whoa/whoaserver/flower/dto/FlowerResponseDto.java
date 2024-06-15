@@ -1,7 +1,7 @@
 package com.whoa.whoaserver.flower.dto;
 
 import com.whoa.whoaserver.flower.domain.Flower;
-import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flowerExpression.dto.FlowerExpressionResponseDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,10 @@ public class FlowerResponseDto {
     private final List<FlowerExpressionResponseDto> flowerExpressions;
 
     public static FlowerResponseDto of(Flower flower) {
+        List<String> imageUrls = flower.getFlowerImages().stream()
+                .map(FlowerImage::getImageUrl)
+                .collect(Collectors.toUnmodifiableList());
+
         List<FlowerExpressionResponseDto> expressionResponseDtos = flower.getFlowerExpressions().stream()
                 .map(FlowerExpressionResponseDto::of)
                 .collect(Collectors.toList());
@@ -34,7 +38,7 @@ public class FlowerResponseDto {
                 flower.getFlowerName(),
                 flower.getFlowerDescription(),
                 flower.getFlowerOneLineDescription(),
-                flower.getFlowerImages(),
+                imageUrls,
                 flower.getBirthFlower(),
                 flower.getManagementMethod(),
                 flower.getStorageMethod(),

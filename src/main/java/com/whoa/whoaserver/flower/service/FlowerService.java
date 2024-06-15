@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.flower.service;
 
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flower.dto.FlowerRecommendResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerSearchResponseDto;
@@ -25,12 +26,13 @@ public class FlowerService {
     @Transactional
     public FlowerResponseDto postFlower(final List<MultipartFile> flowerImages, final Long flowerId) throws IOException {
         Flower flower = flowerRepository.findByFlowerId(flowerId);
-        List<String> storedFileNames = new ArrayList<>();
+        List<FlowerImage> storedFlowerImages = new ArrayList<>();
         for (MultipartFile flowerImage : flowerImages) {
             String storedFileName = s3Uploader.saveFileExceptUser(flowerImage, "flower");
-            storedFileNames.add(storedFileName);
+            FlowerImage flowerImageEntity = FlowerImage.create(storedFileName, flower);
+            storedFlowerImages.add(flowerImageEntity);
         }
-        flower.setFlowerImages(storedFileNames);
+        flower.getFlowerImages().addAll(storedFlowerImages);
         return FlowerResponseDto.of(flower);
     }
 

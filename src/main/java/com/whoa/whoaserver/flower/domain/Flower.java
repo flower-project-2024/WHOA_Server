@@ -1,12 +1,9 @@
 package com.whoa.whoaserver.flower.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
-import com.whoa.whoaserver.keyword.domain.Keyword;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.data.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +38,12 @@ public class Flower {
 
     private String storageMethod;
 
-    @ElementCollection
-    private List<String> flowerImages;
-
     //@JsonIgnore
     @OneToMany(mappedBy = "flower",  cascade = CascadeType.ALL)
     private List<FlowerExpression> flowerExpressions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "flower", cascade = CascadeType.ALL)
+    private List<FlowerImage> flowerImages = new ArrayList<>();
 
     @Builder(toBuilder = true)
     public Flower(
@@ -57,18 +54,18 @@ public class Flower {
             final String birthFlower,
             final String managementMethod,
             final String storageMethod,
-            final List<String> flowerImages,
-            final List<FlowerExpression> flowerExpressions
+            final List<FlowerExpression> flowerExpressions,
+            final List<FlowerImage> flowerImages
     ) {
         this.flowerName = flowerName;
         this.flowerDescription = flowerDescription;
         this.flowerOneLineDescription = flowerOneLineDescription;
-        this.flowerImages = flowerImages;
         this.recommendDate = recommendDate;
         this.birthFlower = birthFlower;
         this.managementMethod = managementMethod;
         this.storageMethod = storageMethod;
         this.flowerExpressions = (flowerExpressions != null) ? new ArrayList<>(flowerExpressions) : new ArrayList<>();
+        this.flowerImages = (flowerImages != null) ? new ArrayList<>(flowerImages) : new ArrayList<>();
     }
 }
 
