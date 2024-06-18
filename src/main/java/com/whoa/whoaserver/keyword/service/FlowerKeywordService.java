@@ -1,9 +1,6 @@
 package com.whoa.whoaserver.keyword.service;
 
-import com.whoa.whoaserver.flower.domain.Flower;
-import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
-import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
@@ -14,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_FLOWER_AND_EXPRESSION;
 
 @Service
 @Transactional(readOnly = true)

@@ -6,14 +6,14 @@ import java.util.List;
 
 public record FlowerInfoByKeywordResponse(
         String flowerName,
-        String flowerImage,
+        String flowerLanguage,
         List<String> flowerKeyword
 ) {
 
     public static FlowerInfoByKeywordResponse fromFlowerExpressionAndKeyword(FlowerExpression flowerExpression, List<String> flowerKeyword) {
         return new FlowerInfoByKeywordResponse(
                 flowerExpression.getFlower().getFlowerName(),
-                flowerExpression.getFlower().getFlowerImages().get(0).getImageUrl(),
+                flowerExpression.getFlowerLanguage(),
                 flowerKeyword
         );
     }
