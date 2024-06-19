@@ -1,9 +1,9 @@
 package com.whoa.whoaserver.keyword.service;
 
-import com.whoa.whoaserver.flower.domain.Flower;
-import com.whoa.whoaserver.flower.repository.FlowerRepository;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
+import com.whoa.whoaserver.flower.repository.FlowerImageRepository;
+import com.whoa.whoaserver.flower.utils.FlowerUtils;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
-import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
@@ -11,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_FLOWER_AND_EXPRESSION;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,6 +22,7 @@ public class FlowerKeywordService {
     private static final int TOTAL_FLOWER_INFORMATION = 0;
 
     private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
+    private final FlowerImageRepository flowerImageRepository;
 
     @Transactional
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
@@ -41,16 +41,22 @@ public class FlowerKeywordService {
     private List<FlowerExpression> getAllFlowerExpressions() {
         List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
         return mapping.stream()
-                .map(flowerExpressionKeyword -> flowerExpressionKeyword.getFlowerExpression())
+                .map(FlowerExpressionKeyword::getFlowerExpression)
+                .filter(this::isInContemplationPeriod)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
         List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAllByKeyword_KeywordId(keywordId);
-
         return mapping.stream()
                 .map(FlowerExpressionKeyword::getFlowerExpression)
+                .filter(this::isInContemplationPeriod)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private boolean isInContemplationPeriod(FlowerExpression flowerExpression) {
+        return FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod())
+                .contains(String.valueOf(LocalDate.now().getMonthValue()));
     }
 
     private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
@@ -58,6 +64,9 @@ public class FlowerKeywordService {
                 .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
                 .collect(Collectors.toUnmodifiableList());
 
-        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, keywordNames);
+        FlowerImage flowerImage = flowerImageRepository.findByFlowerExpression(flowerExpression)
+                .orElse(null);
+
+        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, flowerImage, keywordNames);
     }
 }

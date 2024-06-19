@@ -2,6 +2,7 @@ package com.whoa.whoaserver.flowerExpression.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,15 +36,20 @@ public class FlowerExpression {
     @OneToMany(mappedBy = "flowerExpression", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlowerExpressionKeyword> flowerExpressionKeywords;
 
+    @OneToOne(mappedBy = "flowerExpression", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private FlowerImage flowerImage;
+
     @Builder(access = AccessLevel.PRIVATE)
     public FlowerExpression(
             final String flowerColor,
             final String flowerLanguage,
-            final Flower flower)
+            final Flower flower,
+            final FlowerImage flowerImage)
     {
         this.flowerColor = flowerColor;
         this.flowerLanguage = flowerLanguage;
         this.flower = flower;
+        this.flowerImage = flowerImage;
     }
 
 }
