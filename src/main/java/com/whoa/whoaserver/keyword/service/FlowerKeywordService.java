@@ -2,8 +2,8 @@ package com.whoa.whoaserver.keyword.service;
 
 import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flower.repository.FlowerImageRepository;
+import com.whoa.whoaserver.flower.utils.FlowerUtils;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
-import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 
 
 @Service
@@ -44,6 +44,7 @@ public class FlowerKeywordService {
         List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
         return mapping.stream()
                 .map(flowerExpressionKeyword -> flowerExpressionKeyword.getFlowerExpression())
+                .filter(flowerExpression -> FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod()).contains(String.valueOf(LocalDate.now().getMonthValue())))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -52,6 +53,7 @@ public class FlowerKeywordService {
 
         return mapping.stream()
                 .map(FlowerExpressionKeyword::getFlowerExpression)
+                .filter(flowerExpression -> FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod()).contains(String.valueOf(LocalDate.now().getMonthValue())))
                 .collect(Collectors.toUnmodifiableList());
     }
 
