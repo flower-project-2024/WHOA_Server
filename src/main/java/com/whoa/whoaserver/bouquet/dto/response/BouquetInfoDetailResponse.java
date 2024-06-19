@@ -28,7 +28,7 @@ public record BouquetInfoDetailResponse(
 ) {
     public static BouquetInfoDetailResponse of(Bouquet bouquet, FlowerRepository flowerRepository) {
 
-        List<String> flowerTypes = FlowerUtils.parseFlowerType(bouquet.getFlowerType());
+        List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(bouquet.getFlowerType());
         List<HashMap<String, String>> flowerInfoList = new ArrayList<>();
 
         for (String flowerType : flowerTypes) {
