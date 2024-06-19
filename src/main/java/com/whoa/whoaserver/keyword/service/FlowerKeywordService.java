@@ -1,6 +1,9 @@
 package com.whoa.whoaserver.keyword.service;
 
+import com.whoa.whoaserver.flower.domain.FlowerImage;
+import com.whoa.whoaserver.flower.repository.FlowerImageRepository;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
+import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
@@ -11,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +24,7 @@ public class FlowerKeywordService {
     private static final int TOTAL_FLOWER_INFORMATION = 0;
 
     private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
+    private final FlowerImageRepository flowerImageRepository;
 
     @Transactional
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
@@ -54,6 +60,9 @@ public class FlowerKeywordService {
                 .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
                 .collect(Collectors.toUnmodifiableList());
 
-        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, keywordNames);
+        FlowerImage flowerImage = flowerImageRepository.findByFlowerExpression(flowerExpression)
+                .orElse(null);
+
+        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, flowerImage, keywordNames);
     }
 }
