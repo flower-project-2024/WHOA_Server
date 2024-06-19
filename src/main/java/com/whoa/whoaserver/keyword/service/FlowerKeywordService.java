@@ -15,8 +15,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -43,18 +41,22 @@ public class FlowerKeywordService {
     private List<FlowerExpression> getAllFlowerExpressions() {
         List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
         return mapping.stream()
-                .map(flowerExpressionKeyword -> flowerExpressionKeyword.getFlowerExpression())
-                .filter(flowerExpression -> FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod()).contains(String.valueOf(LocalDate.now().getMonthValue())))
+                .map(FlowerExpressionKeyword::getFlowerExpression)
+                .filter(this::isInContemplationPeriod)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
         List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAllByKeyword_KeywordId(keywordId);
-
         return mapping.stream()
                 .map(FlowerExpressionKeyword::getFlowerExpression)
-                .filter(flowerExpression -> FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod()).contains(String.valueOf(LocalDate.now().getMonthValue())))
+                .filter(this::isInContemplationPeriod)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private boolean isInContemplationPeriod(FlowerExpression flowerExpression) {
+        return FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod())
+                .contains(String.valueOf(LocalDate.now().getMonthValue()));
     }
 
     private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
