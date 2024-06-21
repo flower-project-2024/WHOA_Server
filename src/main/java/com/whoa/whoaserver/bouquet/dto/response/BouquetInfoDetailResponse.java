@@ -18,7 +18,6 @@ public record BouquetInfoDetailResponse(
         String wrappingType,
         String priceRange,
         String requirement,
-        List<String> imagePaths,
         List<HashMap<String, String>> flowerInfoList // Flower Name, Flower Image, Flower language
 
 ) {
@@ -46,8 +45,6 @@ public record BouquetInfoDetailResponse(
                 bouquet.getWrappingType(),
                 bouquet.getPriceRange(),
                 bouquet.getRequirement(),
-                bouquet.getImages().stream().map(bouquetImage -> bouquetImage.getFileName())
-                        .collect(Collectors.toUnmodifiableList()),
                 flowerInfoList
         );
     }
