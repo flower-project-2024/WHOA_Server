@@ -6,7 +6,6 @@ import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record BouquetInfoDetailResponse(
         Long id,
