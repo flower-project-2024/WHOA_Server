@@ -1,11 +1,7 @@
 package com.whoa.whoaserver.bouquet.dto.response;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
-import com.whoa.whoaserver.flower.domain.Flower;
-import com.whoa.whoaserver.flower.repository.FlowerRepository;
-import com.whoa.whoaserver.flower.utils.FlowerUtils;
-import com.whoa.whoaserver.keyword.domain.Keyword;
-import com.whoa.whoaserver.keyword.repository.FlowerKeywordRepository;
+import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,31 +19,20 @@ public record BouquetInfoDetailResponse(
         String priceRange,
         String requirement,
         List<String> imagePaths,
-        List<HashMap<String, String>> flowerInfoList // Flower Name, Flower Image, Keyword Name
+        List<HashMap<String, String>> flowerInfoList // Flower Name, Flower Image, Flower language
 
 ) {
-    public static BouquetInfoDetailResponse of(Bouquet bouquet, FlowerRepository flowerRepository) {
+    public static BouquetInfoDetailResponse of(Bouquet bouquet, List<FlowerExpression> flowerExpressionList) {
 
-        List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(bouquet.getFlowerType());
         List<HashMap<String, String>> flowerInfoList = new ArrayList<>();
 
-        for (String flowerType : flowerTypes) {
-            Flower flower = flowerRepository.findByFlowerName(flowerType);
+        for (FlowerExpression flowerExpression : flowerExpressionList) {
             HashMap<String, String> flowerInfo = new HashMap<>();
 
-            if (flower != null) {
-                flowerInfo.put("name", flower.getFlowerName());
-                flowerInfo.put("imageUrl", flower.getFlowerImages().get(0).getImageUrl());
-
-                List<String> keywordNames = flower.getFlowerExpressions().stream()
-                        .flatMap(flowerExpression -> flowerExpression.getFlowerExpressionKeywords().stream())
-                        .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
-                        .collect(Collectors.toList());
-
-                if (keywordNames != null && !keywordNames.isEmpty()) {
-                    String keywordNamesString = String.join(", ", keywordNames);
-                    flowerInfo.put("flowerLanguage", keywordNamesString);
-                }
+            if (flowerExpression != null) {
+                flowerInfo.put("flowerName", flowerExpression.getFlower().getFlowerName());
+                flowerInfo.put("flowerImageUrl", flowerExpression.getFlowerImage().getImageUrl());
+                flowerInfo.put("flowerLanguage", flowerExpression.getFlowerLanguage());
             }
             flowerInfoList.add(flowerInfo);
         }
