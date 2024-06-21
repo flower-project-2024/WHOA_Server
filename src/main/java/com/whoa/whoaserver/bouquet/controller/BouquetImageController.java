@@ -9,6 +9,7 @@ import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class BouquetImageController {
         return ResponseEntity.ok(PresignedUrlResponse.create(presignedUrl));
     }
 
-    @PostMapping("/multipart-files")
+    @PostMapping(value="/multipart-files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "다중 이미지 업로드", description = "한 번에 여러 개의 이미지를 업로드할 수 있습니다.")
     public ResponseEntity<MultipartFileUploadedUrlResponse> uploadMultipleFiles(@DeviceUser UserContext userContext,
                                                                                 @RequestPart("imgUrl") List<MultipartFile> multipartFiles,
