@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FlowerExpressionRepository extends JpaRepository<FlowerExpression, Long> {
     List<FlowerExpression> findByFlowerLanguageContaining(String flowerKeyword);
+    FlowerExpression findByFlowerExpressionId(Long flowerExpressionid);
 }
