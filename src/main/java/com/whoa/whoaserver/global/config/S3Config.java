@@ -85,6 +85,10 @@ public class S3Config {
     }
 
     public List<String> upload(List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
+        }
+
         List<String> imgUrlList = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
