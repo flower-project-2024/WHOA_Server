@@ -1,5 +1,7 @@
 package com.whoa.whoaserver.global.config;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -16,7 +18,6 @@ import com.whoa.whoaserver.global.properties.S3Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -45,12 +46,6 @@ public class S3Config {
     @Value("${aws.secret-key}")
     private String secretKey;
 
-    @Value("ap-northeast-2")
-    private String region;
-
-    @Value("${s3.bucket}")
-    private String bucket;
-
     private final S3Properties s3Properties;
 
     @Bean
@@ -60,7 +55,7 @@ public class S3Config {
         return AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(region)
+                .withRegion(s3Properties.region())
                 .build();
     }
 
@@ -85,6 +80,10 @@ public class S3Config {
     }
 
     public List<String> upload(List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
+        }
+
         List<String> imgUrlList = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
@@ -97,8 +96,15 @@ public class S3Config {
             try (InputStream inputStream = file.getInputStream()) {
                 amazonS3Client().putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3Client().getUrl(bucket + "/bouquet/image", fileName).toString());
+                imgUrlList.add(amazonS3Client().getUrl(s3Properties.bucket() + "/bouquet/image", fileName).toString());
             } catch (IOException e) {
+                e.printStackTrace();
+                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+            } catch (AmazonServiceException e) {
+                e.printStackTrace();
+                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+            } catch (SdkClientException e) {
+                e.printStackTrace();
                 throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
             }
         }

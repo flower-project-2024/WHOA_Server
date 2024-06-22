@@ -6,6 +6,7 @@ import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import java.util.List;
 
 public record FlowerInfoByKeywordResponse(
+        Long id,
         String flowerName,
         String flowerLanguage,
         String flowerImageUrl,
@@ -16,6 +17,7 @@ public record FlowerInfoByKeywordResponse(
         String imageUrl = (flowerImage != null) ? flowerImage.getImageUrl() : "";
 
         return new FlowerInfoByKeywordResponse(
+                flowerExpression.getFlowerExpressionId(),
                 flowerExpression.getFlower().getFlowerName(),
                 flowerExpression.getFlowerLanguage(),
                 imageUrl,
