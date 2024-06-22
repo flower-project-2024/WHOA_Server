@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.flower.dto;
 
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flowerExpression.dto.FlowerExpressionResponseDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,17 @@ public class FlowerRecommendResponseDto {
         List<FlowerExpressionResponseDto> expressionResponseDtos = flower.getFlowerExpressions().stream()
                 .map(FlowerExpressionResponseDto::of)
                 .collect(Collectors.toList());
+        String flowerImageUrl = null;
+        for (FlowerImage flowerImage : flower.getFlowerImages()) {
+            flowerImageUrl = flowerImage.getImageUrl();
+            if (flowerImageUrl != null)
+                break;
+        }
         return new FlowerRecommendResponseDto(
                 flower.getFlowerId(),
                 flower.getFlowerName(),
                 flower.getFlowerOneLineDescription(),
-                flower.getFlowerImages().get(0).getImageUrl(),
+                flowerImageUrl,
                 expressionResponseDtos
         );
     }

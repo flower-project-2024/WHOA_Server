@@ -15,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +55,13 @@ public class FlowerService {
     @Transactional
     public FlowerRecommendResponseDto getRecommendFlower(final int month, final int date){
         String recommendDate = month + "/" + date;
-        Flower recommendFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
+        Flower recommendFlower = null;
+        Optional<Flower> recommendAcceptFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
+        if (recommendAcceptFlower.isPresent())
+            recommendFlower = recommendAcceptFlower.get();
+        else {
+            recommendFlower = flowerRepository.findRandomFlower();
+        }
         return FlowerRecommendResponseDto.of(recommendFlower);
     }
 
