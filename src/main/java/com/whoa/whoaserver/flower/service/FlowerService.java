@@ -2,10 +2,13 @@ package com.whoa.whoaserver.flower.service;
 
 import com.whoa.whoaserver.flower.domain.Flower;
 import com.whoa.whoaserver.flower.domain.FlowerImage;
+import com.whoa.whoaserver.flower.dto.FlowerPostResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerRecommendResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
 import com.whoa.whoaserver.flower.dto.FlowerSearchResponseDto;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
+import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
+import com.whoa.whoaserver.flowerExpression.repository.FlowerExpressionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,10 +25,11 @@ import java.util.stream.Collectors;
 public class FlowerService {
 
     final FlowerRepository flowerRepository;
+    final FlowerExpressionRepository flowerExpressionRepository;
     final S3Uploader s3Uploader;
 
     @Transactional
-    public FlowerResponseDto postFlower(final List<MultipartFile> flowerImages, final Long flowerId) throws IOException {
+    public FlowerPostResponseDto postFlower(final List<MultipartFile> flowerImages, final Long flowerId) throws IOException {
         Flower flower = flowerRepository.findByFlowerId(flowerId);
         List<FlowerImage> storedFlowerImages = new ArrayList<>();
         for (MultipartFile flowerImage : flowerImages) {
@@ -33,13 +38,20 @@ public class FlowerService {
             storedFlowerImages.add(flowerImageEntity);
         }
         flower.getFlowerImages().addAll(storedFlowerImages);
-        return FlowerResponseDto.of(flower);
+        return FlowerPostResponseDto.of(flower);
     }
 
     @Transactional
     public FlowerResponseDto getFlower(final Long flowerId){
         Flower flower = flowerRepository.findByFlowerId(flowerId);
-        return FlowerResponseDto.of(flower);
+        List<FlowerExpression> flowerExpressions = flowerExpressionRepository.findByFlowerFlowerId(flowerId);
+        List<String> flowerImages = flowerExpressions.stream()
+                .map(FlowerExpression::getFlowerImage)
+                .filter(Objects::nonNull)
+                .map(FlowerImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        return FlowerResponseDto.of(flower, flowerImages);
     }
 
     @Transactional
