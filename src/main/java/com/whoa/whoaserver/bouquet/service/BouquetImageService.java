@@ -98,7 +98,6 @@ public class BouquetImageService {
 
         List<String> imgList = new ArrayList<>();
         for (String imgUrl : imgPaths) {
-            System.out.println(imgUrl);
             BouquetImage bouquetImage = BouquetImage.create(bouquetWithImg, imgUrl);
             bouquetImageRepository.save(bouquetImage);
             imgList.add(bouquetImage.getFileName());
