@@ -1,5 +1,7 @@
 package com.whoa.whoaserver.global.config;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -45,12 +47,6 @@ public class S3Config {
     @Value("${aws.secret-key}")
     private String secretKey;
 
-    @Value("ap-northeast-2")
-    private String region;
-
-    @Value("${s3.bucket}")
-    private String bucket;
-
     private final S3Properties s3Properties;
 
     @Bean
@@ -60,7 +56,7 @@ public class S3Config {
         return AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(region)
+                .withRegion(s3Properties.region())
                 .build();
     }
 
@@ -98,11 +94,21 @@ public class S3Config {
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
 
+            System.out.println(s3Properties.bucket());
+            System.out.println(s3Properties.region());
+
             try (InputStream inputStream = file.getInputStream()) {
                 amazonS3Client().putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3Client().getUrl(bucket + "/bouquet/image", fileName).toString());
+                imgUrlList.add(amazonS3Client().getUrl(s3Properties.bucket() + "/bouquet/image", fileName).toString());
             } catch (IOException e) {
+                e.printStackTrace();
+                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+            } catch (AmazonServiceException e) {
+                e.printStackTrace();
+                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+            } catch (SdkClientException e) {
+                e.printStackTrace();
                 throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
             }
         }
