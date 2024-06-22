@@ -24,15 +24,8 @@ public class FlowerService {
     final S3Uploader s3Uploader;
 
     @Transactional
-    public FlowerResponseDto postFlower(final List<MultipartFile> flowerImages, final Long flowerId) throws IOException {
-        Flower flower = flowerRepository.findByFlowerId(flowerId);
-        List<FlowerImage> storedFlowerImages = new ArrayList<>();
-        for (MultipartFile flowerImage : flowerImages) {
-            String storedFileName = s3Uploader.saveFileExceptUser(flowerImage, "flower");
-            FlowerImage flowerImageEntity = FlowerImage.create(storedFileName, flower);
-            storedFlowerImages.add(flowerImageEntity);
-        }
-        flower.getFlowerImages().addAll(storedFlowerImages);
+    public FlowerResponseDto postFlower(final Flower flower){
+        flowerRepository.save(flower);
         return FlowerResponseDto.of(flower);
     }
 

@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.flower.controller;
 
+import com.whoa.whoaserver.flower.domain.Flower;
 import com.whoa.whoaserver.flower.dto.FlowerRequestDto;
 import com.whoa.whoaserver.flower.service.FlowerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,9 +24,9 @@ public class FlowerController {
     private final FlowerService flowerService;
 
     @PostMapping()
-    @Operation(summary = "꽃 사진 등록", description = "데이터 저장용 API입니다.")
-    public ResponseEntity<?> postFlower(List<MultipartFile> flowerImages, @PathVariable final Long flowerId) throws IOException {
-        return ResponseEntity.ok().body(flowerService.postFlower(flowerImages, flowerId));
+    @Operation(summary = "꽃 등록", description = "데이터 저장용 API입니다.")
+    public ResponseEntity<?> postFlower(Flower flower) {
+        return ResponseEntity.ok().body(flowerService.postFlower(flower));
     }
 
     @GetMapping("detail/{flowerId}")

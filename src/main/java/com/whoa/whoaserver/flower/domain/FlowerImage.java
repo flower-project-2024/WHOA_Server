@@ -29,7 +29,8 @@ public class FlowerImage {
     @JoinColumn(name = "flower_expression_id")
     private FlowerExpression flowerExpression;
 
-    @Builder(access = AccessLevel.PRIVATE)
+    //@Builder(access = AccessLevel.PRIVATE)
+    @Builder
     public FlowerImage(
             final Flower flower,
             final String imageUrl,
