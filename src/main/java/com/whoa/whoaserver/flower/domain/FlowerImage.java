@@ -10,7 +10,6 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 public class FlowerImage {

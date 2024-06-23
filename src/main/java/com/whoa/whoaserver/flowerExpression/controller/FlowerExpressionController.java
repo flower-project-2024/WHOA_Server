@@ -24,7 +24,7 @@ public class FlowerExpressionController {
 
     @PostMapping("{flowerId}")
     @Operation(summary = "꽃말과 사진 등록", description = "데이터 저장용 API입니다.")
-    public ResponseEntity<?> postFlower(@RequestParam("Image") MultipartFile Image, @PathVariable Long flowerId, FlowerExpression flowerExpression) throws IOException {
+    public ResponseEntity<?> postFlower(@RequestPart("Image") MultipartFile Image, @PathVariable Long flowerId, FlowerExpression flowerExpression) throws IOException {
         return ResponseEntity.ok().body(flowerExpressionService.postFlowerExpressions(Image, flowerId, flowerExpression));
     }
 
