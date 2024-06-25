@@ -31,6 +31,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -84,33 +86,41 @@ public class S3Config {
             throw new WhoaException(ExceptionCode.NULL_INPUT_CONTENT);
         }
 
-        List<String> imgUrlList = new ArrayList<>();
+        List<CompletableFuture<String>> futures = new ArrayList<>();
 
         for (MultipartFile file : multipartFiles) {
-            String fileName = createFileName(file.getOriginalFilename());
-
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(file.getSize());
-            objectMetadata.setContentType(file.getContentType());
-
-            try (InputStream inputStream = file.getInputStream()) {
-                amazonS3Client().putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
-                        .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3Client().getUrl(s3Properties.bucket() + "/bouquet/image", fileName).toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
-            } catch (AmazonServiceException e) {
-                e.printStackTrace();
-                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
-            } catch (SdkClientException e) {
-                e.printStackTrace();
-                throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
-            }
+            futures.add(CompletableFuture.supplyAsync(() -> uploadSingleFile(file)));
         }
+
+        List<String> imgUrlList = futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toUnmodifiableList());
 
         return imgUrlList;
     }
+
+    private String uploadSingleFile(MultipartFile file) {
+        String fileName = createFileName(file.getOriginalFilename());
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentType(file.getContentType());
+
+        try (InputStream inputStream = file.getInputStream()) {
+            amazonS3Client().putObject(new PutObjectRequest(s3Properties.bucket() + "/bouquet/image", fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            return amazonS3Client().getUrl(s3Properties.bucket() + "/bouquet/image", fileName).toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+            throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+        } catch (SdkClientException e) {
+            e.printStackTrace();
+            throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+        }
+    }
+
 
     private String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
