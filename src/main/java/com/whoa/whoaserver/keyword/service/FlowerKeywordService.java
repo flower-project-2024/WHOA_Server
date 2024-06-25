@@ -47,7 +47,7 @@ public class FlowerKeywordService {
     }
 
     private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
-        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAllByKeyword_KeywordId(keywordId);
+        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findByKeywordIdWithExpressions(keywordId);
         return mapping.stream()
                 .map(FlowerExpressionKeyword::getFlowerExpression)
                 .filter(this::isInContemplationPeriod)
