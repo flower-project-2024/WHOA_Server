@@ -13,7 +13,10 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
 
     Flower findByFlowerName(String flowerName);
     
-    Flower findFlowerByRecommendDate(String recommendDate);
+    Optional<Flower> findFlowerByRecommendDate(String recommendDate);
+
+    @Query("SELECT f FROM Flower f ORDER BY RAND() LIMIT 1")
+    Flower findRandomFlower();
 
     @Query("SELECT f.flowerDescription FROM Flower f WHERE f.flowerName = :flowerName")
     Optional<String> findFlowerDescriptionByFlowerName(@Param("flowerName") String flowerName);
