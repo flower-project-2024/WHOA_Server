@@ -21,7 +21,7 @@ public enum ExceptionCode {
     IMAGE_EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 파일 형식입니다."),
     NULL_INPUT_CONTENT(HttpStatus.CONFLICT, "이미지 파일이 null로 인식됩니다."),
     IMAGE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
-    INVALID_BOUQUET_ID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "이미지 업로드 시 bouquet_id를 key로 하는 value가 json 형식이어야 합니다.");
+    INVALID_BOUQUET_ID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "이미지 업로드 시 bouquetId를 key로 하는 value가 json(bouquet_id : Long) 형식이어야 합니다.");
 
     private final HttpStatus status;
     private final String message;
