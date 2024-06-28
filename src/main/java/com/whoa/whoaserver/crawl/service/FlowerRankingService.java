@@ -5,6 +5,7 @@ import com.whoa.whoaserver.crawl.domain.FlowerRanking;
 import com.whoa.whoaserver.crawl.dto.FlowerRankingResponseDto;
 import com.whoa.whoaserver.crawl.repository.FlowerRankingRepository;
 import com.whoa.whoaserver.flower.domain.Flower;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flower.dto.FlowerResponseDto;
 import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,22 @@ public class FlowerRankingService {
     public FlowerRankingResponseDto saveFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
         FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
         Flower findFlower = flowerRepository.findByFlowerName(pumName);
-        String findFlowerDescription = findFlower.getFlowerDescription();
-        String findFlowerImage = findFlower.getFlowerImages().get(0).getImageUrl();
-        Long findFlowerId = findFlower.getFlowerId();
-        flowerRanking.update(pumName, findFlowerDescription, avgAmt, date, findFlowerImage, findFlowerId );
+        if (findFlower == null){
+            flowerRanking.updateIfNotPresent(pumName, avgAmt, date);
+            return new FlowerRankingResponseDto(null, flowerRanking.getFlowerRankingName(), null, flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), null, null);
+        }
+        else{
+            String findFlowerDescription = findFlower.getFlowerOneLineDescription();
+            String flowerImageUrl = null;
+            for (FlowerImage flowerImage : findFlower.getFlowerImages()) {
+                flowerImageUrl = flowerImage.getImageUrl();
+                if (flowerImageUrl != null)
+                    break;
+            }
+            Long findFlowerId = findFlower.getFlowerId();
+            flowerRanking.updateIfPresent(pumName, findFlowerDescription, avgAmt, date, flowerImageUrl, findFlowerId);
             return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), flowerRanking.getFlowerImage(), flowerRanking.getFlowerId());
+        }
 
     }
 
