@@ -5,12 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum colorTypeOption {
+public enum FlowerSubstitutionTypeOption {
 
-    ONE_COLOR("단일 색"),
-    TWO_COLORS("두 가지 색"),
-    COLORFULL("컬러풀"),
-    POINT_COLOR("포인트 컬러");
+    FOCUS_ON_COLOR("색감 위주"),
+    FOCUS_ON_FLOWER_LANGUAGE("꽃말 위주");
 
     private final String value;
 }
