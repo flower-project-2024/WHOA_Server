@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -29,8 +30,10 @@ public class FlowerCrawlerScheduler {
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정마다 실행
     public void crawlFlowerData() {
-        String date = String.valueOf(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey="+serviceKey+"&baseDate=" + date + "&flowerGubn=1&dataType=json";
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(formatter);
+        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey="+"129B8A317A674C9EA2115840003C8DEC"+"&baseDate=" + formattedDate + "&flowerGubn=1&dataType=json";
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -68,7 +71,7 @@ public class FlowerCrawlerScheduler {
                         String flowerName = flowerData.get("pumName");
                         String flowerPrize = flowerData.get("avgAmt");
 
-                        flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrize, date);
+                        flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrize, formattedDate);
                     }
                 } else {
                     System.out.println("Failed to fetch flower data from the API.");

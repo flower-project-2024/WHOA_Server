@@ -49,7 +49,7 @@ public class FlowerRanking {
         this.flowerId = flowerId;
     }
 
-    public void update(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrice, String flowerRankingDate, final String flowerImage,
+    public void updateIfPresent(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrice, String flowerRankingDate, final String flowerImage,
                        final Long flowerId){
         this.flowerRankingName = flowerRankingName;
         this.flowerRankingDescription = flowerRankingDescription;
@@ -57,5 +57,11 @@ public class FlowerRanking {
         this.flowerRankingDate = flowerRankingDate;
         this.flowerImage = flowerImage;
         this.flowerId = flowerId;
+    }
+
+    public void updateIfNotPresent(String flowerRankingName, String flowerRankingPrice, String flowerRankingDate){
+        this.flowerRankingName = flowerRankingName;
+        this.flowerRankingPrice = flowerRankingPrice;
+        this.flowerRankingDate = flowerRankingDate;
     }
 }
