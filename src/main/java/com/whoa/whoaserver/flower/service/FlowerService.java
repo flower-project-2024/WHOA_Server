@@ -60,8 +60,9 @@ public class FlowerService {
         if (recommendAcceptFlower.isPresent())
             recommendFlower = recommendAcceptFlower.get();
         else {
+            int flowerCount = (int) flowerRepository.count();
             Random random = new Random((month * 31) + date);
-            int randomIndex = random.nextInt((int) flowerRepository.count());
+            int randomIndex = Math.abs(random.nextInt() % flowerCount);
             recommendFlower = flowerRepository.findAll().get(randomIndex);
         }
         return FlowerRecommendResponseDto.of(recommendFlower);
