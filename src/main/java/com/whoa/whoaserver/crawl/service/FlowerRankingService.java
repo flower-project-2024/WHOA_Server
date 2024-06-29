@@ -28,11 +28,10 @@ public class FlowerRankingService {
         FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
         Flower findFlower = flowerRepository.findByFlowerName(pumName);
         if (findFlower == null){
-            flowerRanking.updateIfNotPresent(pumName, avgAmt, date);
-            return new FlowerRankingResponseDto(null, flowerRanking.getFlowerRankingName(), null, flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), null, null);
+            flowerRanking.update(pumName, null, avgAmt, date, null, null);
         }
         else{
-            String findFlowerDescription = findFlower.getFlowerOneLineDescription();
+            String findFlowerLanguage = findFlower.getFlowerExpressions().get(0).getFlowerLanguage();
             String flowerImageUrl = null;
             for (FlowerImage flowerImage : findFlower.getFlowerImages()) {
                 flowerImageUrl = flowerImage.getImageUrl();
@@ -40,10 +39,9 @@ public class FlowerRankingService {
                     break;
             }
             Long findFlowerId = findFlower.getFlowerId();
-            flowerRanking.updateIfPresent(pumName, findFlowerDescription, avgAmt, date, flowerImageUrl, findFlowerId);
-            return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingDescription(), flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), flowerRanking.getFlowerImage(), flowerRanking.getFlowerId());
+            flowerRanking.update(pumName, findFlowerLanguage, avgAmt, date, flowerImageUrl, findFlowerId);
         }
-
+        return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingLanguage(), flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), flowerRanking.getFlowerImage(), flowerRanking.getFlowerId());
     }
 
     @Transactional
@@ -51,7 +49,7 @@ public class FlowerRankingService {
         List<FlowerRankingResponseDto> flowerRankings = new ArrayList<>();
         for (long i=0; i<3; i++){
             FlowerRanking flowerRankingOne = flowerRankingRepository.findByFlowerRankingId(i+1);
-            FlowerRankingResponseDto flowerRankingResponseDtoOne = new FlowerRankingResponseDto(flowerRankingOne.getFlowerRankingId(), flowerRankingOne.getFlowerRankingName(), flowerRankingOne.getFlowerRankingDescription(), flowerRankingOne.getFlowerRankingPrice(), flowerRankingOne.getFlowerRankingDate(), flowerRankingOne.getFlowerImage(), flowerRankingOne.getFlowerId());
+            FlowerRankingResponseDto flowerRankingResponseDtoOne = new FlowerRankingResponseDto(flowerRankingOne.getFlowerRankingId(), flowerRankingOne.getFlowerRankingName(), flowerRankingOne.getFlowerRankingLanguage(), flowerRankingOne.getFlowerRankingPrice(), flowerRankingOne.getFlowerRankingDate(), flowerRankingOne.getFlowerImage(), flowerRankingOne.getFlowerId());
             flowerRankings.add(flowerRankingResponseDtoOne);
         }
         return flowerRankings;

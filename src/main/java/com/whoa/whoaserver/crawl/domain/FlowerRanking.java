@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.crawl.domain;
 
+import com.whoa.whoaserver.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -21,7 +22,7 @@ public class FlowerRanking {
 
     private String flowerRankingName;
 
-    private String flowerRankingDescription;
+    private String flowerRankingLanguage;
 
     private String flowerRankingPrice;
 
@@ -35,33 +36,28 @@ public class FlowerRanking {
     @Builder(toBuilder = true)
     public FlowerRanking(
             final String flowerRankingName,
-            final String flowerRankingDescription,
+            final String flowerRankingLanguage,
             final String flowerRankingPrice,
             final String flowerRankingDate,
             final String flowerImage,
             final Long flowerId
     ) {
         this.flowerRankingName = flowerRankingName;
-        this.flowerRankingDescription = flowerRankingDescription;
+        this.flowerRankingLanguage = flowerRankingLanguage;
         this.flowerRankingPrice = flowerRankingPrice;
         this.flowerRankingDate = flowerRankingDate;
         this.flowerImage = flowerImage;
         this.flowerId = flowerId;
     }
 
-    public void updateIfPresent(String flowerRankingName, String flowerRankingDescription, String flowerRankingPrice, String flowerRankingDate, final String flowerImage,
+    public void update(String flowerRankingName, String flowerRankingLanguage, String flowerRankingPrice, String flowerRankingDate, final String flowerImage,
                        final Long flowerId){
         this.flowerRankingName = flowerRankingName;
-        this.flowerRankingDescription = flowerRankingDescription;
+        this.flowerRankingLanguage = flowerRankingLanguage;
         this.flowerRankingPrice = flowerRankingPrice;
         this.flowerRankingDate = flowerRankingDate;
         this.flowerImage = flowerImage;
         this.flowerId = flowerId;
     }
 
-    public void updateIfNotPresent(String flowerRankingName, String flowerRankingPrice, String flowerRankingDate){
-        this.flowerRankingName = flowerRankingName;
-        this.flowerRankingPrice = flowerRankingPrice;
-        this.flowerRankingDate = flowerRankingDate;
-    }
 }
