@@ -28,12 +28,12 @@ public class FlowerCrawlerScheduler {
         this.flowerRankingService = flowerRankingService;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정마다 실행
+    @Scheduled(cron = "0 0 0 * * ?")
     public void crawlFlowerData() {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = currentDate.format(formatter);
-        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey="+"129B8A317A674C9EA2115840003C8DEC"+"&baseDate=" + formattedDate + "&flowerGubn=1&dataType=json";
+        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey="+serviceKey+"&baseDate=" + formattedDate + "&flowerGubn=1&dataType=json";
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -65,13 +65,20 @@ public class FlowerCrawlerScheduler {
 
                     flowerDataList.sort(Comparator.comparingInt(data -> Integer.parseInt(data.get("avgAmt"))));
 
-                    for (int i = 0; i < Math.min(3, flowerDataList.size()); i++) {
+                    Set<String> savedNames = new HashSet<>();
+                    long flowerRankingId = 0;
+                    for (int i = 0; i < flowerDataList.size(); i++) {
                         Map<String, String> flowerData = flowerDataList.get(i);
-                        long flowerRankingId = i + 1;
                         String flowerName = flowerData.get("pumName");
-                        String flowerPrize = flowerData.get("avgAmt");
+                        String flowerPrice = flowerData.get("avgAmt");
 
-                        flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrize, formattedDate);
+                        if (!savedNames.contains(flowerName)) {
+                            savedNames.add(flowerName);
+                            flowerRankingId++;
+                            flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
+                        }
+                        if (flowerRankingId==3)
+                            break;
                     }
                 } else {
                     System.out.println("Failed to fetch flower data from the API.");
