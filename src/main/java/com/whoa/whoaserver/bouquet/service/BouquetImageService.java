@@ -91,9 +91,9 @@ public class BouquetImageService {
                 .key(fileName);
     }
 
-    public MultipartFileUploadedUrlResponse uploadMultipleFiles(UserContext userContext, List<String> imgPaths, MultipartFileUploadRequest request) {
+    public MultipartFileUploadedUrlResponse saveMultipleFilesUrl(UserContext userContext, List<String> imgPaths, MultipartFileUploadRequest request) {
 
-        Bouquet bouquetWithImg = bouquetRepository.findByMemberIdAndId(userContext.id(), request.bouquet_id())
+        Bouquet bouquetWithImg = bouquetRepository.findByBouquetIdWithMember(userContext.id(), request.bouquet_id())
                 .orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET));
 
         List<String> imgList = new ArrayList<>();

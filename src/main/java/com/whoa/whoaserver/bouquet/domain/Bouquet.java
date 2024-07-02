@@ -1,7 +1,7 @@
 package com.whoa.whoaserver.bouquet.domain;
 
-import com.whoa.whoaserver.bouquet.domain.type.colorTypeOption;
-import com.whoa.whoaserver.bouquet.domain.type.flowerSubstitutionTypeOption;
+import com.whoa.whoaserver.bouquet.domain.type.ColorTypeOption;
+import com.whoa.whoaserver.bouquet.domain.type.FlowerSubstitutionTypeOption;
 import com.whoa.whoaserver.global.common.BaseEntity;
 import com.whoa.whoaserver.member.domain.Member;
 
@@ -34,7 +34,7 @@ public class Bouquet extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private colorTypeOption colorType;
+    private ColorTypeOption colorType;
 
     @Column(nullable = false)
     private String colorName;
@@ -46,7 +46,7 @@ public class Bouquet extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private flowerSubstitutionTypeOption subsitutionType;
+    private FlowerSubstitutionTypeOption subsitutionType;
 
     private String wrappingType;
 
@@ -61,8 +61,8 @@ public class Bouquet extends BaseEntity {
     public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Bouquet(Member member, String bouquetName, String purpose, colorTypeOption colorType, String colorName, String pointColor,
-                   String flowerType, flowerSubstitutionTypeOption subsitutionType, String wrappingType, String priceRange, String requirement) {
+    public Bouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType, String colorName, String pointColor,
+                   String flowerType, FlowerSubstitutionTypeOption subsitutionType, String wrappingType, String priceRange, String requirement) {
         this.member = member;
         this.bouquetName = bouquetName;
         this.purpose = purpose;
@@ -80,11 +80,11 @@ public class Bouquet extends BaseEntity {
         Member member,
         String bouquetName,
         String purpose,
-        colorTypeOption colorType,
+        ColorTypeOption colorType,
         String colorName,
         String pointColor,
         String flowerType,
-        flowerSubstitutionTypeOption subsitutionType,
+        FlowerSubstitutionTypeOption subsitutionType,
         String wrappingType,
         String priceRange,
         String requirement) {
@@ -110,11 +110,11 @@ public class Bouquet extends BaseEntity {
     public void changeBouquet(
             String bouquetName,
             String purpose,
-            colorTypeOption colorType,
+            ColorTypeOption colorType,
             String colorName,
             String pointColor,
             String flowerType,
-            flowerSubstitutionTypeOption subsitutionType,
+            FlowerSubstitutionTypeOption subsitutionType,
             String wrappingType,
             String priceRange,
             String requirement) {

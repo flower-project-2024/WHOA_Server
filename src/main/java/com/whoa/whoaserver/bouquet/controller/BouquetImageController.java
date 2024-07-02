@@ -53,7 +53,7 @@ public class BouquetImageController {
         try {
             MultipartFileUploadRequest request = objectMapper.readValue(bouquetIdJson, MultipartFileUploadRequest.class);
             List<String> imgPaths = s3Config.upload(multipartFiles);
-            return ResponseEntity.ok(bouquetImageService.uploadMultipleFiles(userContext, imgPaths, request));
+            return ResponseEntity.ok(bouquetImageService.saveMultipleFilesUrl(userContext, imgPaths, request));
         } catch (JsonProcessingException e) {
             throw new WhoaException(INVALID_BOUQUET_ID_JSON_FORMAT);
         } catch (Exception e) {
