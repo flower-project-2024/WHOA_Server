@@ -6,6 +6,7 @@ import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record BouquetInfoDetailResponse(
         Long id,
@@ -17,6 +18,7 @@ public record BouquetInfoDetailResponse(
         String wrappingType,
         String priceRange,
         String requirement,
+        List<String> imgPaths,
         List<HashMap<String, String>> flowerInfoList // Flower Name, Flower Image, Flower language
 
 ) {
@@ -29,7 +31,10 @@ public record BouquetInfoDetailResponse(
 
             if (flowerExpression != null) {
                 flowerInfo.put("flowerName", flowerExpression.getFlower().getFlowerName());
-                flowerInfo.put("flowerImageUrl", flowerExpression.getFlowerImage().getImageUrl());
+
+                String flowerImageUrl = (flowerExpression.getFlowerImage() != null) ? flowerExpression.getFlowerImage().getImageUrl() : "";
+                flowerInfo.put("flowerImageUrl", flowerImageUrl);
+
                 flowerInfo.put("flowerLanguage", flowerExpression.getFlowerLanguage());
             }
             flowerInfoList.add(flowerInfo);
@@ -44,6 +49,7 @@ public record BouquetInfoDetailResponse(
                 bouquet.getWrappingType(),
                 bouquet.getPriceRange(),
                 bouquet.getRequirement(),
+                bouquet.getImages().stream().map(bouquetImage -> bouquetImage.getFileName()).collect(Collectors.toUnmodifiableList()),
                 flowerInfoList
         );
     }
