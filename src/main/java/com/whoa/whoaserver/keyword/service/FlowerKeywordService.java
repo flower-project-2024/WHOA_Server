@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +34,9 @@ public class FlowerKeywordService {
             flowerExpressionList = getExpressionsByKeyword(keywordId);
         }
 
-        return flowerExpressionList.stream()
+        Set<FlowerExpression> uniqueFlowerExpressions = flowerExpressionList.stream().collect(Collectors.toUnmodifiableSet());
+
+        return uniqueFlowerExpressions.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toUnmodifiableList());
     }
