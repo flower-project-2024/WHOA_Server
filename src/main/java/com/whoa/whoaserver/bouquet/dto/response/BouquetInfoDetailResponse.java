@@ -29,7 +29,10 @@ public record BouquetInfoDetailResponse(
 
             if (flowerExpression != null) {
                 flowerInfo.put("flowerName", flowerExpression.getFlower().getFlowerName());
-                flowerInfo.put("flowerImageUrl", flowerExpression.getFlowerImage().getImageUrl());
+
+                String flowerImageUrl = (flowerExpression.getFlowerImage() != null) ? flowerExpression.getFlowerImage().getImageUrl() : "";
+                flowerInfo.put("flowerImageUrl", flowerImageUrl);
+
                 flowerInfo.put("flowerLanguage", flowerExpression.getFlowerLanguage());
             }
             flowerInfoList.add(flowerInfo);
