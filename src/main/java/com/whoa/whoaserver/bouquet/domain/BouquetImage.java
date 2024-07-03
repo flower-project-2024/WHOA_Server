@@ -42,4 +42,8 @@ public class BouquetImage {
                 .bouquet(bouquet)
                 .build();
     }
+
+    public void update(String newFileName) {
+        this.fileName = newFileName;
+    }
 }

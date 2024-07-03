@@ -60,4 +60,29 @@ public class BouquetImageController {
             throw new WhoaException(IMAGE_UPLOAD_ERROR);
         }
     }
+
+    @PatchMapping("/multipart-files/{bouquetImageId}")
+    @Operation(summary = "이미지 수정", description = "기존 이미지를 새 이미지로 교체합니다.")
+    public ResponseEntity<MultipartFileUploadedUrlResponse> updateFile(
+            @DeviceUser UserContext userContext,
+            @PathVariable Long bouquetImageId,
+            @RequestPart("imgUrl") MultipartFile multipartFile) {
+        try {
+            String imgPath = s3Config.uploadSingleFile(multipartFile);
+            return ResponseEntity.ok(bouquetImageService.updateMultipleFilesUrl(userContext, bouquetImageId, imgPath));
+        } catch (Exception e) {
+            throw new WhoaException(IMAGE_UPLOAD_ERROR);
+        }
+    }
+
+    @DeleteMapping("/multipart-files/{bouquetImageId}")
+    @Operation(summary = "이미지 삭제", description = "기존 이미지를 삭제합니다.")
+    public ResponseEntity<Void> deleteFile(
+            @DeviceUser UserContext userContext,
+            @PathVariable Long bouquetImageId) {
+        bouquetImageService.deleteMultipleFilesUrl(userContext, bouquetImageId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
