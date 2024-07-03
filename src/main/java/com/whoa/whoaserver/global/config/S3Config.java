@@ -99,7 +99,7 @@ public class S3Config {
         return imgUrlList;
     }
 
-    private String uploadSingleFile(MultipartFile file) {
+    public String uploadSingleFile(MultipartFile file) {
         String fileName = createFileName(file.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.getSize());
@@ -144,4 +144,29 @@ public class S3Config {
 
         return "." + extension.toLowerCase();
     }
+
+    public void deleteSingleFile(String fileUrl) {
+        try {
+            String fileName = extractFileName(fileUrl);
+            amazonS3Client().deleteObject(s3Properties.bucket() + "/bouquet/image", fileName);
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+            throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+        } catch (SdkClientException e) {
+            e.printStackTrace();
+            throw new WhoaException(ExceptionCode.IMAGE_UPLOAD_ERROR);
+        }
+    }
+
+    private String extractFileName(String fileUrl) {
+        String bucketPath = "/bouquet/image/";
+        int startIndex = fileUrl.indexOf(bucketPath) + bucketPath.length();
+        int endIndex = fileUrl.lastIndexOf(".");
+        if (startIndex != -1 && endIndex != -1 && startIndex < endIndex) {
+            return fileUrl.substring(startIndex, endIndex);
+        } else {
+            throw new WhoaException(ExceptionCode.INVALID_IMAGE_URL);
+        }
+    }
+
 }

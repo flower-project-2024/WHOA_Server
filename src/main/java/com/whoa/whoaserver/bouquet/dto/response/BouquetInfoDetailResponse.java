@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.bouquet.dto.response;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
+import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public record BouquetInfoDetailResponse(
         String wrappingType,
         String priceRange,
         String requirement,
-        List<String> imgPaths,
+        List<HashMap<String, String>> imgInfoList,
         List<HashMap<String, String>> flowerInfoList // Flower Name, Flower Image, Flower language
 
 ) {
@@ -39,6 +40,17 @@ public record BouquetInfoDetailResponse(
             }
             flowerInfoList.add(flowerInfo);
         }
+
+        List<HashMap<String, String>> imgInfoList = bouquet.getImages().stream()
+                .map(bouquetImage -> {
+                    HashMap<String, String> imgHash = new HashMap<>();
+                    imgHash.put("bouquetImageId", bouquetImage.getId().toString());
+                    imgHash.put("bouquetImageUrl", bouquetImage.getFileName());
+                    return imgHash;
+                })
+                .collect(Collectors.toUnmodifiableList());
+
+
         return new BouquetInfoDetailResponse(
                 bouquet.getId(),
                 bouquet.getPurpose(),
@@ -49,7 +61,7 @@ public record BouquetInfoDetailResponse(
                 bouquet.getWrappingType(),
                 bouquet.getPriceRange(),
                 bouquet.getRequirement(),
-                bouquet.getImages().stream().map(bouquetImage -> bouquetImage.getFileName()).collect(Collectors.toUnmodifiableList()),
+                imgInfoList,
                 flowerInfoList
         );
     }

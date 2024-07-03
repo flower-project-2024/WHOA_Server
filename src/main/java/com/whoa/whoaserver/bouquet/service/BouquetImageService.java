@@ -11,6 +11,7 @@ import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.dto.request.MultipartFileUploadRequest;
 import com.whoa.whoaserver.bouquet.dto.response.MultipartFileUploadedUrlResponse;
 import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
+import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,7 @@ public class BouquetImageService {
     private final BouquetImageRepository bouquetImageRepository;
     private final S3Properties s3Properties;
     private final S3Presigner s3Presigner;
+    private final S3Config s3Config;
 
     public static final String DELIMITER = ".";
 
@@ -104,6 +106,38 @@ public class BouquetImageService {
         }
 
         return new MultipartFileUploadedUrlResponse(imgList);
+    }
+
+    @Transactional
+    public MultipartFileUploadedUrlResponse updateMultipleFilesUrl(UserContext userContext, Long bouquetImageId, String imgPath) {
+        Bouquet existingBouquet = bouquetImageRepository.findById(bouquetImageId).get().getBouquet();
+        Long memberId = existingBouquet.getMember().getId();
+
+        if (memberId != userContext.id()) {
+            throw new WhoaException(ExceptionCode.MISMATCH_MEMBER_AND_IMAGE);
+        }
+
+        BouquetImage bouquetImage = bouquetImageRepository.findById(bouquetImageId)
+                .orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET_IMAGE));
+
+
+        s3Config.deleteSingleFile(bouquetImage.getFileName());
+
+        bouquetImage.update(imgPath);
+
+        bouquetImageRepository.save(bouquetImage);
+
+        return new MultipartFileUploadedUrlResponse(List.of(bouquetImage.getFileName()));
+    }
+
+    @Transactional
+    public void deleteMultipleFilesUrl(UserContext userContext, Long bouquetImageId) {
+        BouquetImage bouquetImage = bouquetImageRepository.findById(bouquetImageId)
+                .orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET_IMAGE));
+
+        s3Config.deleteSingleFile(bouquetImage.getFileName());
+
+        bouquetImageRepository.delete(bouquetImage);
     }
 
 
