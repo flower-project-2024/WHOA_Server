@@ -2,6 +2,7 @@ package com.whoa.whoaserver.bouquet.service;
 
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
+import com.whoa.whoaserver.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.flower.utils.FlowerUtils;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.flowerExpression.repository.FlowerExpressionRepository;
@@ -31,6 +32,7 @@ public class BouquetCustomizingService {
     private final MemberRepository memberRepository;
     private final BouquetRepository bouquetRepository;
     private final FlowerExpressionRepository flowerExpressionRepository;
+	private final FlowerRepository flowerRepository;
 
     public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
@@ -59,8 +61,8 @@ public class BouquetCustomizingService {
             request.pointColor(),
             request.flowerType(),
             request.substitutionType(),
-            request.wrappingType(), 
-            request.price(), 
+            request.wrappingType(),
+            request.price(),
             request.requirement()
         );
     }
@@ -114,9 +116,7 @@ public class BouquetCustomizingService {
                         bouquet.getId(),
                         bouquet.getBouquetName(),
                         bouquet.getCreatedAt().toString().substring(0, 10),
-                        bouquet.getImages().stream()
-                            .map(bouquetImage -> bouquetImage.getFileName())
-                        .collect(Collectors.toUnmodifiableList())
+						getOneSelectedFlowerFromBouquet(bouquet)
                         )
                 )
                 .collect(Collectors.toUnmodifiableList());
@@ -147,6 +147,15 @@ public class BouquetCustomizingService {
                 .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
         return targetBouquet;
     }
+
+	private List<String> getOneSelectedFlowerFromBouquet(Bouquet eachBouquet) {
+		List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(eachBouquet.getFlowerType());
+		Long selectedFlowerExpressionId = Long.parseLong(flowerTypes.get(0));
+
+		FlowerExpression selectedFlowerExpression = flowerExpressionRepository.findByFlowerExpressionId(selectedFlowerExpressionId);
+
+		return List.of(selectedFlowerExpression.getFlowerImage().getImageUrl());
+	}
 
 
 }
