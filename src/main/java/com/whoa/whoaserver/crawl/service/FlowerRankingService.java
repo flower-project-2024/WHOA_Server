@@ -47,7 +47,7 @@ public class FlowerRankingService {
     @Transactional
     public List<FlowerRankingResponseDto> getFlowerRanking(){
         List<FlowerRankingResponseDto> flowerRankings = new ArrayList<>();
-        for (long i=0; i<3; i++){
+        for (long i=0; i<5; i++){
             FlowerRanking flowerRankingOne = flowerRankingRepository.findByFlowerRankingId(i+1);
             FlowerRankingResponseDto flowerRankingResponseDtoOne = new FlowerRankingResponseDto(flowerRankingOne.getFlowerRankingId(), flowerRankingOne.getFlowerRankingName(), flowerRankingOne.getFlowerRankingLanguage(), flowerRankingOne.getFlowerRankingPrice(), flowerRankingOne.getFlowerRankingDate(), flowerRankingOne.getFlowerImage(), flowerRankingOne.getFlowerId());
             flowerRankings.add(flowerRankingResponseDtoOne);
