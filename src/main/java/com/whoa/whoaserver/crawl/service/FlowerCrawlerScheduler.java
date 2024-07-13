@@ -47,7 +47,7 @@ public class FlowerCrawlerScheduler {
                 String resultMsg = responseNode.path("resultMsg").asText();
                 int numOfRows = responseNode.path("numOfRows").asInt();
 
-                if ("OK".equals(resultMsg) && numOfRows >= 3) {
+                if ("OK".equals(resultMsg) && numOfRows >= 5) {
                     JsonNode itemsNode = responseNode.path("items");
                     Iterator<JsonNode> items = itemsNode.elements();
 
@@ -77,7 +77,7 @@ public class FlowerCrawlerScheduler {
                             flowerRankingId++;
                             flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
                         }
-                        if (flowerRankingId==3)
+                        if (flowerRankingId==5)
                             break;
                     }
                 } else {
