@@ -1,6 +1,10 @@
 package com.whoa.whoaserver.bouquet.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
+import com.whoa.whoaserver.global.exception.WhoaException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 
 @Tag(name = "Bouquet Customizing", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청해주세요.")
 @RestController
@@ -23,13 +32,25 @@ import lombok.RequiredArgsConstructor;
 public class BouquetCustomizingController {
 
     private final BouquetCustomizingService bouquetCustomizingService;
+	private final ObjectMapper objectMapper;
 
-    @PostMapping("/customizing")
+    @PostMapping(value ="/customizing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "꽃다발 제작", description = "꽃다발 주문을 등록합니다.")
-    public ResponseEntity<BouquetCustomizingResponse> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request) { 
-        Long memberId = userContext.id();
-        BouquetCustomizingResponse response = bouquetCustomizingService.registerBouquet(request, memberId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<BouquetCustomizingResponse> registerBouquet(@DeviceUser UserContext userContext,
+																	  @Valid @RequestPart("request") String bouquetRequest,
+																	  @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
+
+		try {
+			Long memberId = userContext.id();
+			BouquetCustomizingRequest request = objectMapper.readValue(bouquetRequest, BouquetCustomizingRequest.class);
+			BouquetCustomizingResponse response = bouquetCustomizingService.registerBouquet(request, memberId, multipartFiles);
+			return ResponseEntity.ok(response);
+		} catch (JsonProcessingException e) {
+			throw new WhoaException(INVALID_BOUQUET_REQUEST_JSON_FORMAT);
+		} catch (Exception e) {
+			throw new WhoaException(IMAGE_UPLOAD_ERROR);
+		}
+
     }
 
     @PutMapping("/customizing/{bouquetId}")

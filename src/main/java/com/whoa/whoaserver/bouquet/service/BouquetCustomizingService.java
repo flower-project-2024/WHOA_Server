@@ -1,11 +1,14 @@
 package com.whoa.whoaserver.bouquet.service;
 
+import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
-import com.whoa.whoaserver.flower.repository.FlowerRepository;
+import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.flower.utils.FlowerUtils;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.flowerExpression.repository.FlowerExpressionRepository;
+import com.whoa.whoaserver.global.config.S3Config;
+import com.whoa.whoaserver.global.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
@@ -18,6 +21,7 @@ import com.whoa.whoaserver.member.domain.MemberRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,10 +35,11 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 public class BouquetCustomizingService {
     private final MemberRepository memberRepository;
     private final BouquetRepository bouquetRepository;
+	private final BouquetImageRepository bouquetImageRepository;
     private final FlowerExpressionRepository flowerExpressionRepository;
-	private final FlowerRepository flowerRepository;
+	private final S3Config s3Config;
 
-    public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
+    public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId, List<MultipartFile> multipartFiles) {
 
         Member member = getMemberByMemberId(memberId);
 
@@ -44,11 +49,14 @@ public class BouquetCustomizingService {
             throw new WhoaException(DUPLICATED_BOUQUET_NAME);
         }
 
-        Bouquet bouquet = createBouquetEntity(request, member);
+        Bouquet newBouquet = createBouquetEntity(request, member);
 
-        bouquetRepository.save(bouquet);
+        bouquetRepository.save(newBouquet);
 
-        return BouquetCustomizingResponse.of(bouquet);
+		List<String> imgPaths = s3Config.upload(multipartFiles);
+		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, newBouquet.getId());
+
+        return BouquetCustomizingResponse.of(newBouquet, imgPaths);
     }
 
     private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
@@ -66,6 +74,17 @@ public class BouquetCustomizingService {
             request.requirement()
         );
     }
+
+	private void saveMultipleFilesUrlWithBouquetAtOnce(Long memberId, List<String> imgPaths, Long bouquetId) {
+
+		Bouquet bouquetWithImg = bouquetRepository.findByBouquetIdWithMember(memberId, bouquetId)
+			.orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET));
+
+		for (String imgUrl : imgPaths) {
+			BouquetImage bouquetImage = BouquetImage.create(bouquetWithImg, imgUrl);
+			bouquetImageRepository.save(bouquetImage);
+		}
+	}
 
     public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId) {
         Member member = getMemberByMemberId(memberId);
@@ -91,7 +110,10 @@ public class BouquetCustomizingService {
 
         bouquetRepository.save(existingBouquet);
 
-        return BouquetCustomizingResponse.of(existingBouquet);
+		List<String> imgUrl = existingBouquet.getImages().stream().map(BouquetImage::getFileName)
+			.collect(Collectors.toUnmodifiableList());
+
+        return BouquetCustomizingResponse.of(existingBouquet, imgUrl);
     }
 
     public void deleteBouquet(Long memberId, Long bouquetId) {
