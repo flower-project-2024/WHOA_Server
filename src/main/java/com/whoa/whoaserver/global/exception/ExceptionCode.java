@@ -22,6 +22,7 @@ public enum ExceptionCode {
     NULL_INPUT_CONTENT(HttpStatus.CONFLICT, "이미지 파일이 null로 인식됩니다."),
     IMAGE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
     INVALID_BOUQUET_ID_JSON_FORMAT(HttpStatus.BAD_REQUEST, "이미지 업로드 시 bouquetId를 key로 하는 value가 json(bouquet_id : Long) 형식이어야 합니다."),
+	INVALID_BOUQUET_REQUEST_JSON_FORMAT(HttpStatus.BAD_REQUEST, "이미지 업로드 시 request를 key로 하는 value가 json string 형식이어야 합니다."),
     MISMATCH_MEMBER_AND_IMAGE(HttpStatus.BAD_REQUEST, "해당 유저가 수정하려는 이미지를 업로드한 내역이 없습니다. 유저가 업로드한 이미지 아이디로 요청해주세요."),
     NOT_REGISTER_BOUQUET_IMAGE(HttpStatus.NOT_FOUND, "업로드 된 적이 없는 이미지입니다."),
     INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, "올바른 S3 이미지 경로 URL 형식이 아닙니다.");
