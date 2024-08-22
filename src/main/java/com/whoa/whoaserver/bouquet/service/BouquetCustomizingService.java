@@ -53,8 +53,7 @@ public class BouquetCustomizingService {
 
         bouquetRepository.save(newBouquet);
 
-		List<String> imgPaths = s3Config.upload(multipartFiles);
-		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, newBouquet.getId());
+		List<String> imgPaths = handleMultipartFiles(memberId, newBouquet, multipartFiles);
 
         return BouquetCustomizingResponse.of(newBouquet, imgPaths);
     }
@@ -75,6 +74,13 @@ public class BouquetCustomizingService {
         );
     }
 
+	private List<String> handleMultipartFiles(Long memberId, Bouquet bouquet, List<MultipartFile> multipartFiles) {
+		List<String> imgPaths = s3Config.upload(multipartFiles);
+		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, bouquet.getId());
+
+		return imgPaths;
+	}
+
 	private void saveMultipleFilesUrlWithBouquetAtOnce(Long memberId, List<String> imgPaths, Long bouquetId) {
 
 		Bouquet bouquetWithImg = bouquetRepository.findByBouquetIdWithMember(memberId, bouquetId)
@@ -86,7 +92,7 @@ public class BouquetCustomizingService {
 		}
 	}
 
-    public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId) {
+    public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId, List<MultipartFile> multipartFiles) {
         Member member = getMemberByMemberId(memberId);
 
         Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
@@ -110,10 +116,12 @@ public class BouquetCustomizingService {
 
         bouquetRepository.save(existingBouquet);
 
-		List<String> imgUrl = existingBouquet.getImages().stream().map(BouquetImage::getFileName)
-			.collect(Collectors.toUnmodifiableList());
+		List<BouquetImage> existingBouquetImages = bouquetImageRepository.findAllByBouquet(existingBouquet);
+		bouquetImageRepository.deleteAll(existingBouquetImages);
 
-        return BouquetCustomizingResponse.of(existingBouquet, imgUrl);
+		List<String> imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
+
+        return BouquetCustomizingResponse.of(existingBouquet, imgPaths);
     }
 
     public void deleteBouquet(Long memberId, Long bouquetId) {
