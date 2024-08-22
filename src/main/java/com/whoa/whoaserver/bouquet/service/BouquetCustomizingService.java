@@ -53,8 +53,7 @@ public class BouquetCustomizingService {
 
         bouquetRepository.save(newBouquet);
 
-		List<String> imgPaths = s3Config.upload(multipartFiles);
-		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, newBouquet.getId());
+		List<String> imgPaths = handleMultipartFiles(memberId, newBouquet, multipartFiles);
 
         return BouquetCustomizingResponse.of(newBouquet, imgPaths);
     }
@@ -74,6 +73,13 @@ public class BouquetCustomizingService {
             request.requirement()
         );
     }
+
+	private List<String> handleMultipartFiles(Long memberId, Bouquet bouquet, List<MultipartFile> multipartFiles) {
+		List<String> imgPaths = s3Config.upload(multipartFiles);
+		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, bouquet.getId());
+
+		return imgPaths;
+	}
 
 	private void saveMultipleFilesUrlWithBouquetAtOnce(Long memberId, List<String> imgPaths, Long bouquetId) {
 
@@ -113,13 +119,9 @@ public class BouquetCustomizingService {
 		List<BouquetImage> existingBouquetImages = bouquetImageRepository.findAllByBouquet(existingBouquet);
 		bouquetImageRepository.deleteAll(existingBouquetImages);
 
-		List<String> imgPaths = s3Config.upload(multipartFiles);
-		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, existingBouquet.getId());
+		List<String> imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
 
-		List<String> imgUrl = existingBouquet.getImages().stream().map(BouquetImage::getFileName)
-			.collect(Collectors.toUnmodifiableList());
-
-        return BouquetCustomizingResponse.of(existingBouquet, imgUrl);
+        return BouquetCustomizingResponse.of(existingBouquet, imgPaths);
     }
 
     public void deleteBouquet(Long memberId, Long bouquetId) {
