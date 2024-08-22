@@ -35,7 +35,7 @@ public class BouquetCustomizingController {
 	private final ObjectMapper objectMapper;
 
     @PostMapping(value ="/customizing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "꽃다발 제작", description = "꽃다발 주문을 등록합니다.")
+    @Operation(summary = "꽃다발 제작", description = "꽃다발 주문과 이미지를 등록합니다.")
     public ResponseEntity<BouquetCustomizingResponse> registerBouquet(@DeviceUser UserContext userContext,
 																	  @Valid @RequestPart("request") String bouquetRequest,
 																	  @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
@@ -54,11 +54,22 @@ public class BouquetCustomizingController {
     }
 
     @PutMapping("/customizing/{bouquetId}")
-    @Operation(summary = "꽃다발 수정", description = "유저의 꽃다발 주문서를 수정합니다.")
-    public ResponseEntity<BouquetCustomizingResponse> updateBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request, @PathVariable("bouquetId") final Long bouquetId) {
-        Long memberId = userContext.id();
-        BouquetCustomizingResponse response = bouquetCustomizingService.updateBouquet(request, memberId, bouquetId);
-        return ResponseEntity.ok(response);
+    @Operation(summary = "꽃다발 수정", description = "유저의 꽃다발 주문서와 이미지를 수정합니다.")
+    public ResponseEntity<BouquetCustomizingResponse> updateBouquet(@DeviceUser UserContext userContext,
+																	@Valid @RequestPart("request") String bouquetRequest,
+																	@RequestPart("imgUrl") List<MultipartFile> multipartFiles,
+																	@PathVariable("bouquetId") final Long bouquetId) {
+
+		try {
+			Long memberId = userContext.id();
+			BouquetCustomizingRequest request = objectMapper.readValue(bouquetRequest, BouquetCustomizingRequest.class);
+			BouquetCustomizingResponse response = bouquetCustomizingService.updateBouquet(request, memberId, bouquetId, multipartFiles);
+			return ResponseEntity.ok(response);
+		} catch (JsonProcessingException e) {
+			throw new WhoaException(INVALID_BOUQUET_REQUEST_JSON_FORMAT);
+		} catch (Exception e) {
+			throw new WhoaException(IMAGE_UPLOAD_ERROR);
+		}
     }
 
     @DeleteMapping("/{bouquetId}")

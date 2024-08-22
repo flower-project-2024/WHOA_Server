@@ -86,7 +86,7 @@ public class BouquetCustomizingService {
 		}
 	}
 
-    public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId) {
+    public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId, List<MultipartFile> multipartFiles) {
         Member member = getMemberByMemberId(memberId);
 
         Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
@@ -109,6 +109,12 @@ public class BouquetCustomizingService {
         );
 
         bouquetRepository.save(existingBouquet);
+
+		List<BouquetImage> existingBouquetImages = bouquetImageRepository.findAllByBouquet(existingBouquet);
+		bouquetImageRepository.deleteAll(existingBouquetImages);
+
+		List<String> imgPaths = s3Config.upload(multipartFiles);
+		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, existingBouquet.getId());
 
 		List<String> imgUrl = existingBouquet.getImages().stream().map(BouquetImage::getFileName)
 			.collect(Collectors.toUnmodifiableList());
