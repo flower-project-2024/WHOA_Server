@@ -11,7 +11,7 @@ on:
  push:
    branches:
      - main
-     - infra
+     - chore/actuator
  pull_request:
    branches: [ "main" ]
 
@@ -39,6 +39,7 @@ jobs:
         touch ./application-rds.yml
         touch ./application-s3.yml
         touch ./application-crawl.yml
+        touch ./application-actuator.yml
         
         echo "$APPLICATION" > ./application.yml
         echo "$APPLICATION_PROD" > ./application-prod.yml
@@ -46,6 +47,7 @@ jobs:
         echo "$APPLICATION_RDS" > ./application-rds.yml
         echo "$APPLICATION_S3" > ./application-s3.yml
         echo "$APPLICATION_CRAWL" > ./application-crawl.yml
+        echo "$APPLICATION_ACTUATOR" > ./application-actuator.yml
 
       env:
         APPLICATION: ${{ secrets.APPLICATION }}
@@ -54,6 +56,7 @@ jobs:
         APPLICATION_RDS: ${{ secrets.APPLICATION_RDS }}
         APPLICATION_S3: ${{ secrets.APPLICATION_S3 }}
         APPLICATION_CRAWL: ${{ secrets.APPLICATION_CRAWL }}
+        APPLICATION_ACTUATOR: ${{ secrets.APPLICATION_ACTUATOR }}
       shell: bash
 
     - name: gradlew에 실행 권한 부여
