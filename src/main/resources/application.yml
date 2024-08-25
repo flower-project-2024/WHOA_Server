@@ -5,6 +5,7 @@ spring:
       prod: "prod, rds, s3, crawl"
     include:
       - credentials
+      - actuator
 
   jpa:
     hibernate:
