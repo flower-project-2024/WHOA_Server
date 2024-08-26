@@ -8,6 +8,7 @@ import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import com.whoa.whoaserver.mapping.repository.FlowerExpressionKeywordRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class FlowerKeywordService {
     private static final int TOTAL_FLOWER_INFORMATION = 0;
@@ -25,7 +26,8 @@ public class FlowerKeywordService {
     private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
     private final FlowerImageRepository flowerImageRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
+	@Cacheable(cacheNames = "keyword", key = "#keywordId")
     public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
         List<FlowerExpression> flowerExpressionList;
         if (keywordId == TOTAL_FLOWER_INFORMATION) {
