@@ -17,7 +17,7 @@ import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponse;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.member.domain.Member;
-import com.whoa.whoaserver.member.domain.MemberRepository;
+import com.whoa.whoaserver.member.repository.MemberRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
