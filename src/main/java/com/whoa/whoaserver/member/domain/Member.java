@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.member.domain;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
+import com.whoa.whoaserver.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.util.List;
 @Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +26,14 @@ public class Member {
     @Column(nullable = false)
     private String deviceId;
     private boolean registered;
-    private boolean deleted;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bouquet> bouquet = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Member(String deviceId, boolean registered, boolean deleted) {
+    private Member(String deviceId, boolean registered) {
         this.deviceId = deviceId;
         this.registered = registered;
-        this.deleted = deleted;
     }
 
     public static Member createInitMemberStatus(String deviceId) {
@@ -42,9 +41,5 @@ public class Member {
                 .registered(true)
                 .deviceId(deviceId)
                 .build();
-    }
-
-    public Long getId() {
-        return id;
     }
 }
