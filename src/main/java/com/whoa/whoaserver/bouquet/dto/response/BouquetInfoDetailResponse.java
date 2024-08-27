@@ -1,7 +1,6 @@
 package com.whoa.whoaserver.bouquet.dto.response;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
-import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 
 import java.util.ArrayList;
