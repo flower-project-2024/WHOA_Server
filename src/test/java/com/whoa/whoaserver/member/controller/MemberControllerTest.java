@@ -36,8 +36,8 @@ public class MemberControllerTest {
 
 	@Nested
 	class 디바이스등록 {
-		private static String TEST_DEVICE_ID = "B353GF4G-E1CB-58B0-0B77-9E47E6G9D362";
-		private static String DUPLICATED_DEVICE_ID = "8834046F-06E3-4BF5-AEEA-E3AB5BF6F383";
+		private static final String TEST_DEVICE_ID = "B353GF4G-E1CB-58B0-0B77-9E47E6G9D362";
+		private static final String DUPLICATED_DEVICE_ID = "8834046F-06E3-4BF5-AEEA-E3AB5BF6F383";
 
 		@Test
 		void 디바이스_등록_요청() throws Exception {

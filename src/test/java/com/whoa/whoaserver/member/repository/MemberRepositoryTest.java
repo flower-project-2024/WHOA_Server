@@ -20,7 +20,7 @@ public class MemberRepositoryTest {
 	@Autowired
 	private MemberRepository memberRepository;
 
-	private static String TEST_DEVICE_ID = "B353GF4G-E1CB-58B0-0B77-9E47E6G9D362";
+	private static final String TEST_DEVICE_ID = "B353GF4G-E1CB-58B0-0B77-9E47E6G9D362";
 
 	@Test
 	void 디바이스_등록에_따라_멤버를_저장() {

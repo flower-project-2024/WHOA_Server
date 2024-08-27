@@ -28,7 +28,7 @@ public class MemberServiceTest {
 	@Nested
 	@DisplayName("디바이스 기기 등록 테스트")
 	class RegisterTest {
-		private static String TEST_DEVICE_ID = "C464HG5H-F2DC-69C1-1C88-0F58F7H0E473";
+		private static final String TEST_DEVICE_ID = "C464HG5H-F2DC-69C1-1C88-0F58F7H0E473";
 		private MemberRegisterRequest request;
 
 		@BeforeEach
