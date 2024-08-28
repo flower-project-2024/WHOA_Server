@@ -32,6 +32,14 @@ public class BouquetCustomizingController {
 		return ResponseEntity.ok(response);
 	}
 
+	@PutMapping("/customizing/{bouquetId}")
+	@Operation(summary = "꽃다발 수정", description = "유저의 꽃다발 주문서를 수정합니다.")
+	public ResponseEntity<BouquetCustomizingResponse> updateBouquet(@DeviceUser UserContext userContext, @Valid @RequestBody BouquetCustomizingRequest request, @PathVariable("bouquetId") final Long bouquetId) {
+		Long memberId = userContext.id();
+		BouquetCustomizingResponse response = bouquetCustomizingService.updateBouquet(request, memberId, bouquetId);
+		return ResponseEntity.ok(response);
+	}
+
     @DeleteMapping("/{bouquetId}")
     @Operation(summary = "꽃다발 주문서 단건 삭제", description = "유저의 꽃다발 주문서 하나를 삭제합니다.")
     public ResponseEntity<Void> deleteBouquet(@DeviceUser UserContext userContext, @PathVariable("bouquetId") final Long bouquetId) {
