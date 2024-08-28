@@ -11,17 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.member.domain.Member;
-import com.whoa.whoaserver.member.domain.MemberRepository;
+import com.whoa.whoaserver.member.repository.MemberRepository;
 import com.whoa.whoaserver.member.dto.request.MemberRegisterRequest;
 import com.whoa.whoaserver.member.dto.response.MemberInfo;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    @Transactional
     public MemberInfo register(MemberRegisterRequest request) {
 
         Optional<Member> optionalMember = memberRepository.findByDeviceId(request.deviceId());
@@ -33,7 +32,7 @@ public class MemberService {
         Member newMember = registerMember(request.deviceId());
 
         memberRepository.save(newMember);
-        
+
         return MemberInfo.of(newMember);
     }
 

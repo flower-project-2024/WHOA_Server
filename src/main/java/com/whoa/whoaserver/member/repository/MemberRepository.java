@@ -1,5 +1,6 @@
-package com.whoa.whoaserver.member.domain;
+package com.whoa.whoaserver.member.repository;
 
+import com.whoa.whoaserver.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

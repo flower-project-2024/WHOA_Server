@@ -30,7 +30,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bouquet> bouquet = new ArrayList<>();
 
-    @Builder(access = AccessLevel.PRIVATE)
+    @Builder
     private Member(String deviceId, boolean registered) {
         this.deviceId = deviceId;
         this.registered = registered;
