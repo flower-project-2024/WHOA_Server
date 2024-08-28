@@ -2,13 +2,10 @@ package com.whoa.whoaserver.bouquet.dto.response;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
 
-import java.util.List;
-
 public record BouquetCustomizingResponse(
-    Long bouquetId,
-	List<String> imgList
+	Long bouquetId
 ) {
-    public static BouquetCustomizingResponse of(Bouquet bouquet, List<String> imgList) {
-        return new BouquetCustomizingResponse(bouquet.getId(), imgList);
-    }
- }
+	public static BouquetCustomizingResponse of(Bouquet bouquet) {
+		return new BouquetCustomizingResponse(bouquet.getId());
+	}
+}

@@ -35,94 +35,65 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 public class BouquetCustomizingService {
     private final MemberRepository memberRepository;
     private final BouquetRepository bouquetRepository;
-	private final BouquetImageRepository bouquetImageRepository;
     private final FlowerExpressionRepository flowerExpressionRepository;
-	private final S3Config s3Config;
 
-    public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId, List<MultipartFile> multipartFiles) {
+	public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
-        Member member = getMemberByMemberId(memberId);
+		Member member = getMemberByMemberId(memberId);
 
-        Optional<Bouquet> existingBouquetOptional = bouquetRepository.findByMemberIdAndBouquetName(memberId, request.bouquetName());
-
-        if (existingBouquetOptional.isPresent()) {
-            throw new WhoaException(DUPLICATED_BOUQUET_NAME);
-        }
-
-        Bouquet newBouquet = createBouquetEntity(request, member);
-
-        bouquetRepository.save(newBouquet);
-
-		List<String> imgPaths = handleMultipartFiles(memberId, newBouquet, multipartFiles);
-
-        return BouquetCustomizingResponse.of(newBouquet, imgPaths);
-    }
-
-    private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
-        return Bouquet.orderBouquet(
-            member,
-            request.bouquetName(),
-            request.purpose(),
-            request.colorType(),
-            request.colorName(),
-            request.pointColor(),
-            request.flowerType(),
-            request.substitutionType(),
-            request.wrappingType(),
-            request.price(),
-            request.requirement()
-        );
-    }
-
-	private List<String> handleMultipartFiles(Long memberId, Bouquet bouquet, List<MultipartFile> multipartFiles) {
-		List<String> imgPaths = s3Config.upload(multipartFiles);
-		saveMultipleFilesUrlWithBouquetAtOnce(memberId, imgPaths, bouquet.getId());
-
-		return imgPaths;
-	}
-
-	private void saveMultipleFilesUrlWithBouquetAtOnce(Long memberId, List<String> imgPaths, Long bouquetId) {
-
-		Bouquet bouquetWithImg = bouquetRepository.findByBouquetIdWithMember(memberId, bouquetId)
-			.orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET));
-
-		for (String imgUrl : imgPaths) {
-			BouquetImage bouquetImage = BouquetImage.create(bouquetWithImg, imgUrl);
-			bouquetImageRepository.save(bouquetImage);
+		Optional<Bouquet> existingBouquetOptional = bouquetRepository.findByMemberIdAndBouquetName(memberId, request.bouquetName());
+		if (existingBouquetOptional.isPresent()) {
+			throw new WhoaException(DUPLICATED_BOUQUET_NAME);
 		}
+
+		Bouquet bouquet = createBouquetEntity(request, member);
+
+		bouquetRepository.save(bouquet);
+
+		return BouquetCustomizingResponse.of(bouquet);
 	}
 
-    public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId, List<MultipartFile> multipartFiles) {
-        Member member = getMemberByMemberId(memberId);
+	private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
+		return Bouquet.orderBouquet(
+			member,
+			request.bouquetName(),
+			request.purpose(),
+			request.colorType(),
+			request.colorName(),
+			request.pointColor(),
+			request.flowerType(),
+			request.substitutionType(),
+			request.wrappingType(),
+			request.price(),
+			request.requirement()
+		);
+	}
 
-        Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
-        if (!existingBouquet.getMember().equals(member)) {
-            throw new WhoaException(NOT_MEMBER_BOUQUET);
-        }
+	public BouquetCustomizingResponse updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId) {
+		Member member = getMemberByMemberId(memberId);
 
-        existingBouquet.changeBouquet(
-                request.bouquetName(),
-                request.purpose(),
-                request.colorType(),
-                request.colorName(),
-                request.pointColor(),
-                request.flowerType(),
-                request.substitutionType(),
-                request.wrappingType(),
-                request.price(),
-                request.requirement()
-        );
+		Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
+		if (!existingBouquet.getMember().equals(member)) {
+			throw new WhoaException(NOT_MEMBER_BOUQUET);
+		}
+		existingBouquet.changeBouquet(
+			request.bouquetName(),
+			request.purpose(),
+			request.colorType(),
+			request.colorName(),
+			request.pointColor(),
+			request.flowerType(),
+			request.substitutionType(),
+			request.wrappingType(),
+			request.price(),
+			request.requirement()
+		);
 
-        bouquetRepository.save(existingBouquet);
+		bouquetRepository.save(existingBouquet);
 
-		List<BouquetImage> existingBouquetImages = bouquetImageRepository.findAllByBouquet(existingBouquet);
-		bouquetImageRepository.deleteAll(existingBouquetImages);
-
-		List<String> imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
-
-        return BouquetCustomizingResponse.of(existingBouquet, imgPaths);
-    }
+		return BouquetCustomizingResponse.of(existingBouquet);
+	}
 
     public void deleteBouquet(Long memberId, Long bouquetId) {
         Member member = getMemberByMemberId(memberId);
@@ -166,13 +137,13 @@ public class BouquetCustomizingService {
         return BouquetInfoDetailResponse.of(bouquetToRead, flowerExpressionList);
     }
 
-    private Member getMemberByMemberId(Long memberId) {
+    public Member getMemberByMemberId(Long memberId) {
         Member targetMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new WhoaException(INVALID_MEMBER));
         return targetMember;
     }
 
-    private Bouquet getBouquetByMemberIdAndBouquetId(Long memberId, Long bouquetId) {
+    public Bouquet getBouquetByMemberIdAndBouquetId(Long memberId, Long bouquetId) {
         Bouquet targetBouquet = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
                 .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
         return targetBouquet;
