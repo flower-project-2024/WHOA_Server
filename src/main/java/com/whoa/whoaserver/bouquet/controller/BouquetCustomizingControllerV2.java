@@ -31,11 +31,9 @@ public class BouquetCustomizingControllerV2 {
 	private final BouquetCustomizingServiceV2 bouquetCustomizingService;
 	private final ObjectMapper objectMapper;
 
-	@PostMapping(value ="/customizing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/customizing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "꽃다발 제작", description = "꽃다발 주문과 이미지를 등록합니다.")
-	public ResponseEntity<BouquetCustomizingResponseV2> registerBouquet(@DeviceUser UserContext userContext,
-																	  @Valid @RequestPart("request") String bouquetRequest,
-																	  @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
+	public ResponseEntity<BouquetCustomizingResponseV2> registerBouquet(@DeviceUser UserContext userContext, @Valid @RequestPart("request") String bouquetRequest, @RequestPart("imgUrl") List<MultipartFile> multipartFiles) {
 
 		try {
 			Long memberId = userContext.id();
@@ -52,10 +50,7 @@ public class BouquetCustomizingControllerV2 {
 
 	@PutMapping("/customizing/{bouquetId}")
 	@Operation(summary = "꽃다발 수정", description = "유저의 꽃다발 주문서와 이미지를 수정합니다.")
-	public ResponseEntity<BouquetCustomizingResponseV2> updateBouquet(@DeviceUser UserContext userContext,
-																	  @Valid @RequestPart("request") String bouquetRequest,
-																	  @RequestPart("imgUrl") List<MultipartFile> multipartFiles,
-																	  @PathVariable("bouquetId") final Long bouquetId) {
+	public ResponseEntity<BouquetCustomizingResponseV2> updateBouquet(@DeviceUser UserContext userContext, @Valid @RequestPart("request") String bouquetRequest, @RequestPart("imgUrl") List<MultipartFile> multipartFiles, @PathVariable("bouquetId") final Long bouquetId) {
 
 		try {
 			Long memberId = userContext.id();
