@@ -2,9 +2,11 @@ package com.whoa.whoaserver.keyword.dto.response;
 
 import com.whoa.whoaserver.flower.domain.FlowerImage;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record FlowerInfoByKeywordResponse(
         Long id,
         String flowerName,
