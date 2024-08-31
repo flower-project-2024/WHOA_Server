@@ -135,7 +135,11 @@ public class Bouquet extends BaseEntity {
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
         this.requirement = requirement;
-    };
+    }
+
+	public void updateBouquetStatus(BouquetStatus bouquetStatus) {
+		this.bouquetStatus = bouquetStatus;
+	}
 
 
 

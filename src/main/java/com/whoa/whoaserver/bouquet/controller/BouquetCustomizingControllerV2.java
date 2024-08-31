@@ -25,7 +25,7 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_BOUQUET
 @Tag(name = "Bouquet Customizing", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청해주세요.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/bouquet/v2")
+@RequestMapping("/api/v2/bouquet")
 public class BouquetCustomizingControllerV2 {
 
 	private final BouquetCustomizingServiceV2 bouquetCustomizingService;
@@ -62,6 +62,13 @@ public class BouquetCustomizingControllerV2 {
 		} catch (Exception e) {
 			throw new WhoaException(IMAGE_UPLOAD_ERROR);
 		}
+	}
+
+	@PatchMapping("/status/{bouquetId}")
+	@Operation(summary = "꽃다발 실제 제작 완료 처리", description = "꽃다발 상세 조회 페이지에서 제작 완료 버튼을 누르면 전체 조회 시 제작 완료 항목으로 반환됩니다.")
+	public void updateBouquetStatus(@DeviceUser UserContext userContext, @PathVariable("bouquetId") final Long bouquetId) {
+		Long memberId = userContext.id();
+		bouquetCustomizingService.updateBouquetStatus(memberId, bouquetId);
 	}
 
 }

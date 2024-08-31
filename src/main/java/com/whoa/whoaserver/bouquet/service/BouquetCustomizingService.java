@@ -74,9 +74,9 @@ public class BouquetCustomizingService {
 		Member member = getMemberByMemberId(memberId);
 
 		Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
-		if (!existingBouquet.getMember().equals(member)) {
-			throw new WhoaException(NOT_MEMBER_BOUQUET);
-		}
+
+		validateMemberBouquetOwnership(member, existingBouquet);
+
 		existingBouquet.changeBouquet(
 			request.bouquetName(),
 			request.purpose(),
@@ -100,13 +100,17 @@ public class BouquetCustomizingService {
 
         Bouquet bouquetToDelete = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
-        if (!bouquetToDelete.getMember().equals(member)) {
-            throw new WhoaException(NOT_MEMBER_BOUQUET);
-        }
+		validateMemberBouquetOwnership(member, bouquetToDelete);
 
         member.getBouquet().remove(bouquetToDelete);
         bouquetRepository.delete(bouquetToDelete);
     }
+
+	public void validateMemberBouquetOwnership(Member member, Bouquet bouquet) {
+		if (!bouquet.getMember().equals(member)) {
+			throw new WhoaException(NOT_MEMBER_BOUQUET);
+		}
+	}
 
     public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
         List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId)

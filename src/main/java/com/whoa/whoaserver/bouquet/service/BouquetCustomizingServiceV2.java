@@ -2,6 +2,7 @@ package com.whoa.whoaserver.bouquet.service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.bouquet.domain.BouquetImage;
+import com.whoa.whoaserver.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
 import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
@@ -114,5 +115,15 @@ public class BouquetCustomizingServiceV2 {
 		List<String> imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
 
 		return BouquetCustomizingResponseV2.of(existingBouquet, imgPaths);
+	}
+
+	public void updateBouquetStatus(Long memberId, Long bouquetId) {
+		Member member = bouquetCustomizingService.getMemberByMemberId(memberId);
+
+		Bouquet bouquetToUpdate = bouquetCustomizingService.getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
+
+		bouquetCustomizingService.validateMemberBouquetOwnership(member, bouquetToUpdate);
+
+		bouquetToUpdate.updateBouquetStatus(BouquetStatus.COMPLETED);
 	}
 }
