@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.bouquet.domain;
 
+import com.whoa.whoaserver.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.bouquet.domain.type.ColorTypeOption;
 import com.whoa.whoaserver.bouquet.domain.type.FlowerSubstitutionTypeOption;
 import com.whoa.whoaserver.global.common.BaseEntity;
@@ -55,6 +56,10 @@ public class Bouquet extends BaseEntity {
 
     private String requirement;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private BouquetStatus bouquetStatus;
+
     @OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BouquetImage> images = new ArrayList<>();
 
@@ -62,7 +67,7 @@ public class Bouquet extends BaseEntity {
 
     @Builder(access = AccessLevel.PRIVATE)
     public Bouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType, String colorName, String pointColor,
-                   String flowerType, FlowerSubstitutionTypeOption subsitutionType, String wrappingType, String priceRange, String requirement) {
+                   String flowerType, FlowerSubstitutionTypeOption subsitutionType, String wrappingType, String priceRange, String requirement, BouquetStatus bouquetStatus) {
         this.member = member;
         this.bouquetName = bouquetName;
         this.purpose = purpose;
@@ -74,6 +79,7 @@ public class Bouquet extends BaseEntity {
         this.wrappingType = wrappingType;
         this.priceRange = priceRange;
         this.requirement = requirement;
+		this.bouquetStatus = bouquetStatus;
     }
 
     public static Bouquet orderBouquet(
@@ -103,8 +109,9 @@ public class Bouquet extends BaseEntity {
                     .wrappingType(wrappingType)
                     .priceRange(priceRange)
                     .requirement(requirement)
+					.bouquetStatus(BouquetStatus.INCOMPLETED)
                     .build();
-        
+
     }
 
     public void changeBouquet(
@@ -129,7 +136,7 @@ public class Bouquet extends BaseEntity {
         this.priceRange = priceRange;
         this.requirement = requirement;
     };
-    
-    
-    
+
+
+
 }
