@@ -69,8 +69,7 @@ public class BouquetCustomizingServiceV2 {
 			request.substitutionType(),
 			request.wrappingType(),
 			request.price(),
-			request.requirement()
-		);
+			request.requirement());
 	}
 
 	private List<String> handleMultipartFiles(Long memberId, Bouquet bouquet, List<MultipartFile> multipartFiles) {
@@ -110,8 +109,7 @@ public class BouquetCustomizingServiceV2 {
 			request.substitutionType(),
 			request.wrappingType(),
 			request.price(),
-			request.requirement()
-		);
+			request.requirement());
 
 		bouquetRepository.save(existingBouquet);
 
@@ -150,8 +148,7 @@ public class BouquetCustomizingServiceV2 {
 				bouquet.getBouquetName(),
 				bouquet.getCreatedAt().toString().substring(0, 10),
 				getAllSelectedFlowerFromBouquet(bouquet))
-			)
-			.collect(Collectors.toUnmodifiableList());
+			).collect(Collectors.toUnmodifiableList());
 
 		totalResponse.put(bouquetStatus.getValue(), bouquetResponsesByStatus);
 	}
@@ -159,9 +156,7 @@ public class BouquetCustomizingServiceV2 {
 	private List<String> getAllSelectedFlowerFromBouquet(Bouquet eachBouquet) {
 		List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(eachBouquet.getFlowerType());
 
-		List<Long> flowerTypeIds = flowerTypes.stream()
-			.map(Long::valueOf)
-			.collect(Collectors.toUnmodifiableList());
+		List<Long> flowerTypeIds = flowerTypes.stream().map(Long::valueOf).collect(Collectors.toUnmodifiableList());
 
 		return flowerTypeIds.stream()
 			.map(flowerExpressionRepository::findByFlowerExpressionId)

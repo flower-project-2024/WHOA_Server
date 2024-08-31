@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BouquetRepository extends JpaRepository<Bouquet, Long>, BouquetRepositoryCustom {
-    Optional<Bouquet> findByMemberIdAndId(Long memberId, Long bouquetId);
+	Optional<Bouquet> findByMemberIdAndId(Long memberId, Long bouquetId);
 
-    List<Bouquet> findAllByMemberId(Long memberId);
+	List<Bouquet> findAllByMemberId(Long memberId);
 
-    Optional<Bouquet> findByMemberIdAndBouquetName(Long memberId, String bouquetName);
+	Optional<Bouquet> findByMemberIdAndBouquetName(Long memberId, String bouquetName);
 
 	List<Bouquet> findAllByMemberIdAndBouquetStatus(Long memberId, BouquetStatus bouquetStatus);
 

@@ -18,129 +18,112 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bouquet extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bouquet_id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "bouquet_id")
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+	@ManyToOne
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
-    @Column(nullable = true)
-    private String bouquetName;
+	@Column(nullable = true)
+	private String bouquetName;
 
-    @Column(nullable = false)
-    private String purpose;
+	@Column(nullable = false)
+	private String purpose;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ColorTypeOption colorType;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private ColorTypeOption colorType;
 
-    @Column(nullable = false)
-    private String colorName;
+	@Column(nullable = false)
+	private String colorName;
 
-    private String pointColor;
+	private String pointColor;
 
-    @Column(nullable = false)
-    private String flowerType;
+	@Column(nullable = false)
+	private String flowerType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private FlowerSubstitutionTypeOption subsitutionType;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private FlowerSubstitutionTypeOption subsitutionType;
 
-    private String wrappingType;
+	private String wrappingType;
 
-    @Column(nullable = false)
-    private String priceRange;
+	@Column(nullable = false)
+	private String priceRange;
 
-    private String requirement;
+	private String requirement;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private BouquetStatus bouquetStatus;
 
-    @OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BouquetImage> images = new ArrayList<>();
+	@OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<BouquetImage> images = new ArrayList<>();
 
-    public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
+	public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
-    @Builder(access = AccessLevel.PRIVATE)
-    public Bouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType, String colorName, String pointColor,
-                   String flowerType, FlowerSubstitutionTypeOption subsitutionType, String wrappingType, String priceRange, String requirement, BouquetStatus bouquetStatus) {
-        this.member = member;
-        this.bouquetName = bouquetName;
-        this.purpose = purpose;
-        this.colorType = colorType;
-        this.colorName = colorName;
-        this.pointColor = pointColor;
-        this.flowerType = flowerType;
-        this.subsitutionType = subsitutionType;
-        this.wrappingType = wrappingType;
-        this.priceRange = priceRange;
-        this.requirement = requirement;
+	@Builder(access = AccessLevel.PRIVATE)
+	public Bouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType, String colorName,
+				   String pointColor, String flowerType, FlowerSubstitutionTypeOption subsitutionType, String wrappingType,
+				   String priceRange, String requirement, BouquetStatus bouquetStatus) {
+		this.member = member;
+		this.bouquetName = bouquetName;
+		this.purpose = purpose;
+		this.colorType = colorType;
+		this.colorName = colorName;
+		this.pointColor = pointColor;
+		this.flowerType = flowerType;
+		this.subsitutionType = subsitutionType;
+		this.wrappingType = wrappingType;
+		this.priceRange = priceRange;
+		this.requirement = requirement;
 		this.bouquetStatus = bouquetStatus;
-    }
+	}
 
-    public static Bouquet orderBouquet(
-        Member member,
-        String bouquetName,
-        String purpose,
-        ColorTypeOption colorType,
-        String colorName,
-        String pointColor,
-        String flowerType,
-        FlowerSubstitutionTypeOption subsitutionType,
-        String wrappingType,
-        String priceRange,
-        String requirement) {
-        if (wrappingType == null) {
-            wrappingType = DEFAULT_WRAPPING_TYPE;
-        }
-        return Bouquet.builder()
-                    .member(member)
-                    .bouquetName(bouquetName)
-                    .purpose(purpose)
-                    .colorType(colorType)
-                    .colorName(colorName)
-                    .pointColor(pointColor)
-                    .flowerType(flowerType)
-                    .subsitutionType(subsitutionType)
-                    .wrappingType(wrappingType)
-                    .priceRange(priceRange)
-                    .requirement(requirement)
-					.bouquetStatus(BouquetStatus.INCOMPLETED)
-                    .build();
+	public static Bouquet orderBouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType,
+									   String colorName, String pointColor, String flowerType, FlowerSubstitutionTypeOption subsitutionType,
+									   String wrappingType, String priceRange, String requirement) {
+		if (wrappingType == null) {
+			wrappingType = DEFAULT_WRAPPING_TYPE;
+		}
+		return Bouquet.builder()
+			.member(member)
+			.bouquetName(bouquetName)
+			.purpose(purpose)
+			.colorType(colorType)
+			.colorName(colorName)
+			.pointColor(pointColor)
+			.flowerType(flowerType)
+			.subsitutionType(subsitutionType)
+			.wrappingType(wrappingType)
+			.priceRange(priceRange)
+			.requirement(requirement)
+			.bouquetStatus(BouquetStatus.INCOMPLETED)
+			.build();
 
-    }
+	}
 
-    public void changeBouquet(
-            String bouquetName,
-            String purpose,
-            ColorTypeOption colorType,
-            String colorName,
-            String pointColor,
-            String flowerType,
-            FlowerSubstitutionTypeOption subsitutionType,
-            String wrappingType,
-            String priceRange,
-            String requirement) {
-        this.bouquetName = bouquetName;
-        this.purpose = purpose;
-        this.colorType = colorType;
-        this.colorName = colorName;
-        this.pointColor = pointColor;
-        this.flowerType = flowerType;
-        this.subsitutionType = subsitutionType;
-        this.wrappingType = wrappingType;
-        this.priceRange = priceRange;
-        this.requirement = requirement;
-    }
+	public void changeBouquet(String bouquetName, String purpose, ColorTypeOption colorType, String colorName, String pointColor,
+							  String flowerType, FlowerSubstitutionTypeOption subsitutionType, String wrappingType,
+							  String priceRange, String requirement) {
+		this.bouquetName = bouquetName;
+		this.purpose = purpose;
+		this.colorType = colorType;
+		this.colorName = colorName;
+		this.pointColor = pointColor;
+		this.flowerType = flowerType;
+		this.subsitutionType = subsitutionType;
+		this.wrappingType = wrappingType;
+		this.priceRange = priceRange;
+		this.requirement = requirement;
+	}
 
 	public void updateBouquetStatus(BouquetStatus bouquetStatus) {
 		this.bouquetStatus = bouquetStatus;
 	}
-
 
 
 }
