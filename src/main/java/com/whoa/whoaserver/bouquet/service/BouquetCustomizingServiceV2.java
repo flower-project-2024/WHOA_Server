@@ -129,6 +129,8 @@ public class BouquetCustomizingServiceV2 {
 		bouquetCustomizingService.validateMemberBouquetOwnership(member, bouquetToUpdate);
 
 		bouquetToUpdate.updateBouquetStatus(BouquetStatus.COMPLETED);
+
+		bouquetRepository.save(bouquetToUpdate);
 	}
 
 	public Map<String, List<BouquetOrderResponse>> getAllBouquetsByBouquetStatus(Long memberId) {
