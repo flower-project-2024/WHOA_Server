@@ -85,7 +85,7 @@ public class BouquetCustomizingControllerV2 {
 		bouquetCustomizingService.updateBouquetStatus(memberId, bouquetId);
 	}
 
-	@GetMapping("/status")
+	@GetMapping("/all/status")
 	@Operation(summary = "꽃다발 제작 완료 여부에 따른 전체 조회", description = "마이 페이지에서 저장된 요구서와 제작 완료 항목을 분리하여 반환합니다.")
 	public ResponseEntity<Map<String, List<BouquetOrderResponse>>> getAllBouquetsByBouquetStatus(
 		@DeviceUser UserContext userContext
