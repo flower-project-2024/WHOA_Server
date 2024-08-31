@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Flower Keyword", description = "Flower Keyword API")
+@Tag(name = "1차 MVP Flower Keyword", description = "Flower Keyword API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/flower")

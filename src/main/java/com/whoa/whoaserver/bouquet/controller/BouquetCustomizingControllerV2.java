@@ -24,7 +24,7 @@ import java.util.Map;
 import static com.whoa.whoaserver.global.exception.ExceptionCode.IMAGE_UPLOAD_ERROR;
 import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_BOUQUET_REQUEST_JSON_FORMAT;
 
-@Tag(name = "Bouquet Customizing", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청해주세요.")
+@Tag(name = "2차 MVP Bouquet Customizing", description = "Header에 MEMBER_ID(key), 디바이스 등록 이후 반환 받은 id(value)로 요청해주세요.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/bouquet")
