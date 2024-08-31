@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import com.whoa.whoaserver.bouquet.service.BouquetCustomizingServiceV2;
 import com.whoa.whoaserver.global.annotation.DeviceUser;
 import com.whoa.whoaserver.global.dto.UserContext;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.IMAGE_UPLOAD_ERROR;
 import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_BOUQUET_REQUEST_JSON_FORMAT;
@@ -69,6 +71,14 @@ public class BouquetCustomizingControllerV2 {
 	public void updateBouquetStatus(@DeviceUser UserContext userContext, @PathVariable("bouquetId") final Long bouquetId) {
 		Long memberId = userContext.id();
 		bouquetCustomizingService.updateBouquetStatus(memberId, bouquetId);
+	}
+
+	@GetMapping("/status")
+	@Operation(summary = "꽃다발 제작 완료 여부에 따른 전체 조회", description = "마이 페이지에서 저장된 요구서와 제작 완료 항목을 분리하여 반환합니다.")
+	public ResponseEntity<Map<String, List<BouquetOrderResponse>>> getAllBouquetsByBouquetStatus(@DeviceUser UserContext userContext) {
+		Long memberId = userContext.id();
+		Map<String, List<BouquetOrderResponse>> response = bouquetCustomizingService.getAllBouquetsByBouquetStatus(memberId);
+		return ResponseEntity.ok(response);
 	}
 
 }

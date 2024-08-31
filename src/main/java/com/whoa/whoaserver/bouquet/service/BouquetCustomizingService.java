@@ -113,8 +113,7 @@ public class BouquetCustomizingService {
 	}
 
     public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
-        List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+        List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberId(memberId);
 
         return memberBouquets.stream()
                 .map(bouquet -> new BouquetOrderResponse(

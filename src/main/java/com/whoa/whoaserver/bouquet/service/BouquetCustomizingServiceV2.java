@@ -5,8 +5,13 @@ import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
 import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
+import com.whoa.whoaserver.flower.domain.FlowerImage;
+import com.whoa.whoaserver.flower.utils.FlowerUtils;
+import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
+import com.whoa.whoaserver.flowerExpression.repository.FlowerExpressionRepository;
 import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
@@ -16,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.DUPLICATED_BOUQUET_NAME;
 import static com.whoa.whoaserver.global.exception.ExceptionCode.NOT_MEMBER_BOUQUET;
@@ -29,6 +34,7 @@ public class BouquetCustomizingServiceV2 {
 
 	private final BouquetRepository bouquetRepository;
 	private final BouquetImageRepository bouquetImageRepository;
+	private final FlowerExpressionRepository flowerExpressionRepository;
 	private final BouquetCustomizingService bouquetCustomizingService;
 	private final S3Config s3Config;
 
@@ -125,5 +131,42 @@ public class BouquetCustomizingServiceV2 {
 		bouquetCustomizingService.validateMemberBouquetOwnership(member, bouquetToUpdate);
 
 		bouquetToUpdate.updateBouquetStatus(BouquetStatus.COMPLETED);
+	}
+
+	public Map<String, List<BouquetOrderResponse>> getAllBouquetsByBouquetStatus(Long memberId) {
+		Map<String, List<BouquetOrderResponse>> totalResponse = new HashMap<>();
+
+		putBouquetOrderResponseListByBouquetStatus(memberId, BouquetStatus.INCOMPLETED, totalResponse);
+		putBouquetOrderResponseListByBouquetStatus(memberId, BouquetStatus.COMPLETED, totalResponse);
+
+		return totalResponse;
+	}
+
+	private void putBouquetOrderResponseListByBouquetStatus(Long memberId, BouquetStatus bouquetStatus, Map<String, List<BouquetOrderResponse>> totalResponse) {
+		List<Bouquet> allBouquetsByStatus = bouquetRepository.findAllByMemberIdAndBouquetStatus(memberId, bouquetStatus);
+		List<BouquetOrderResponse> bouquetResponsesByStatus = allBouquetsByStatus.stream()
+			.map(bouquet -> new BouquetOrderResponse(
+				bouquet.getId(),
+				bouquet.getBouquetName(),
+				bouquet.getCreatedAt().toString().substring(0, 10),
+				getAllSelectedFlowerFromBouquet(bouquet))
+			)
+			.collect(Collectors.toUnmodifiableList());
+
+		totalResponse.put(bouquetStatus.getValue(), bouquetResponsesByStatus);
+	}
+
+	private List<String> getAllSelectedFlowerFromBouquet(Bouquet eachBouquet) {
+		List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(eachBouquet.getFlowerType());
+
+		List<Long> flowerTypeIds = flowerTypes.stream()
+			.map(Long::valueOf)
+			.collect(Collectors.toUnmodifiableList());
+
+		return flowerTypeIds.stream()
+			.map(flowerExpressionRepository::findByFlowerExpressionId)
+			.map(FlowerExpression::getFlowerImage)
+			.map(FlowerImage::getImageUrl)
+			.collect(Collectors.toUnmodifiableList());
 	}
 }

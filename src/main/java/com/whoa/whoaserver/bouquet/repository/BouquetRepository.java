@@ -1,6 +1,7 @@
 package com.whoa.whoaserver.bouquet.repository;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
+import com.whoa.whoaserver.bouquet.domain.type.BouquetStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -9,8 +10,10 @@ import java.util.Optional;
 public interface BouquetRepository extends JpaRepository<Bouquet, Long>, BouquetRepositoryCustom {
     Optional<Bouquet> findByMemberIdAndId(Long memberId, Long bouquetId);
 
-    Optional<List<Bouquet>> findByMemberId(Long memberId);
+    List<Bouquet> findAllByMemberId(Long memberId);
 
     Optional<Bouquet> findByMemberIdAndBouquetName(Long memberId, String bouquetName);
+
+	List<Bouquet> findAllByMemberIdAndBouquetStatus(Long memberId, BouquetStatus bouquetStatus);
 
 }
