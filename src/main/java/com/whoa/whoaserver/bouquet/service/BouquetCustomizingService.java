@@ -1,14 +1,10 @@
 package com.whoa.whoaserver.bouquet.service;
 
-import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
-import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.flower.utils.FlowerUtils;
 import com.whoa.whoaserver.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.flowerExpression.repository.FlowerExpressionRepository;
-import com.whoa.whoaserver.global.config.S3Config;
-import com.whoa.whoaserver.global.exception.ExceptionCode;
 import org.springframework.stereotype.Service;
 
 import com.whoa.whoaserver.bouquet.domain.Bouquet;
@@ -21,7 +17,6 @@ import com.whoa.whoaserver.member.repository.MemberRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +28,9 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 @Transactional
 @RequiredArgsConstructor
 public class BouquetCustomizingService {
-    private final MemberRepository memberRepository;
-    private final BouquetRepository bouquetRepository;
-    private final FlowerExpressionRepository flowerExpressionRepository;
+	private final MemberRepository memberRepository;
+	private final BouquetRepository bouquetRepository;
+	private final FlowerExpressionRepository flowerExpressionRepository;
 
 	public BouquetCustomizingResponse registerBouquet(BouquetCustomizingRequest request, Long memberId) {
 
@@ -74,9 +69,9 @@ public class BouquetCustomizingService {
 		Member member = getMemberByMemberId(memberId);
 
 		Bouquet existingBouquet = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
-		if (!existingBouquet.getMember().equals(member)) {
-			throw new WhoaException(NOT_MEMBER_BOUQUET);
-		}
+
+		validateMemberBouquetOwnership(member, existingBouquet);
+
 		existingBouquet.changeBouquet(
 			request.bouquetName(),
 			request.purpose(),
@@ -95,59 +90,67 @@ public class BouquetCustomizingService {
 		return BouquetCustomizingResponse.of(existingBouquet);
 	}
 
-    public void deleteBouquet(Long memberId, Long bouquetId) {
-        Member member = getMemberByMemberId(memberId);
+	public void deleteBouquet(Long memberId, Long bouquetId) {
+		Member member = getMemberByMemberId(memberId);
 
-        Bouquet bouquetToDelete = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
+		Bouquet bouquetToDelete = getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
-        if (!bouquetToDelete.getMember().equals(member)) {
-            throw new WhoaException(NOT_MEMBER_BOUQUET);
-        }
+		validateMemberBouquetOwnership(member, bouquetToDelete);
 
-        member.getBouquet().remove(bouquetToDelete);
-        bouquetRepository.delete(bouquetToDelete);
-    }
+		member.getBouquet().remove(bouquetToDelete);
+		bouquetRepository.delete(bouquetToDelete);
+	}
 
-    public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
-        List<Bouquet> memberBouquets = bouquetRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+	public void validateMemberBouquetOwnership(Member member, Bouquet bouquet) {
+		if (!bouquet.getMember().equals(member)) {
+			throw new WhoaException(NOT_MEMBER_BOUQUET);
+		}
+	}
 
-        return memberBouquets.stream()
-                .map(bouquet -> new BouquetOrderResponse(
-                        bouquet.getId(),
-                        bouquet.getBouquetName(),
-                        bouquet.getCreatedAt().toString().substring(0, 10),
-						getOneSelectedFlowerFromBouquet(bouquet)
-                        )
-                )
-                .collect(Collectors.toUnmodifiableList());
-    }
+	public List<BouquetOrderResponse> getAllBouquets(Long memberId) {
+		List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberId(memberId);
 
-    public BouquetInfoDetailResponse getBouquetDetails(Long memberId, Long bouquetId) {
-        Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
-                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+		return memberBouquets.stream()
+			.map(bouquet -> new BouquetOrderResponse(
+					bouquet.getId(),
+					bouquet.getBouquetName(),
+					bouquet.getCreatedAt().toString().substring(0, 10),
+					getOneSelectedFlowerFromBouquet(bouquet)
+				)
+			)
+			.collect(Collectors.toUnmodifiableList());
+	}
 
-        List<String> flowerExpressionStringIdsList = FlowerUtils.parseFlowerEnumerationColumn(bouquetToRead.getFlowerType());
-        List<Long> flowerExpressionLongIdsList =flowerExpressionStringIdsList.stream()
-                .map( id -> Long.parseLong(id))
-                .collect(Collectors.toUnmodifiableList());
-        List<FlowerExpression> flowerExpressionList = flowerExpressionLongIdsList.stream()
-                .map(id -> flowerExpressionRepository.findByFlowerExpressionId(id))
-                .collect(Collectors.toUnmodifiableList());
-        return BouquetInfoDetailResponse.of(bouquetToRead, flowerExpressionList);
-    }
+	public BouquetInfoDetailResponse getBouquetDetails(Long memberId, Long bouquetId) {
+		Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
+			.orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
 
-    public Member getMemberByMemberId(Long memberId) {
-        Member targetMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new WhoaException(INVALID_MEMBER));
-        return targetMember;
-    }
+		List<String> flowerExpressionStringIdsList = FlowerUtils.parseFlowerEnumerationColumn(bouquetToRead.getFlowerType());
 
-    public Bouquet getBouquetByMemberIdAndBouquetId(Long memberId, Long bouquetId) {
-        Bouquet targetBouquet = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
-                .orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
-        return targetBouquet;
-    }
+		List<Long> flowerExpressionLongIdsList = flowerExpressionStringIdsList.stream()
+			.map(id -> Long.parseLong(id))
+			.collect(Collectors.toUnmodifiableList());
+
+		List<FlowerExpression> flowerExpressionList = flowerExpressionLongIdsList.stream()
+			.map(id -> flowerExpressionRepository.findByFlowerExpressionId(id))
+			.collect(Collectors.toUnmodifiableList());
+
+		return BouquetInfoDetailResponse.of(bouquetToRead, flowerExpressionList);
+	}
+
+	public Member getMemberByMemberId(Long memberId) {
+		Member targetMember = memberRepository.findById(memberId)
+			.orElseThrow(() -> new WhoaException(INVALID_MEMBER));
+
+		return targetMember;
+	}
+
+	public Bouquet getBouquetByMemberIdAndBouquetId(Long memberId, Long bouquetId) {
+		Bouquet targetBouquet = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
+			.orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+
+		return targetBouquet;
+	}
 
 	private List<String> getOneSelectedFlowerFromBouquet(Bouquet eachBouquet) {
 		List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(eachBouquet.getFlowerType());
