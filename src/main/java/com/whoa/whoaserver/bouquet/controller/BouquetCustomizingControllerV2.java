@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
-import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponseV2;
 import com.whoa.whoaserver.bouquet.service.BouquetCustomizingServiceV2;
 import com.whoa.whoaserver.global.annotation.DeviceUser;
 import com.whoa.whoaserver.global.dto.UserContext;
@@ -86,13 +86,12 @@ public class BouquetCustomizingControllerV2 {
 	}
 
 	@GetMapping("/all/status")
-	@Operation(summary = "꽃다발 제작 완료 여부에 따른 전체 조회", description = "마이 페이지에서 저장된 요구서와 제작 완료 항목을 분리하여 반환합니다.")
-	public ResponseEntity<Map<String, List<BouquetOrderResponse>>> getAllBouquetsByBouquetStatus(
+	@Operation(summary = "꽃다발 제작 완료 여부에 따른 전체 조회", description = "마이 페이지에서 상태를 추가하여 반환합니다.")
+	public ResponseEntity<List<BouquetOrderResponseV2>> getAllBouquetsWithStatus(
 		@DeviceUser UserContext userContext
 	) {
 		Long memberId = userContext.id();
-		Map<String, List<BouquetOrderResponse>> response = bouquetCustomizingService.getAllBouquetsByBouquetStatus(memberId);
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok().body(bouquetCustomizingService.getAllBouquetsWithStatus(memberId));
 	}
 
 }

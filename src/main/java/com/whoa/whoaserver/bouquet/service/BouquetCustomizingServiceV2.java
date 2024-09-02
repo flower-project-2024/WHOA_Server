@@ -5,7 +5,7 @@ import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
-import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponse;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponseV2;
 import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
 import com.whoa.whoaserver.flower.domain.FlowerImage;
@@ -133,26 +133,19 @@ public class BouquetCustomizingServiceV2 {
 		bouquetRepository.save(bouquetToUpdate);
 	}
 
-	public Map<String, List<BouquetOrderResponse>> getAllBouquetsByBouquetStatus(Long memberId) {
-		Map<String, List<BouquetOrderResponse>> totalResponse = new HashMap<>();
+	public List<BouquetOrderResponseV2> getAllBouquetsWithStatus(Long memberId) {
+		List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberId(memberId);
 
-		putBouquetOrderResponseListByBouquetStatus(memberId, BouquetStatus.INCOMPLETED, totalResponse);
-		putBouquetOrderResponseListByBouquetStatus(memberId, BouquetStatus.COMPLETED, totalResponse);
-
-		return totalResponse;
-	}
-
-	private void putBouquetOrderResponseListByBouquetStatus(Long memberId, BouquetStatus bouquetStatus, Map<String, List<BouquetOrderResponse>> totalResponse) {
-		List<Bouquet> allBouquetsByStatus = bouquetRepository.findAllByMemberIdAndBouquetStatus(memberId, bouquetStatus);
-		List<BouquetOrderResponse> bouquetResponsesByStatus = allBouquetsByStatus.stream()
-			.map(bouquet -> new BouquetOrderResponse(
-				bouquet.getId(),
-				bouquet.getBouquetName(),
-				bouquet.getCreatedAt().toString().substring(0, 10),
-				getAllSelectedFlowerFromBouquet(bouquet))
-			).collect(Collectors.toUnmodifiableList());
-
-		totalResponse.put(bouquetStatus.getValue(), bouquetResponsesByStatus);
+		return memberBouquets.stream()
+			.map(bouquet -> new BouquetOrderResponseV2(
+					bouquet.getId(),
+					bouquet.getBouquetName(),
+					bouquet.getCreatedAt().toString().substring(0, 10),
+					getAllSelectedFlowerFromBouquet(bouquet),
+					bouquet.getBouquetStatus().getValue()
+				)
+			)
+			.collect(Collectors.toUnmodifiableList());
 	}
 
 	private List<String> getAllSelectedFlowerFromBouquet(Bouquet eachBouquet) {
