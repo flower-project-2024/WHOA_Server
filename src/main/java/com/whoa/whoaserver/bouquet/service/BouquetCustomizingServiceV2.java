@@ -134,7 +134,7 @@ public class BouquetCustomizingServiceV2 {
 	}
 
 	public List<BouquetOrderResponseV2> getAllBouquetsWithStatus(Long memberId) {
-		List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberId(memberId);
+		List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberIdOrderByIdDesc(memberId);
 
 		return memberBouquets.stream()
 			.map(bouquet -> new BouquetOrderResponseV2(
