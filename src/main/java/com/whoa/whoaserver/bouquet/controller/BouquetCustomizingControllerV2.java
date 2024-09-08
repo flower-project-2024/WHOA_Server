@@ -89,10 +89,10 @@ public class BouquetCustomizingControllerV2 {
 	@Operation(summary = "꽃다발 제작 완료 여부에 따른 전체 조회", description = "마이 페이지에서 상태를 추가하여 반환합니다.")
 	public ResponseEntity<List<BouquetOrderResponseV2>> getAllBouquetsWithStatus(
 		@DeviceUser UserContext userContext,
-		@RequestParam("uploadedBouquetIdList") List<Long> uploadedBouquetIdList
+		@RequestParam(value = "uploadedBouquetIdsList", required = false) List<Long> uploadedBouquetIdsList
 	) {
 		Long memberId = userContext.id();
-		return ResponseEntity.ok().body(bouquetCustomizingService.getAllBouquetsWithStatus(memberId, uploadedBouquetIdList));
+		return ResponseEntity.ok().body(bouquetCustomizingService.getAllBouquetsWithStatus(memberId, uploadedBouquetIdsList));
 	}
 
 }

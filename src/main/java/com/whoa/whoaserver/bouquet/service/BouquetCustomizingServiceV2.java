@@ -133,12 +133,12 @@ public class BouquetCustomizingServiceV2 {
 		bouquetRepository.save(bouquetToUpdate);
 	}
 
-	public List<BouquetOrderResponseV2> getAllBouquetsWithStatus(Long memberId, List<Long> uploadedBouquetIdList) {
+	public List<BouquetOrderResponseV2> getAllBouquetsWithStatus(Long memberId, List<Long> uploadedBouquetIdsList) {
 		List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberIdOrderByIdDesc(memberId);
 
 		return memberBouquets.stream()
 			.map(bouquet -> {
-					if (uploadedBouquetIdList.contains(bouquet.getId())) {
+					if (uploadedBouquetIdsList.contains(bouquet.getId())) {
 						return new BouquetOrderResponseV2(
 							bouquet.getId(),
 							bouquet.getBouquetName(),
