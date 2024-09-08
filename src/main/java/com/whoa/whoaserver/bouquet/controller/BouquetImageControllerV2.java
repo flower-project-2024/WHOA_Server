@@ -22,9 +22,11 @@ public class BouquetImageControllerV2 {
 
 	@PostMapping(value = "/multipart-file/{bouquetId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "실제 꽃다발 이미지 업로드", description = "실제 제작한 꽃다발 사진을 한 장 업로드합니다.")
-	public ResponseEntity<RealBouquetImageResponse> uploadRealBouquetMultipleFile(@DeviceUser UserContext userContext,
-																				  @PathVariable("bouquetId") final Long bouquetId,
-																				  @RequestPart("imgFile") MultipartFile multipartFiles) {
+	public ResponseEntity<RealBouquetImageResponse> uploadRealBouquetMultipleFile(
+		@DeviceUser UserContext userContext,
+		@PathVariable("bouquetId") final Long bouquetId,
+		@RequestPart("imgFile") MultipartFile multipartFiles
+	) {
 
 		Long memberId = userContext.id();
 		return ResponseEntity.ok().body(bouquetImageServiceV2.uploadRealBouquetMultipleFile(memberId, bouquetId, multipartFiles));
