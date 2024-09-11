@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.keyword.domain;
 
+import com.whoa.whoaserver.mapping.domain.CustomizingPurposeKeyword;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,10 @@ public class Keyword {
 
     @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlowerExpressionKeyword> flowerExpressionKeywords;
+
+	@OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<CustomizingPurposeKeyword> customizingPurposeKeywords;
+
 
     public Keyword(
             final String keywordName
