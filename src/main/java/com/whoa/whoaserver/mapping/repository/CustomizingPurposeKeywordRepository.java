@@ -8,4 +8,6 @@ import java.util.List;
 public interface CustomizingPurposeKeywordRepository extends JpaRepository<CustomizingPurposeKeyword, Long> {
 
 	List<CustomizingPurposeKeyword> findAllByCustomizingPurpose_CustomizingPurposeIdAndKeyword_KeywordId(Long customizingPurposeId, Long keywordId);
+
+	List<CustomizingPurposeKeyword> findAllByCustomizingPurpose_CustomizingPurposeId(Long customizingPurposeId);
 }
