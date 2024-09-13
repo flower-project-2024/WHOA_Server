@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "2차 MVP Flower Keyword", description = "Flower Keyword API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/flower")
+@RequestMapping("/api/v2/flower/keyword")
 public class FlowerKeywordControllerV2 {
 
 	private final FlowerKeywordServiceV2 flowerKeywordServiceV2;
 
-	@GetMapping("/keyword")
+	@GetMapping
 	@Operation(summary = "키워드별 꽃 조회", description = "키워드별 꽃 조회 시 구매 목적을 고려하여 커스터마이징 할 수 있도록 꽃 정보를 제공합니다.")
 	public ResponseEntity<?> getFlowerInfoByKeywordAndCustomizingPurpose(
 		@RequestParam(value = "customizingPurposeId", required = false) Long customizingPurposeId,
