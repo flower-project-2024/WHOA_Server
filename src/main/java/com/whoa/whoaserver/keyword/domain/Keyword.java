@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.keyword.domain;
 
+import com.whoa.whoaserver.mapping.domain.CustomizingPurposeKeyword;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,19 +20,23 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class Keyword {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long keywordId;
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	private Long keywordId;
 
-    private String keywordName;
+	private String keywordName;
 
-    @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FlowerExpressionKeyword> flowerExpressionKeywords;
+	@OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<FlowerExpressionKeyword> flowerExpressionKeywords;
 
-    public Keyword(
-            final String keywordName
-    ) {
-        this.keywordName = keywordName;
-    }
+	@OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<CustomizingPurposeKeyword> customizingPurposeKeywords;
+
+
+	public Keyword(
+		final String keywordName
+	) {
+		this.keywordName = keywordName;
+	}
 
 }
