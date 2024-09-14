@@ -4,6 +4,7 @@ import com.whoa.whoaserver.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.dto.response.RealBouquetImageResponse;
 import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
+import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
 import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.member.domain.Member;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class BouquetImageServiceV2 {
 
-	private final BouquetImageRepository bouquetImageRepository;
+	private final BouquetRepository bouquetRepository;
 
 	private final S3Config s3Config;
 	private final BouquetCustomizingService bouquetCustomizingService;
@@ -30,12 +31,9 @@ public class BouquetImageServiceV2 {
 		final Bouquet bouquet = bouquetCustomizingService.getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 		bouquetCustomizingService.validateMemberBouquetOwnership(member, bouquet);
 
-		List<BouquetImage> bouquetImages = bouquetImageRepository.findAllByBouquet(bouquet);
-		bouquetImageRepository.deleteAll(bouquetImages);
+		bouquet.registerRealBouquetImagePath(bouquetImageS3Url);
+		Bouquet updatedBouquet = bouquetRepository.save(bouquet);
 
-		BouquetImage newBouquetRealImage = BouquetImage.create(bouquet, bouquetImageS3Url);
-		bouquetImageRepository.save(newBouquetRealImage);
-
-		return RealBouquetImageResponse.from(newBouquetRealImage);
+		return RealBouquetImageResponse.from(updatedBouquet);
 	}
 }

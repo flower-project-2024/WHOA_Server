@@ -133,30 +133,18 @@ public class BouquetCustomizingServiceV2 {
 		bouquetRepository.save(bouquetToUpdate);
 	}
 
-	public List<BouquetOrderResponseV2> getAllBouquetsWithStatus(Long memberId, List<Long> uploadedBouquetIdsList) {
+	public List<BouquetOrderResponseV2> getAllBouquetsWithStatus(Long memberId) {
 		List<Bouquet> memberBouquets = bouquetRepository.findAllByMemberIdOrderByIdDesc(memberId);
 
 		return memberBouquets.stream()
-			.map(bouquet -> {
-					if (uploadedBouquetIdsList.contains(bouquet.getId())) {
-						return new BouquetOrderResponseV2(
-							bouquet.getId(),
-							bouquet.getBouquetName(),
-							bouquet.getCreatedAt().toString().substring(0, 10),
-							bouquet.getImages().stream().map(BouquetImage::getFileName).collect(Collectors.toUnmodifiableList()),
-							bouquet.getBouquetStatus().getValue()
-						);
-					} else {
-						return new BouquetOrderResponseV2(
-							bouquet.getId(),
-							bouquet.getBouquetName(),
-							bouquet.getCreatedAt().toString().substring(0, 10),
-							getAllSelectedFlowerFromBouquet(bouquet),
-							bouquet.getBouquetStatus().getValue()
-						);
-					}
-				}
-			)
+			.map(bouquet -> new BouquetOrderResponseV2(
+				bouquet.getId(),
+				bouquet.getBouquetName(),
+				bouquet.getCreatedAt().toString().substring(0, 10),
+				getAllSelectedFlowerFromBouquet(bouquet),
+				bouquet.getRealImageUrl(),
+				bouquet.getBouquetStatus().getValue()
+			))
 			.collect(Collectors.toUnmodifiableList());
 	}
 
