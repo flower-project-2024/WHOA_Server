@@ -63,6 +63,8 @@ public class Bouquet extends BaseEntity {
 	@OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BouquetImage> images = new ArrayList<>();
 
+	private String realImageUrl;
+
 	public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
 	@Builder(access = AccessLevel.PRIVATE)
@@ -123,6 +125,10 @@ public class Bouquet extends BaseEntity {
 
 	public void updateBouquetStatus(BouquetStatus bouquetStatus) {
 		this.bouquetStatus = bouquetStatus;
+	}
+
+	public void registerRealBouquetImagePath(String realImageUrl) {
+		this.realImageUrl = realImageUrl;
 	}
 
 

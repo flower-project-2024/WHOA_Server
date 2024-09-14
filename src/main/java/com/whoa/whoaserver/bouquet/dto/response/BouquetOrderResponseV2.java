@@ -6,7 +6,8 @@ public record BouquetOrderResponseV2(
 	Long bouquetId,
 	String bouquetName,
 	String createdAt,
-	List<String> imgPaths,
+	List<String> selectedAllFlowersImagePathes,
+	String realBouquetImagePath,
 	String bouquetStatus
 ) {
 }
