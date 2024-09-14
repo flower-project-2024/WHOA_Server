@@ -1,6 +1,6 @@
 package com.whoa.whoaserver.mapping.domain;
 
-import com.whoa.whoaserver.CustomizingPurpose.domain.CustomizingPurpose;
+import com.whoa.whoaserver.customizingPurpose.domain.CustomizingPurpose;
 import com.whoa.whoaserver.keyword.domain.Keyword;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

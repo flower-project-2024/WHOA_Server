@@ -1,4 +1,4 @@
-package com.whoa.whoaserver.CustomizingPurpose.domain;
+package com.whoa.whoaserver.customizingPurpose.domain;
 
 import com.whoa.whoaserver.mapping.domain.CustomizingPurposeKeyword;
 import jakarta.persistence.*;
