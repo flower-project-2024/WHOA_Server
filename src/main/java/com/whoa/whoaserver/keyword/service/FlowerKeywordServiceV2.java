@@ -22,6 +22,7 @@ public class FlowerKeywordServiceV2 {
 	private static final int TOTAL_FLOWER_INFORMATION_FLAG_BY_KEYWORD_ID = 0;
 
 	private final CustomizingPurposeKeywordRepository customizingPurposeKeywordRepository;
+	private final FlowerKeywordService flowerKeywordService;
 
 	public List<FlowerInfoByKeywordResponseV2> getFlowerInfoByKeywordAndCustomizingPurpose(Long customizingPurposeId, Long keywordId) {
 		List<CustomizingPurposeKeyword> customizingPurposeKeywordList;
@@ -40,6 +41,7 @@ public class FlowerKeywordServiceV2 {
 			.map(CustomizingPurposeKeyword::getKeyword)
 			.flatMap(keyword -> keyword.getFlowerExpressionKeywords().stream())
 			.map(FlowerExpressionKeyword::getFlowerExpression)
+			.filter(flowerKeywordService::isInContemplationPeriod)
 			.collect(Collectors.toUnmodifiableList());
 
 		return targetFlowerExpressionByCustomizingPurpose.stream()

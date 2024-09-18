@@ -21,57 +21,57 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class FlowerKeywordService {
-    private static final int TOTAL_FLOWER_INFORMATION = 0;
+	private static final int TOTAL_FLOWER_INFORMATION = 0;
 
-    private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
-    private final FlowerImageRepository flowerImageRepository;
+	private final FlowerExpressionKeywordRepository flowerExpressionKeywordRepository;
+	private final FlowerImageRepository flowerImageRepository;
 
-    @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	@Cacheable(cacheNames = "keyword", key = "#keywordId")
-    public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
-        List<FlowerExpression> flowerExpressionList;
-        if (keywordId == TOTAL_FLOWER_INFORMATION) {
-            flowerExpressionList = getAllFlowerExpressions();
-        } else {
-            flowerExpressionList = getExpressionsByKeyword(keywordId);
-        }
+	public List<FlowerInfoByKeywordResponse> getFlowerInfoByKeyword(final Long keywordId) {
+		List<FlowerExpression> flowerExpressionList;
+		if (keywordId == TOTAL_FLOWER_INFORMATION) {
+			flowerExpressionList = getAllFlowerExpressions();
+		} else {
+			flowerExpressionList = getExpressionsByKeyword(keywordId);
+		}
 
-        Set<FlowerExpression> uniqueFlowerExpressions = flowerExpressionList.stream().collect(Collectors.toUnmodifiableSet());
+		Set<FlowerExpression> uniqueFlowerExpressions = flowerExpressionList.stream().collect(Collectors.toUnmodifiableSet());
 
-        return uniqueFlowerExpressions.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toUnmodifiableList());
-    }
+		return uniqueFlowerExpressions.stream()
+			.map(this::mapToResponse)
+			.collect(Collectors.toUnmodifiableList());
+	}
 
-    private List<FlowerExpression> getAllFlowerExpressions() {
-        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
-        return mapping.stream()
-                .map(FlowerExpressionKeyword::getFlowerExpression)
-                .filter(this::isInContemplationPeriod)
-                .collect(Collectors.toUnmodifiableList());
-    }
+	private List<FlowerExpression> getAllFlowerExpressions() {
+		List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findAll();
+		return mapping.stream()
+			.map(FlowerExpressionKeyword::getFlowerExpression)
+			.filter(this::isInContemplationPeriod)
+			.collect(Collectors.toUnmodifiableList());
+	}
 
-    private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
-        List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findByKeywordIdWithExpressions(keywordId);
-        return mapping.stream()
-                .map(FlowerExpressionKeyword::getFlowerExpression)
-                .filter(this::isInContemplationPeriod)
-                .collect(Collectors.toUnmodifiableList());
-    }
+	private List<FlowerExpression> getExpressionsByKeyword(Long keywordId) {
+		List<FlowerExpressionKeyword> mapping = flowerExpressionKeywordRepository.findByKeywordIdWithExpressions(keywordId);
+		return mapping.stream()
+			.map(FlowerExpressionKeyword::getFlowerExpression)
+			.filter(this::isInContemplationPeriod)
+			.collect(Collectors.toUnmodifiableList());
+	}
 
-    private boolean isInContemplationPeriod(FlowerExpression flowerExpression) {
-        return FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod())
-                .contains(String.valueOf(LocalDate.now().getMonthValue()));
-    }
+	public boolean isInContemplationPeriod(FlowerExpression flowerExpression) {
+		return FlowerUtils.parseFlowerEnumerationColumn(flowerExpression.getFlower().getComtemplationPeriod())
+			.contains(String.valueOf(LocalDate.now().getMonthValue()));
+	}
 
-    private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
-        List<String> keywordNames = flowerExpression.getFlowerExpressionKeywords().stream()
-                .map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
-                .collect(Collectors.toUnmodifiableList());
+	private FlowerInfoByKeywordResponse mapToResponse(FlowerExpression flowerExpression) {
+		List<String> keywordNames = flowerExpression.getFlowerExpressionKeywords().stream()
+			.map(flowerExpressionKeyword -> flowerExpressionKeyword.getKeyword().getKeywordName())
+			.collect(Collectors.toUnmodifiableList());
 
-        FlowerImage flowerImage = flowerImageRepository.findByFlowerExpression(flowerExpression)
-                .orElse(null);
+		FlowerImage flowerImage = flowerImageRepository.findByFlowerExpression(flowerExpression)
+			.orElse(null);
 
-        return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, flowerImage, keywordNames);
-    }
+		return FlowerInfoByKeywordResponse.fromFlowerExpressionAndKeyword(flowerExpression, flowerImage, keywordNames);
+	}
 }
