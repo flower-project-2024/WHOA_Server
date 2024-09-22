@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponse;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponseV2;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponseV2;
+import com.whoa.whoaserver.bouquet.service.BouquetCustomizingService;
 import com.whoa.whoaserver.bouquet.service.BouquetCustomizingServiceV2;
 import com.whoa.whoaserver.global.annotation.DeviceUser;
 import com.whoa.whoaserver.global.dto.UserContext;
@@ -30,7 +33,7 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_BOUQUET
 @RequestMapping("/api/v2/bouquet")
 public class BouquetCustomizingControllerV2 {
 
-	private final BouquetCustomizingServiceV2 bouquetCustomizingService;
+	private final BouquetCustomizingServiceV2 bouquetCustomizingServiceV2;
 	private final ObjectMapper objectMapper;
 
 	@PostMapping(value = "/customizing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -44,7 +47,7 @@ public class BouquetCustomizingControllerV2 {
 		try {
 			Long memberId = userContext.id();
 			BouquetCustomizingRequest request = objectMapper.readValue(bouquetRequest, BouquetCustomizingRequest.class);
-			BouquetCustomizingResponseV2 response = bouquetCustomizingService.registerBouquet(request, memberId, multipartFiles);
+			BouquetCustomizingResponseV2 response = bouquetCustomizingServiceV2.registerBouquet(request, memberId, multipartFiles);
 			return ResponseEntity.ok(response);
 		} catch (JsonProcessingException e) {
 			throw new WhoaException(INVALID_BOUQUET_REQUEST_JSON_FORMAT);
@@ -66,7 +69,7 @@ public class BouquetCustomizingControllerV2 {
 		try {
 			Long memberId = userContext.id();
 			BouquetCustomizingRequest request = objectMapper.readValue(bouquetRequest, BouquetCustomizingRequest.class);
-			BouquetCustomizingResponseV2 response = bouquetCustomizingService.updateBouquet(request, memberId, bouquetId, multipartFiles);
+			BouquetCustomizingResponseV2 response = bouquetCustomizingServiceV2.updateBouquet(request, memberId, bouquetId, multipartFiles);
 			return ResponseEntity.ok(response);
 		} catch (JsonProcessingException e) {
 			throw new WhoaException(INVALID_BOUQUET_REQUEST_JSON_FORMAT);
@@ -82,7 +85,7 @@ public class BouquetCustomizingControllerV2 {
 		@PathVariable("bouquetId") final Long bouquetId
 	) {
 		Long memberId = userContext.id();
-		bouquetCustomizingService.updateBouquetStatus(memberId, bouquetId);
+		bouquetCustomizingServiceV2.updateBouquetStatus(memberId, bouquetId);
 	}
 
 	@GetMapping("/all/status")
@@ -91,7 +94,17 @@ public class BouquetCustomizingControllerV2 {
 		@DeviceUser UserContext userContext
 	) {
 		Long memberId = userContext.id();
-		return ResponseEntity.ok().body(bouquetCustomizingService.getAllBouquetsWithStatus(memberId));
+		return ResponseEntity.ok().body(bouquetCustomizingServiceV2.getAllBouquetsWithStatus(memberId));
+	}
+
+	@GetMapping("/{bouquetId}")
+	@Operation(summary = "꽃다발 주문서 단건 조회", description = "유저가 등록한 주문서 한 건을 상세 조회합니다.")
+	public ResponseEntity<BouquetInfoDetailResponseV2> getBouquetDetails(
+		@DeviceUser UserContext userContext,
+		@PathVariable("bouquetId") final Long bouquetId
+	) {
+		BouquetInfoDetailResponseV2 response = bouquetCustomizingServiceV2.getBouquetDetails(userContext.id(), bouquetId);
+		return ResponseEntity.ok(response);
 	}
 
 }

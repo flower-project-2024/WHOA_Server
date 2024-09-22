@@ -5,6 +5,7 @@ import com.whoa.whoaserver.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.bouquet.dto.request.BouquetCustomizingRequest;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetCustomizingResponseV2;
+import com.whoa.whoaserver.bouquet.dto.response.BouquetInfoDetailResponseV2;
 import com.whoa.whoaserver.bouquet.dto.response.BouquetOrderResponseV2;
 import com.whoa.whoaserver.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.bouquet.repository.BouquetRepository;
@@ -24,8 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.whoa.whoaserver.global.exception.ExceptionCode.DUPLICATED_BOUQUET_NAME;
-import static com.whoa.whoaserver.global.exception.ExceptionCode.NOT_MEMBER_BOUQUET;
+import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 
 @Service
 @Transactional
@@ -158,5 +158,19 @@ public class BouquetCustomizingServiceV2 {
 			.map(FlowerExpression::getFlowerImage)
 			.map(FlowerImage::getImageUrl)
 			.collect(Collectors.toUnmodifiableList());
+	}
+
+	public BouquetInfoDetailResponseV2 getBouquetDetails(Long memberId, Long bouquetId) {
+		Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
+			.orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+
+		List<String> flowerExpressionStringIdsList = FlowerUtils.parseFlowerEnumerationColumn(bouquetToRead.getFlowerType());
+
+		List<FlowerExpression> flowerExpressionList = flowerExpressionStringIdsList.stream()
+			.map(Long::parseLong)
+			.map(flowerExpressionRepository::findByFlowerExpressionId)
+			.collect(Collectors.toUnmodifiableList());
+
+		return BouquetInfoDetailResponseV2.of(bouquetToRead, flowerExpressionList);
 	}
 }
