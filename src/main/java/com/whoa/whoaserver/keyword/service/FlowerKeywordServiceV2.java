@@ -7,6 +7,7 @@ import com.whoa.whoaserver.mapping.domain.CustomizingPurposeKeyword;
 import com.whoa.whoaserver.mapping.domain.FlowerExpressionKeyword;
 import com.whoa.whoaserver.mapping.repository.CustomizingPurposeKeywordRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,8 @@ public class FlowerKeywordServiceV2 {
 	private final CustomizingPurposeKeywordRepository customizingPurposeKeywordRepository;
 	private final FlowerKeywordService flowerKeywordService;
 
+	@Transactional(readOnly = true)
+	@Cacheable(cacheNames = "CustomizingPurposeAndKeyword", key = "{#customizingPurposeId, #keywordId}")
 	public List<FlowerInfoByKeywordResponseV2> getFlowerInfoByKeywordAndCustomizingPurpose(Long customizingPurposeId, Long keywordId) {
 		List<CustomizingPurposeKeyword> customizingPurposeKeywordList;
 
@@ -47,7 +50,6 @@ public class FlowerKeywordServiceV2 {
 		return targetFlowerExpressionByCustomizingPurpose.stream()
 			.map(FlowerInfoByKeywordResponseV2::from)
 			.collect(Collectors.toUnmodifiableList());
-
 
 
 	}
