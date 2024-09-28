@@ -30,10 +30,4 @@ public class FlowerExpressionKeyword {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id")
     private Keyword keyword;
-
-    @Builder
-    public FlowerExpressionKeyword(FlowerExpression flowerExpression, Keyword keyword) {
-        this.flowerExpression = flowerExpression;
-        this.keyword = keyword;
-    }
 }

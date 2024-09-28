@@ -24,10 +24,4 @@ public class CustomizingPurposeKeyword {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "keyword_id")
 	private Keyword keyword;
-
-	@Builder
-	public CustomizingPurposeKeyword(CustomizingPurpose customizingPurpose, Keyword keyword) {
-		this.customizingPurpose = customizingPurpose;
-		this.keyword = keyword;
-	}
 }

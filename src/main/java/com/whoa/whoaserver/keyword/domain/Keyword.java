@@ -31,12 +31,4 @@ public class Keyword {
 
 	@OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<CustomizingPurposeKeyword> customizingPurposeKeywords;
-
-
-	public Keyword(
-		final String keywordName
-	) {
-		this.keywordName = keywordName;
-	}
-
 }
