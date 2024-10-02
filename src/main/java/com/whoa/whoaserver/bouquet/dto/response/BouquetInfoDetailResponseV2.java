@@ -20,6 +20,7 @@ public record BouquetInfoDetailResponseV2(
 	String wrappingType,
 	String priceRange,
 	String requirement,
+	String bouquetStatus,
 	List<HashMap<String, String>> selectedFlowersInfoList, // FlowerExpression id, image, language, keywords && Flower Name
 	List<HashMap<String, String>> uploadedBouquetImagesInfoList
 
@@ -70,6 +71,7 @@ public record BouquetInfoDetailResponseV2(
 			bouquet.getWrappingType(),
 			bouquet.getPriceRange(),
 			bouquet.getRequirement(),
+			bouquet.getBouquetStatus().getValue(),
 			selectedFlowersInfoList,
 			uploadedBouquetImagesInfoList
 		);
