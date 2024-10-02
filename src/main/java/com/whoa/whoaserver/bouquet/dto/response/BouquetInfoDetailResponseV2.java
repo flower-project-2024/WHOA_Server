@@ -22,7 +22,8 @@ public record BouquetInfoDetailResponseV2(
 	String requirement,
 	String bouquetStatus,
 	List<HashMap<String, String>> selectedFlowersInfoList, // FlowerExpression id, image, language, keywords && Flower Name
-	List<HashMap<String, String>> uploadedBouquetImagesInfoList
+	List<HashMap<String, String>> uploadedBouquetCustomizingImagesInfoList,
+	String bouquetRealImage
 
 
 ) {
@@ -51,7 +52,7 @@ public record BouquetInfoDetailResponseV2(
 			selectedFlowersInfoList.add(eachFlowerInfo);
 		}
 
-		List<HashMap<String, String>> uploadedBouquetImagesInfoList = bouquet.getImages().stream()
+		List<HashMap<String, String>> uploadedBouquetCustomizingImagesInfoList = bouquet.getImages().stream()
 			.map(bouquetImage -> {
 				HashMap<String, String> imgHash = new HashMap<>();
 				imgHash.put("bouquetImageId", bouquetImage.getId().toString());
@@ -73,7 +74,8 @@ public record BouquetInfoDetailResponseV2(
 			bouquet.getRequirement(),
 			bouquet.getBouquetStatus().getValue(),
 			selectedFlowersInfoList,
-			uploadedBouquetImagesInfoList
+			uploadedBouquetCustomizingImagesInfoList,
+			bouquet.getRealImageUrl()
 		);
 	}
 }
