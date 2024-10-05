@@ -19,13 +19,12 @@ public class FlowerResponseDto {
     private final String flowerName;
     private final String flowerDescription;
     private final String flowerOneLineDescription;
-    private final List<String> flowerImages;
     private final String birthFlower;
     private final String managementMethod;
     private final String storageMethod;
     private final List<FlowerExpressionResponseDto> flowerExpressions;
 
-    public static FlowerResponseDto of(Flower flower, List<String> flowerImages) {
+    public static FlowerResponseDto of(Flower flower) {
         List<FlowerExpressionResponseDto> expressionResponseDtos = flower.getFlowerExpressions().stream()
                 .map(FlowerExpressionResponseDto::of)
                 .collect(Collectors.toList());
@@ -34,7 +33,6 @@ public class FlowerResponseDto {
                 flower.getFlowerName(),
                 flower.getFlowerDescription(),
                 flower.getFlowerOneLineDescription(),
-                flowerImages,
                 flower.getBirthFlower(),
                 flower.getManagementMethod(),
                 flower.getStorageMethod(),
