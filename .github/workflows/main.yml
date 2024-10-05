@@ -11,7 +11,6 @@ on:
  push:
    branches:
      - main
-     - chore/migration
  pull_request:
    branches: [ "main" ]
 
