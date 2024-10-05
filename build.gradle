@@ -74,6 +74,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'com.github.ben-manes.caffeine:caffeine'
 
+	// Flyway
+	implementation 'org.flywaydb:flyway-mysql'
+
 }
 
 tasks.named('test') {
