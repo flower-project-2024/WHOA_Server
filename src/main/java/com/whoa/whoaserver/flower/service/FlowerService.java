@@ -42,14 +42,7 @@ public class FlowerService {
     @Transactional
     public FlowerResponseDto getFlower(final Long flowerId){
         Flower flower = flowerRepository.findByFlowerId(flowerId);
-        List<FlowerExpression> flowerExpressions = flowerExpressionRepository.findByFlowerFlowerId(flowerId);
-        List<String> flowerImages = flowerExpressions.stream()
-                .map(FlowerExpression::getFlowerImage)
-                .filter(Objects::nonNull)
-                .map(FlowerImage::getImageUrl)
-                .collect(Collectors.toList());
-
-        return FlowerResponseDto.of(flower, flowerImages);
+        return FlowerResponseDto.of(flower);
     }
 
     @Transactional
