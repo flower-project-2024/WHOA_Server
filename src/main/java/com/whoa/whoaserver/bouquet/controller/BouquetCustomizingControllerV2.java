@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,12 +42,17 @@ public class BouquetCustomizingControllerV2 {
 	public ResponseEntity<BouquetCustomizingResponseV2> registerBouquet(
 		@DeviceUser UserContext userContext,
 		@Valid @RequestPart("request") String bouquetRequest,
-		@RequestPart("imgUrl") List<MultipartFile> multipartFiles
+		@RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles
 	) {
 
 		try {
 			Long memberId = userContext.id();
 			BouquetCustomizingRequest request = objectMapper.readValue(bouquetRequest, BouquetCustomizingRequest.class);
+
+			if (multipartFiles == null) {
+				multipartFiles = Collections.emptyList();
+			}
+
 			BouquetCustomizingResponseV2 response = bouquetCustomizingServiceV2.registerBouquet(request, memberId, multipartFiles);
 			return ResponseEntity.ok(response);
 		} catch (JsonProcessingException e) {
@@ -62,13 +68,18 @@ public class BouquetCustomizingControllerV2 {
 	public ResponseEntity<BouquetCustomizingResponseV2> updateBouquet(
 		@DeviceUser UserContext userContext,
 		@Valid @RequestPart("request") String bouquetRequest,
-		@RequestPart("imgUrl") List<MultipartFile> multipartFiles,
+		@RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles,
 		@PathVariable("bouquetId") final Long bouquetId
 	) {
 
 		try {
 			Long memberId = userContext.id();
 			BouquetCustomizingRequest request = objectMapper.readValue(bouquetRequest, BouquetCustomizingRequest.class);
+
+			if (multipartFiles == null) {
+				multipartFiles = Collections.emptyList();
+			}
+
 			BouquetCustomizingResponseV2 response = bouquetCustomizingServiceV2.updateBouquet(request, memberId, bouquetId, multipartFiles);
 			return ResponseEntity.ok(response);
 		} catch (JsonProcessingException e) {

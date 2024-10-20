@@ -52,7 +52,13 @@ public class BouquetCustomizingServiceV2 {
 
 		bouquetRepository.save(newBouquet);
 
-		List<String> imgPaths = handleMultipartFiles(memberId, newBouquet, multipartFiles);
+		List<String> imgPaths;
+		if (!multipartFiles.isEmpty()) {
+			imgPaths = handleMultipartFiles(memberId, newBouquet, multipartFiles);
+		} else {
+			imgPaths = Collections.emptyList();
+			;
+		}
 
 		return BouquetCustomizingResponseV2.of(newBouquet, imgPaths);
 	}
@@ -116,7 +122,12 @@ public class BouquetCustomizingServiceV2 {
 		List<BouquetImage> existingBouquetImages = bouquetImageRepository.findAllByBouquet(existingBouquet);
 		bouquetImageRepository.deleteAll(existingBouquetImages);
 
-		List<String> imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
+		List<String> imgPaths;
+		if (!multipartFiles.isEmpty()) {
+			imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
+		} else {
+			imgPaths = Collections.emptyList();
+		}
 
 		return BouquetCustomizingResponseV2.of(existingBouquet, imgPaths);
 	}
