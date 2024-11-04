@@ -50,17 +50,17 @@ public class BouquetCustomizingServiceV2 {
 
 		Bouquet newBouquet = createBouquetEntity(request, member);
 
-		bouquetRepository.save(newBouquet);
+		Bouquet savedBouquet = bouquetRepository.save(newBouquet);
 
 		List<String> imgPaths;
 		if (!multipartFiles.isEmpty()) {
-			imgPaths = handleMultipartFiles(memberId, newBouquet, multipartFiles);
+			imgPaths = handleMultipartFiles(memberId, savedBouquet, multipartFiles);
 		} else {
 			imgPaths = Collections.emptyList();
 			;
 		}
 
-		return BouquetCustomizingResponseV2.of(newBouquet, imgPaths);
+		return BouquetCustomizingResponseV2.of(savedBouquet, imgPaths);
 	}
 
 	private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
