@@ -81,8 +81,6 @@ public class BouquetCustomizingControllerV2 {
 			return ResponseEntity.ok(response);
 		} catch (JsonProcessingException e) {
 			throw new WhoaException(INVALID_BOUQUET_REQUEST_JSON_FORMAT);
-		} catch (Exception e) {
-			throw new WhoaException(IMAGE_UPLOAD_ERROR);
 		}
 	}
 

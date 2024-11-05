@@ -42,25 +42,21 @@ public class BouquetCustomizingServiceV2 {
 
 		Member member = bouquetCustomizingService.getMemberByMemberId(memberId);
 
-		Optional<Bouquet> existingBouquetOptional = bouquetRepository.findByMemberIdAndBouquetName(memberId, request.bouquetName());
-
-		if (existingBouquetOptional.isPresent()) {
-			throw new WhoaException(DUPLICATED_BOUQUET_NAME);
-		}
-
 		Bouquet newBouquet = createBouquetEntity(request, member);
 
 		Bouquet savedBouquet = bouquetRepository.save(newBouquet);
 
-		List<String> imgPaths;
-		if (!multipartFiles.isEmpty()) {
-			imgPaths = handleMultipartFiles(memberId, savedBouquet, multipartFiles);
-		} else {
-			imgPaths = Collections.emptyList();
-			;
-		}
+		List<String> imgPaths = getImagePathsFromMultipartContent(memberId, savedBouquet, multipartFiles);
 
 		return BouquetCustomizingResponseV2.of(savedBouquet, imgPaths);
+	}
+
+	private List<String> getImagePathsFromMultipartContent(Long memberId, Bouquet targetBouquet, List<MultipartFile> multipartFiles) {
+		if (!multipartFiles.isEmpty()) {
+			return handleMultipartFiles(memberId, targetBouquet, multipartFiles);
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	private Bouquet createBouquetEntity(BouquetCustomizingRequest request, Member member) {
@@ -117,17 +113,12 @@ public class BouquetCustomizingServiceV2 {
 			request.price(),
 			request.requirement());
 
-		bouquetRepository.save(existingBouquet);
+		Bouquet savedBouquet = bouquetRepository.save(existingBouquet);
 
 		List<BouquetImage> existingBouquetImages = bouquetImageRepository.findAllByBouquet(existingBouquet);
 		bouquetImageRepository.deleteAll(existingBouquetImages);
 
-		List<String> imgPaths;
-		if (!multipartFiles.isEmpty()) {
-			imgPaths = handleMultipartFiles(memberId, existingBouquet, multipartFiles);
-		} else {
-			imgPaths = Collections.emptyList();
-		}
+		List<String> imgPaths = getImagePathsFromMultipartContent(memberId, savedBouquet, multipartFiles);
 
 		return BouquetCustomizingResponseV2.of(existingBouquet, imgPaths);
 	}
