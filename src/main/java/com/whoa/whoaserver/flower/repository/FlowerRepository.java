@@ -7,12 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface FlowerRepository extends JpaRepository<Flower, Long> {
+public interface FlowerRepository extends JpaRepository<Flower, Long>, FlowerRepositoryCustom {
 
     Flower findByFlowerId(final Long flowerId);
 
     Flower findByFlowerName(String flowerName);
-    
+
     Optional<Flower> findFlowerByRecommendDate(String recommendDate);
 
     @Query("SELECT f FROM Flower f ORDER BY RAND() LIMIT 1")

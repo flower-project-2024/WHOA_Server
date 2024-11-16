@@ -61,19 +61,8 @@ public class FlowerService {
         return FlowerRecommendResponseDto.of(recommendFlower);
     }
 
-    @Transactional
+	@Transactional(readOnly = true)
     public List<FlowerSearchResponseDto> getAllFlowers() {
-        List<Flower> flowers = flowerRepository.findAll();
-
-        return flowers.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    private FlowerSearchResponseDto convertToDto(Flower flower) {
-        return new FlowerSearchResponseDto(
-                flower.getFlowerId(),
-                flower.getFlowerName()
-        );
+        return flowerRepository.findAllFlowers();
     }
 }
