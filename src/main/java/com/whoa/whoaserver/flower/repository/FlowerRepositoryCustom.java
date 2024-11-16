@@ -2,6 +2,8 @@ package com.whoa.whoaserver.flower.repository;
 
 import com.whoa.whoaserver.flower.dto.FlowerSearchResponseDto;
 
+import java.util.List;
+
 public interface FlowerRepositoryCustom {
-	FlowerSearchResponseDto findAllFlowers(Long flowerId);
+	List<FlowerSearchResponseDto> findAllFlowers();
 }

@@ -63,10 +63,6 @@ public class FlowerService {
 
 	@Transactional(readOnly = true)
     public List<FlowerSearchResponseDto> getAllFlowers() {
-        List<Flower> flowers = flowerRepository.findAll();
-
-        return flowers.stream()
-                .map(flower -> flowerRepository.findAllFlowers(flower.getFlowerId()))
-                .collect(Collectors.toList());
+        return flowerRepository.findAllFlowers();
     }
 }

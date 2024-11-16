@@ -5,6 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.whoa.whoaserver.flower.dto.FlowerSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import static com.whoa.whoaserver.flower.domain.QFlower.flower;
 
 @RequiredArgsConstructor
@@ -13,13 +15,12 @@ public class FlowerRepositoryImpl implements FlowerRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public FlowerSearchResponseDto findAllFlowers(Long flowerId) {
+	public List<FlowerSearchResponseDto> findAllFlowers() {
 		return jpaQueryFactory
 			.select(Projections.constructor(FlowerSearchResponseDto.class,
 				flower.flowerId,
 				flower.flowerName))
 			.from(flower)
-			.where(flower.flowerId.eq(flowerId))
-			.fetchOne();
+			.fetch();
 	}
 }
