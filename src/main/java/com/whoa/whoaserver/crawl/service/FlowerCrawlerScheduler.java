@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class FlowerCrawlerScheduler {
 
     @Value("${crawl.service-key}")
@@ -22,13 +23,7 @@ public class FlowerCrawlerScheduler {
 
     private final FlowerRankingService flowerRankingService;
 
-    @Autowired
-    public FlowerCrawlerScheduler(@Value("${crawl.service-key}") String serviceKey, FlowerRankingService flowerRankingService) {
-        this.serviceKey = serviceKey;
-        this.flowerRankingService = flowerRankingService;
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * MON")
     public void crawlFlowerData() {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -75,7 +70,7 @@ public class FlowerCrawlerScheduler {
                         if (!savedNames.contains(flowerName)) {
                             savedNames.add(flowerName);
                             flowerRankingId++;
-                            flowerRankingService.saveFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
+                            flowerRankingService.updateFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
                         }
                         if (flowerRankingId==5)
                             break;

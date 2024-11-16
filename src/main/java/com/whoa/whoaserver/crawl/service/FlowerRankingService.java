@@ -24,7 +24,7 @@ public class FlowerRankingService {
     final FlowerRepository flowerRepository;
 
     @Transactional
-    public FlowerRankingResponseDto saveFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
+    public void updateFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
         FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
         Flower findFlower = flowerRepository.findByFlowerName(pumName);
         if (findFlower == null){
@@ -41,18 +41,12 @@ public class FlowerRankingService {
             Long findFlowerId = findFlower.getFlowerId();
             flowerRanking.update(pumName, findFlowerLanguage, avgAmt, date, flowerImageUrl, findFlowerId);
         }
-        return new FlowerRankingResponseDto(flowerRanking.getFlowerRankingId(), flowerRanking.getFlowerRankingName(), flowerRanking.getFlowerRankingLanguage(), flowerRanking.getFlowerRankingPrice(), flowerRanking.getFlowerRankingDate(), flowerRanking.getFlowerImage(), flowerRanking.getFlowerId());
+		flowerRankingRepository.save(flowerRanking);
     }
 
     @Transactional
     public List<FlowerRankingResponseDto> getFlowerRanking(){
-        List<FlowerRankingResponseDto> flowerRankings = new ArrayList<>();
-        for (long i=0; i<5; i++){
-            FlowerRanking flowerRankingOne = flowerRankingRepository.findByFlowerRankingId(i+1);
-            FlowerRankingResponseDto flowerRankingResponseDtoOne = new FlowerRankingResponseDto(flowerRankingOne.getFlowerRankingId(), flowerRankingOne.getFlowerRankingName(), flowerRankingOne.getFlowerRankingLanguage(), flowerRankingOne.getFlowerRankingPrice(), flowerRankingOne.getFlowerRankingDate(), flowerRankingOne.getFlowerImage(), flowerRankingOne.getFlowerId());
-            flowerRankings.add(flowerRankingResponseDtoOne);
-        }
-        return flowerRankings;
+		return flowerRankingRepository.findAllFlowerRankingInformation();
     }
 
 }
