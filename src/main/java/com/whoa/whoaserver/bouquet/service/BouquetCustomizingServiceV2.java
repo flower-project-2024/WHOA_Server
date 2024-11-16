@@ -143,14 +143,14 @@ public class BouquetCustomizingServiceV2 {
 				bouquet.getId(),
 				bouquet.getBouquetName(),
 				bouquet.getCreatedAt().toString().substring(0, 10),
-				getAllSelectedFlowerFromBouquet(bouquet),
+				getAllSelectedFlowerImagesFromBouquet(bouquet),
 				bouquet.getRealImageUrl(),
 				bouquet.getBouquetStatus().getValue()
 			))
 			.collect(Collectors.toUnmodifiableList());
 	}
 
-	private List<String> getAllSelectedFlowerFromBouquet(Bouquet eachBouquet) {
+	private List<String> getAllSelectedFlowerImagesFromBouquet(Bouquet eachBouquet) {
 		List<String> flowerTypes = FlowerUtils.parseFlowerEnumerationColumn(eachBouquet.getFlowerType());
 
 		List<Long> flowerTypeIds = flowerTypes.stream().map(Long::valueOf).collect(Collectors.toUnmodifiableList());
