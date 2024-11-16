@@ -1,11 +1,8 @@
 package com.whoa.whoaserver.crawl.dto;
 
 
-import lombok.Builder;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 public class FlowerRankingResponseDto {
@@ -17,7 +14,7 @@ public class FlowerRankingResponseDto {
     private final String flowerImage;
     private final Long flowerId;
 
-    @Builder
+    @QueryProjection
     public FlowerRankingResponseDto(Long flowerRankingId, String flowerRankingName, String flowerRankingLanguage, String flowerRankingPrice, String flowerRankingDate, String flowerImage, Long flowerId){
         this.flowerRankingId = flowerRankingId;
         this.flowerRankingName = flowerRankingName;
