@@ -1,11 +1,12 @@
 package com.whoa.whoaserver.member.service;
 
+import com.whoa.whoaserver.domain.member.service.MemberService;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
-import com.whoa.whoaserver.member.domain.Member;
-import com.whoa.whoaserver.member.dto.request.MemberRegisterRequest;
-import com.whoa.whoaserver.member.dto.response.MemberInfo;
-import com.whoa.whoaserver.member.repository.MemberRepository;
+import com.whoa.whoaserver.domain.member.domain.Member;
+import com.whoa.whoaserver.domain.member.dto.request.MemberRegisterRequest;
+import com.whoa.whoaserver.domain.member.dto.response.MemberInfo;
+import com.whoa.whoaserver.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

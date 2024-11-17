@@ -1,7 +1,8 @@
 package com.whoa.whoaserver.keyword.controller;
 
-import com.whoa.whoaserver.keyword.dto.response.FlowerInfoByKeywordResponse;
-import com.whoa.whoaserver.keyword.service.FlowerKeywordService;
+import com.whoa.whoaserver.domain.keyword.controller.FlowerKeywordController;
+import com.whoa.whoaserver.domain.keyword.dto.response.FlowerInfoByKeywordResponse;
+import com.whoa.whoaserver.domain.keyword.service.FlowerKeywordService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

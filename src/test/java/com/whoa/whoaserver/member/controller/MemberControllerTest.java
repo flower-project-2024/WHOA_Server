@@ -1,9 +1,10 @@
 package com.whoa.whoaserver.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.whoa.whoaserver.domain.member.controller.MemberController;
 import com.whoa.whoaserver.global.exception.WhoaException;
-import com.whoa.whoaserver.member.dto.request.MemberRegisterRequest;
-import com.whoa.whoaserver.member.service.MemberService;
+import com.whoa.whoaserver.domain.member.dto.request.MemberRegisterRequest;
+import com.whoa.whoaserver.domain.member.service.MemberService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

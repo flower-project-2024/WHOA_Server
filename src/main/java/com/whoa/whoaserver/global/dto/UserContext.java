@@ -1,6 +1,6 @@
 package com.whoa.whoaserver.global.dto;
 
-import com.whoa.whoaserver.member.domain.Member;
+import com.whoa.whoaserver.domain.member.domain.Member;
 
 import lombok.Builder;
 

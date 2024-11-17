@@ -1,8 +1,9 @@
 package com.whoa.whoaserver.member.repository;
 
+import com.whoa.whoaserver.domain.member.repository.MemberRepository;
 import com.whoa.whoaserver.global.config.JpaAuditingConfig;
 import com.whoa.whoaserver.global.config.QuerydslConfig;
-import com.whoa.whoaserver.member.domain.Member;
+import com.whoa.whoaserver.domain.member.domain.Member;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
