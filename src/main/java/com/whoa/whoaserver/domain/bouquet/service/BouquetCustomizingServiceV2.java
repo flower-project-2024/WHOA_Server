@@ -9,15 +9,17 @@ import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetInfoDetailResponse
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetOrderResponseV2;
 import com.whoa.whoaserver.domain.bouquet.repository.BouquetImageRepository;
 import com.whoa.whoaserver.domain.bouquet.repository.BouquetRepository;
-import com.whoa.whoaserver.domain.flower.domain.FlowerImage;
 import com.whoa.whoaserver.domain.flower.utils.FlowerUtils;
 import com.whoa.whoaserver.domain.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.domain.flowerExpression.repository.FlowerExpressionRepository;
+import com.whoa.whoaserver.domain.flowerExpression.service.FlowerExpressionService;
 import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.domain.member.domain.Member;
-import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,10 +34,13 @@ import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
 @RequiredArgsConstructor
 public class BouquetCustomizingServiceV2 {
 
+	Logger logger = LoggerFactory.getLogger(BouquetCustomizingServiceV2.class);
+
 	private final BouquetRepository bouquetRepository;
 	private final BouquetImageRepository bouquetImageRepository;
 	private final FlowerExpressionRepository flowerExpressionRepository;
 	private final BouquetCustomizingService bouquetCustomizingService;
+	private final FlowerExpressionService flowerExpressionService;
 	private final S3Config s3Config;
 
 	public BouquetCustomizingResponseV2 registerBouquet(BouquetCustomizingRequest request, Long memberId, List<MultipartFile> multipartFiles) {
@@ -156,9 +161,15 @@ public class BouquetCustomizingServiceV2 {
 		List<Long> flowerTypeIds = flowerTypes.stream().map(Long::valueOf).collect(Collectors.toUnmodifiableList());
 
 		return flowerTypeIds.stream()
-			.map(flowerExpressionRepository::findByFlowerExpressionId)
-			.map(FlowerExpression::getFlowerImage)
-			.map(FlowerImage::getImageUrl)
+			.peek(flowerExpressionId -> {
+				if (flowerExpressionId == null) {
+					logger.debug("flowerExpressionId is null -> cacheable key null");
+				} else {
+					logger.info("flowerExpressionId: " + flowerExpressionId);
+				}
+			})
+			.filter(Objects::nonNull)
+			.map(flowerExpressionService::getFlowerImageUrlByFlowerExpressionId)
 			.collect(Collectors.toUnmodifiableList());
 	}
 
