@@ -23,7 +23,7 @@ public class Bouquet extends BaseEntity {
 	@Column(name = "bouquet_id")
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
