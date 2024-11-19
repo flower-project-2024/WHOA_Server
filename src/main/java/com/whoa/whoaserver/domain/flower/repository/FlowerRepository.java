@@ -15,7 +15,7 @@ public interface FlowerRepository extends JpaRepository<Flower, Long>, FlowerRep
 
     Optional<Flower> findFlowerByRecommendDate(String recommendDate);
 
-    @Query("SELECT f FROM Flower f ORDER BY RAND() LIMIT 1")
+    @Query(value = "SELECT * FROM flower WHERE flower_id >= (SELECT FLOOR(RAND() * (SELECT MAX(flower_id) FROM flower)) + 1) LIMIT 1", nativeQuery = true)
     Flower findRandomFlower();
 
     @Query("SELECT f.flowerDescription FROM Flower f WHERE f.flowerName = :flowerName")
