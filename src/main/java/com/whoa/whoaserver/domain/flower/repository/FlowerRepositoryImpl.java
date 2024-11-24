@@ -1,6 +1,9 @@
 package com.whoa.whoaserver.domain.flower.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.whoa.whoaserver.domain.flower.domain.Flower;
 import com.whoa.whoaserver.domain.flower.dto.response.FlowerSearchResponseDto;
@@ -27,21 +30,22 @@ public class FlowerRepositoryImpl implements FlowerRepositoryCustom {
 
 	@Override
 	public Flower findRandomFlower() {
-		Long maxId = jpaQueryFactory
-			.select(flower.flowerId.max())
-			.from(flower)
-			.fetchOne();
-
-		if (maxId == null || maxId == 0) {
-			return null;
-		}
-
-		Long randomId = (long) (Math.random() * maxId) + 1;
+		NumberExpression<Double> randomExpression = Expressions.numberTemplate(Double.class, "RAND()");
 
 		return jpaQueryFactory
 			.selectFrom(flower)
-			.from(flower)
-			.where(flower.flowerId.goe(randomId))
+			.where(flower.flowerId.goe(
+				JPAExpressions
+					.select(flower.flowerId.min()
+						.add(
+							JPAExpressions
+								.select(flower.flowerId.max().subtract(flower.flowerId.min())
+									.multiply(randomExpression))
+								.from(flower)
+						))
+					.from(flower)
+			))
+			.orderBy(flower.flowerId.asc())
 			.limit(1)
 			.fetchOne();
 	}
