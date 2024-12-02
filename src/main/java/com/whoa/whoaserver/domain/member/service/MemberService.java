@@ -37,6 +37,6 @@ public class MemberService {
     }
 
     private Member registerMember(String deviceId) {
-        return Member.createInitMemberStatus(deviceId);
+        return Member.createMember(deviceId);
     }
 }

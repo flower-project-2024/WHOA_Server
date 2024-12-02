@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
         this.registered = registered;
     }
 
-    public static Member createInitMemberStatus(String deviceId) {
+    public static Member createMember(String deviceId) {
         return Member.builder()
                 .registered(true)
                 .deviceId(deviceId)
