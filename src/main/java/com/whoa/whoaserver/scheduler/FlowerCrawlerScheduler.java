@@ -4,16 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.whoa.whoaserver.domain.flower.domain.FlowerRanking;
-import com.whoa.whoaserver.domain.flower.repository.ranking.FlowerRankingRepository;
-import com.whoa.whoaserver.domain.flower.domain.Flower;
-import com.whoa.whoaserver.domain.flower.domain.FlowerImage;
-import com.whoa.whoaserver.domain.flower.repository.FlowerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -27,8 +21,7 @@ public class FlowerCrawlerScheduler {
     @Value("${crawl.service-key}")
     private String serviceKey;
 
-    private final FlowerRankingRepository flowerRankingRepository;
-	private final FlowerRepository flowerRepository;
+	private final FlowerRankingUpdater flowerRankingUpdater;
 
     @Scheduled(cron = "0 0 0 * * MON")
     public void crawlFlowerData() {
@@ -77,7 +70,7 @@ public class FlowerCrawlerScheduler {
                         if (!savedNames.contains(flowerName)) {
                             savedNames.add(flowerName);
                             flowerRankingId++;
-                            updateFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
+							flowerRankingUpdater.updateFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
                         }
                         if (flowerRankingId==5)
                             break;
@@ -94,25 +87,4 @@ public class FlowerCrawlerScheduler {
             throw new RuntimeException(e);
         }
     }
-
-	@Transactional
-	public void updateFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
-		FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
-		Flower findFlower = flowerRepository.findByFlowerName(pumName);
-		if (findFlower == null){
-			flowerRanking.update(pumName, null, avgAmt, date, null, null);
-		}
-		else{
-			String findFlowerLanguage = findFlower.getFlowerExpressions().get(0).getFlowerLanguage();
-			String flowerImageUrl = null;
-			for (FlowerImage flowerImage : findFlower.getFlowerImages()) {
-				flowerImageUrl = flowerImage.getImageUrl();
-				if (flowerImageUrl != null)
-					break;
-			}
-			Long findFlowerId = findFlower.getFlowerId();
-			flowerRanking.update(pumName, findFlowerLanguage, avgAmt, date, flowerImageUrl, findFlowerId);
-		}
-		flowerRankingRepository.save(flowerRanking);
-	}
 }
