@@ -14,7 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-public class FlowerRanking extends BaseEntity{
+public class FlowerRanking {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
