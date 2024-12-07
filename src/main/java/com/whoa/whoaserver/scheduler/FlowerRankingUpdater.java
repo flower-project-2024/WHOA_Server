@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class FlowerRankingUpdater {
@@ -35,5 +37,16 @@ public class FlowerRankingUpdater {
 			flowerRanking.update(pumName, findFlowerLanguage, avgAmt, date, flowerImageUrl, findFlowerId);
 		}
 		flowerRankingRepository.save(flowerRanking);
+	}
+
+	@Transactional
+	public void updateOnlyFlowerRankingDateToFormattedDate(String formattedDate) {
+		List<FlowerRanking> flowerRankings = flowerRankingRepository.findAll();
+
+		for (FlowerRanking flowerRanking : flowerRankings) {
+			flowerRanking.updateFlowerRankingDate(formattedDate);
+		}
+
+		flowerRankingRepository.saveAll(flowerRankings);
 	}
 }
