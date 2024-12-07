@@ -52,7 +52,7 @@ public class FlowerCrawlerScheduler {
 				logger.info("외부 API 호출 응답 : {}", response.getResponse());
 				processResponseData(response.getResponse(), formattedDate);
 			} else {
-				logger.error("외부 API Response는 응답 실패");
+				logger.error("외부 API Response 응답 실패");
 			}
 
 		} catch (RuntimeException e) {
@@ -65,6 +65,7 @@ public class FlowerCrawlerScheduler {
 		int numOfRows = response.getNumOfRows();
 
 		if ("OK".equals(resultMsg) && numOfRows >= 5) {
+			logger.info("외부 API Response로 flowerRanking table에 새로운 data update 가능");
 			List<WebClientResponse.Item> items = List.of(response.getItems());
 
 			items.sort(Comparator.comparingInt(item -> Integer.parseInt(item.getAvgAmt())));
@@ -84,7 +85,7 @@ public class FlowerCrawlerScheduler {
 				if (flowerRankingId == 5) break;
 			}
 		} else {
-			logger.info("외부 API Response는 정상적으로 얻었으나 새로운 데이터가 없어 기존 데이터를 유지");
+			logger.info("외부 API Response 정상적으로 얻었으나 새로운 데이터가 없어 기존 데이터 유지 및 date만 변경");
 			flowerRankingUpdater.updateOnlyFlowerRankingDateToFormattedDate(formattedDate);
 		}
 	}
