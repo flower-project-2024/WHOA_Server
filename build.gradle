@@ -12,7 +12,7 @@ java {
 }
 
 jar {
-	enabled=false
+	enabled = false
 }
 
 configurations {
@@ -76,6 +76,9 @@ dependencies {
 
 	// Flyway
 	implementation 'org.flywaydb:flyway-mysql'
+
+	// Web Flux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 }
 

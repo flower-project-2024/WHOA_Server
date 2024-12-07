@@ -1,14 +1,14 @@
 package com.whoa.whoaserver.scheduler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.whoa.whoaserver.scheduler.dto.WebClientResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,73 +18,75 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FlowerCrawlerScheduler {
 
-    @Value("${crawl.service-key}")
-    private String serviceKey;
+	@Value("${crawl.service-key}")
+	private String serviceKey;
 
 	private final FlowerRankingUpdater flowerRankingUpdater;
 
-    @Scheduled(cron = "0 0 0 * * MON")
-    public void crawlFlowerData() {
-        LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = currentDate.format(formatter);
-        String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey="+serviceKey+"&baseDate=" + formattedDate + "&flowerGubn=1&dataType=json";
+	Logger logger = LoggerFactory.getLogger(FlowerCrawlerScheduler.class);
 
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-            String jsonResult = restTemplate.getForObject(apiUrl, String.class);
+	@Scheduled(cron = "0 0 0 * * MON")
+	public void crawlFlowerData() {
+		LocalDate currentDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = currentDate.format(formatter);
+		String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey=" + serviceKey + "&baseDate=" + formattedDate + "&flowerGubn=1&dataType=json";
 
-            if (jsonResult != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode rootNode = objectMapper.readTree(jsonResult);
+		logger.info("스케쥴러 실행 시작");
 
-                JsonNode responseNode = rootNode.path("response");
-                String resultMsg = responseNode.path("resultMsg").asText();
-                int numOfRows = responseNode.path("numOfRows").asInt();
+		WebClient webClient = WebClient.builder().baseUrl(apiUrl).build();
 
-                if ("OK".equals(resultMsg) && numOfRows >= 5) {
-                    JsonNode itemsNode = responseNode.path("items");
-                    Iterator<JsonNode> items = itemsNode.elements();
+		try {
+			WebClientResponse response = webClient.get()
+				.retrieve()
+				.onStatus(status -> status.is4xxClientError(), clientResponse -> {
+					return Mono.error(new RuntimeException("4xx 에러 발생"));
+				})
+				.onStatus(status -> status.is5xxServerError(), clientResponse -> {
+					return Mono.error(new RuntimeException("5xx 에러 발생"));
+				})
+				.bodyToMono(WebClientResponse.class)
+				.block();
 
-                    List<Map<String, String>> flowerDataList = new ArrayList<>();
+			if (response != null && response.getResponse() != null) {
+				logger.info("외부 API 호출 응답 : {}", response.getResponse());
+				processResponseData(response.getResponse(), formattedDate);
+			} else {
+				logger.error("외부 API Response 응답 실패");
+			}
 
-                    while (items.hasNext()) {
-                        JsonNode item = items.next();
-                        Map<String, String> flowerData = new HashMap<>();
+		} catch (RuntimeException e) {
+			throw new RuntimeException("스케쥴러 동작 중 에러 발생", e);
+		}
+	}
 
-                        flowerData.put("pumName", item.path("pumName").asText());
-                        flowerData.put("avgAmt", item.path("avgAmt").asText());
+	private void processResponseData(WebClientResponse.Response response, String formattedDate) {
+		String resultMsg = response.getResultMsg();
+		int numOfRows = response.getNumOfRows();
 
-                        flowerDataList.add(flowerData);
-                    }
+		if ("OK".equals(resultMsg) && numOfRows >= 5) {
+			logger.info("외부 API Response로 flowerRanking table에 새로운 data update 가능");
+			List<WebClientResponse.Item> items = List.of(response.getItems());
 
-                    flowerDataList.sort(Comparator.comparingInt(data -> Integer.parseInt(data.get("avgAmt"))));
+			items.sort(Comparator.comparingInt(item -> Integer.parseInt(item.getAvgAmt())));
 
-                    Set<String> savedNames = new HashSet<>();
-                    long flowerRankingId = 0;
-                    for (int i = 0; i < flowerDataList.size(); i++) {
-                        Map<String, String> flowerData = flowerDataList.get(i);
-                        String flowerName = flowerData.get("pumName");
-                        String flowerPrice = flowerData.get("avgAmt");
+			Set<String> savedNames = new HashSet<>();
+			long flowerRankingId = 0;
 
-                        if (!savedNames.contains(flowerName)) {
-                            savedNames.add(flowerName);
-                            flowerRankingId++;
-							flowerRankingUpdater.updateFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
-                        }
-                        if (flowerRankingId==5)
-                            break;
-                    }
-                } else {
-                    System.out.println("Failed to fetch flower data from the API.");
-                }
+			for (WebClientResponse.Item item : items) {
+				String flowerName = item.getPumName();
+				String flowerPrice = item.getAvgAmt();
 
-            }
-
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+				if (!savedNames.contains(flowerName)) {
+					savedNames.add(flowerName);
+					flowerRankingId++;
+					flowerRankingUpdater.updateFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
+				}
+				if (flowerRankingId == 5) break;
+			}
+		} else {
+			logger.info("외부 API Response 정상적으로 얻었으나 새로운 데이터가 없어 기존 데이터 유지 및 date만 변경");
+			flowerRankingUpdater.updateOnlyFlowerRankingDateToFormattedDate(formattedDate);
+		}
+	}
 }

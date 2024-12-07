@@ -1,6 +1,5 @@
 package com.whoa.whoaserver.domain.flower.domain;
 
-import com.whoa.whoaserver.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -59,5 +58,9 @@ public class FlowerRanking {
         this.flowerImage = flowerImage;
         this.flowerId = flowerId;
     }
+
+	public void updateFlowerRankingDate(String schedulerTime) {
+		this.flowerRankingDate = schedulerTime;
+	}
 
 }
