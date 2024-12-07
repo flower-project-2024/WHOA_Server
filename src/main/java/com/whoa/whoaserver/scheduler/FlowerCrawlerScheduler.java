@@ -25,7 +25,7 @@ public class FlowerCrawlerScheduler {
 
 	Logger logger = LoggerFactory.getLogger(FlowerCrawlerScheduler.class);
 
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 0 * * MON")
 	public void crawlFlowerData() {
 		LocalDate currentDate = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -56,7 +56,7 @@ public class FlowerCrawlerScheduler {
 			}
 
 		} catch (RuntimeException e) {
-			throw new RuntimeException("WebClient 통신 에러 발생", e);
+			throw new RuntimeException("스케쥴러 동작 중 에러 발생", e);
 		}
 	}
 

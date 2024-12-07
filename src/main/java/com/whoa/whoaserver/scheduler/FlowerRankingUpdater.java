@@ -5,16 +5,17 @@ import com.whoa.whoaserver.domain.flower.domain.FlowerImage;
 import com.whoa.whoaserver.domain.flower.domain.FlowerRanking;
 import com.whoa.whoaserver.domain.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.domain.flower.repository.ranking.FlowerRankingRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class FlowerRankingUpdater {
 
+	private final EntityManager entityManager;
 	private final FlowerRankingRepository flowerRankingRepository;
 	private final FlowerRepository flowerRepository;
 
@@ -22,10 +23,9 @@ public class FlowerRankingUpdater {
 	public void updateFlowerRanking(final Long flowerRankingId, final String pumName, final String avgAmt, final String date) {
 		FlowerRanking flowerRanking = flowerRankingRepository.findByFlowerRankingId(flowerRankingId);
 		Flower findFlower = flowerRepository.findByFlowerName(pumName);
-		if (findFlower == null){
+		if (findFlower == null) {
 			flowerRanking.update(pumName, null, avgAmt, date, null, null);
-		}
-		else{
+		} else {
 			String findFlowerLanguage = findFlower.getFlowerExpressions().get(0).getFlowerLanguage();
 			String flowerImageUrl = null;
 			for (FlowerImage flowerImage : findFlower.getFlowerImages()) {
@@ -41,12 +41,7 @@ public class FlowerRankingUpdater {
 
 	@Transactional
 	public void updateOnlyFlowerRankingDateToFormattedDate(String formattedDate) {
-		List<FlowerRanking> flowerRankings = flowerRankingRepository.findAll();
-
-		for (FlowerRanking flowerRanking : flowerRankings) {
-			flowerRanking.updateFlowerRankingDate(formattedDate);
-		}
-
-		flowerRankingRepository.saveAll(flowerRankings);
+		flowerRankingRepository.updateAllFlowerRankingDates(formattedDate);
+		entityManager.clear();
 	}
 }
