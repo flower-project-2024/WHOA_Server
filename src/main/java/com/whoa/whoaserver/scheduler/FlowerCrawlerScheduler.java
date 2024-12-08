@@ -57,8 +57,8 @@ public class FlowerCrawlerScheduler {
 				logger.error("외부 API Response 응답 실패");
 			}
 
-		} catch (RuntimeException e) {
-			throw new RuntimeException("스케쥴러 동작 중 에러 발생", e);
+		} catch (WhoaException e) {
+			throw new WhoaException(ExceptionCode.SCHEDULER_WHOA_SERVER_ERROR);
 		}
 	}
 
