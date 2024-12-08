@@ -1,5 +1,7 @@
 package com.whoa.whoaserver.scheduler;
 
+import com.whoa.whoaserver.global.exception.ExceptionCode;
+import com.whoa.whoaserver.global.exception.WhoaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.whoa.whoaserver.scheduler.dto.WebClientResponse;
@@ -40,10 +42,10 @@ public class FlowerCrawlerScheduler {
 			WebClientResponse response = webClient.get()
 				.retrieve()
 				.onStatus(status -> status.is4xxClientError(), clientResponse -> {
-					return Mono.error(new RuntimeException("4xx 에러 발생"));
+					return Mono.error(new WhoaException(ExceptionCode.SCHEDULER_CLIENT_REQUEST_ERROR));
 				})
 				.onStatus(status -> status.is5xxServerError(), clientResponse -> {
-					return Mono.error(new RuntimeException("5xx 에러 발생"));
+					return Mono.error(new WhoaException(ExceptionCode.SCHEDULER_FLOWER_SERVER_ERROR));
 				})
 				.bodyToMono(WebClientResponse.class)
 				.block();
