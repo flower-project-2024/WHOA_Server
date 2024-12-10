@@ -18,6 +18,8 @@ import java.util.UUID;
 @Service
 public class FlowerDataUploader {
 
+	private static final String SLASH_SEPERATOR = "/";
+
     private final AmazonS3 amazonS3Client;
 
     @Value("whoa-bucket")
@@ -25,7 +27,7 @@ public class FlowerDataUploader {
 
     public String saveFile(MultipartFile multipartFile, String userId, String dirName) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-        String newFilename = userId + "/" + dirName + "/" + UUID.randomUUID() + originalFilename;
+        String newFilename = userId + SLASH_SEPERATOR + dirName + SLASH_SEPERATOR + UUID.randomUUID() + originalFilename;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -37,7 +39,7 @@ public class FlowerDataUploader {
 
     public String saveFileExceptUser(MultipartFile multipartFile, String dirName) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-        String newFilename = dirName + "/" + UUID.randomUUID() + originalFilename;
+        String newFilename = dirName + SLASH_SEPERATOR + UUID.randomUUID() + originalFilename;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
