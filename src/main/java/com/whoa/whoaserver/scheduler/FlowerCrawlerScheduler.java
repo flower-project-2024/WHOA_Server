@@ -20,6 +20,14 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FlowerCrawlerScheduler {
 
+	private static final String FLOWER_INFORMATION_DEFAULT_ADDRESS = "https://flower.at.or.kr/api/returnData.api?";
+	private static final String KIND_PARAM = "kind=f001";
+	private static final String SERVICE_KEY_PARAM = "serviceKey=";
+	private static final String BASE_DATE_PARAM = "baseDate=";
+	private static final String FLOWER_GUBN_PARAM = "flowerGubn=1";
+	private static final String DATA_TYPE_PARAM = "dataType=json";
+
+
 	@Value("${crawl.service-key}")
 	private String serviceKey;
 
@@ -32,9 +40,11 @@ public class FlowerCrawlerScheduler {
 		LocalDate currentDate = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String formattedDate = currentDate.format(formatter);
-		String apiUrl = "https://flower.at.or.kr/api/returnData.api?kind=f001&serviceKey=" + serviceKey + "&baseDate=" + formattedDate + "&flowerGubn=1&dataType=json";
+		String apiUrl = String.format("%s%s&%s%s&%s%s&%s&%s",
+			FLOWER_INFORMATION_DEFAULT_ADDRESS, KIND_PARAM, SERVICE_KEY_PARAM, serviceKey,
+			BASE_DATE_PARAM, formattedDate, FLOWER_GUBN_PARAM, DATA_TYPE_PARAM);
 
-		logger.info("스케쥴러 실행 시작");
+		logger.info("{} 데이터 요청 시작", apiUrl);
 
 		WebClient webClient = WebClient.builder().baseUrl(apiUrl).build();
 
@@ -68,23 +78,31 @@ public class FlowerCrawlerScheduler {
 
 		if ("OK".equals(resultMsg) && numOfRows >= 5) {
 			logger.info("외부 API Response로 flowerRanking table에 새로운 data update 가능");
-			List<WebClientResponse.Item> items = List.of(response.getItems());
 
-			items.sort(Comparator.comparingInt(item -> Integer.parseInt(item.getAvgAmt())));
+			List<WebClientResponse.Item> items = List.of(response.getItems());
+			logger.info("immutable items data : {}", items);
+
+			List<WebClientResponse.Item> mutableItems = new ArrayList<>(items);
+			mutableItems.sort(Comparator.comparingInt(item -> Integer.parseInt(item.getAvgAmt())));
+			logger.info("mutable items sorted data : {}", mutableItems);
 
 			Set<String> savedNames = new HashSet<>();
 			long flowerRankingId = 0;
 
-			for (WebClientResponse.Item item : items) {
+			for (WebClientResponse.Item item : mutableItems) {
 				String flowerName = item.getPumName();
 				String flowerPrice = item.getAvgAmt();
+				logger.info("DB에 저장될 flowerName : {}, flowerPrice : {}", flowerName, flowerPrice);
 
 				if (!savedNames.contains(flowerName)) {
 					savedNames.add(flowerName);
 					flowerRankingId++;
 					flowerRankingUpdater.updateFlowerRanking(flowerRankingId, flowerName, flowerPrice, formattedDate);
 				}
-				if (flowerRankingId == 5) break;
+				if (flowerRankingId == 5) {
+					logger.info("disorderly added savedNames : {}", savedNames);
+					break;
+				}
 			}
 		} else {
 			logger.info("외부 API Response 정상적으로 얻었으나 새로운 데이터가 없어 기존 데이터 유지 및 date만 변경");

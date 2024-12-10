@@ -31,6 +31,6 @@ public class WebClientResponse {
 		private String pumName;
 
 		@JsonProperty("avgAmt")
-		private String avgAmt;
+		private String avgAmt; // instanceof String
 	}
 }
