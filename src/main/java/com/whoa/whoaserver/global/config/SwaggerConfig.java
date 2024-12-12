@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
 public class SwaggerConfig {
-    
+
     @Bean
     public OpenApiCustomizer customOpenApiCustomizer() {
         return openApi -> openApi.info(apiInfo("WHOA API"));
@@ -34,6 +34,6 @@ public class SwaggerConfig {
         return new Info()
             .title(title)
             .description("꽃다발 맞춤형 제작을 위한 서비스")
-            .version("1.0.0");
+            .version("3.0.0");
     }
 }
