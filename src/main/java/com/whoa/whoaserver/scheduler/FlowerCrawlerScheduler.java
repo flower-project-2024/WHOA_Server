@@ -2,8 +2,6 @@ package com.whoa.whoaserver.scheduler;
 
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.whoa.whoaserver.scheduler.dto.WebClientResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +13,8 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static com.whoa.whoaserver.global.utils.LoggerUtils.logger;
 
 @Component
 @RequiredArgsConstructor
@@ -32,8 +32,6 @@ public class FlowerCrawlerScheduler {
 	private String serviceKey;
 
 	private final FlowerRankingUpdater flowerRankingUpdater;
-
-	Logger logger = LoggerFactory.getLogger(FlowerCrawlerScheduler.class);
 
 	@Scheduled(cron = "0 0 0 * * MON")
 	public void crawlFlowerData() {
