@@ -28,8 +28,15 @@ public class FlowerKeywordServiceV2 {
 	@Transactional(readOnly = true)
 	@Cacheable(cacheNames = "CustomizingPurposeAndKeyword", key = "{#customizingPurposeId, #keywordId}")
 	public List<FlowerInfoByKeywordResponseV2> getFlowerInfoByKeywordAndCustomizingPurpose(Long customizingPurposeId, Long keywordId) {
-		List<CustomizingPurposeKeyword> customizingPurposeKeywordList;
+		List<CustomizingPurposeKeyword> customizingPurposeKeywordList = getCustomizingPurposeKeywordListByTotalKeywordFlag(customizingPurposeId, keywordId);
 
+		List<FlowerExpression> targetFlowerExpressionByCustomizingPurpose = getFlowerExpressionByCustomizingPurposeKeyword(customizingPurposeKeywordList);
+
+		return mappingFlowerExpressionByCustomizingPurposeToFlowerInfoByKeywordResponse(targetFlowerExpressionByCustomizingPurpose);
+	}
+
+	public List<CustomizingPurposeKeyword> getCustomizingPurposeKeywordListByTotalKeywordFlag(Long customizingPurposeId, Long keywordId) {
+		List<CustomizingPurposeKeyword> customizingPurposeKeywordList;
 		if (keywordId == TOTAL_FLOWER_INFORMATION_FLAG_BY_KEYWORD_ID) {
 			customizingPurposeKeywordList = customizingPurposeKeywordRepository.findAllByCustomizingPurpose_CustomizingPurposeId(customizingPurposeId);
 		} else {
@@ -40,17 +47,21 @@ public class FlowerKeywordServiceV2 {
 			}
 		}
 
-		List<FlowerExpression> targetFlowerExpressionByCustomizingPurpose = customizingPurposeKeywordList.stream()
+		return customizingPurposeKeywordList;
+	}
+
+	public List<FlowerExpression> getFlowerExpressionByCustomizingPurposeKeyword(List<CustomizingPurposeKeyword> customizingPurposeKeywordList) {
+		return customizingPurposeKeywordList.stream()
 			.map(CustomizingPurposeKeyword::getKeyword)
 			.flatMap(keyword -> keyword.getFlowerExpressionKeywords().stream())
 			.map(FlowerExpressionKeyword::getFlowerExpression)
 			.filter(flowerKeywordService::isInContemplationPeriod)
 			.collect(Collectors.toUnmodifiableList());
+	}
 
+	public List<FlowerInfoByKeywordResponseV2> mappingFlowerExpressionByCustomizingPurposeToFlowerInfoByKeywordResponse(List<FlowerExpression> targetFlowerExpressionByCustomizingPurpose) {
 		return targetFlowerExpressionByCustomizingPurpose.stream()
 			.map(FlowerInfoByKeywordResponseV2::from)
 			.collect(Collectors.toUnmodifiableList());
-
-
 	}
 }
