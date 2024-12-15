@@ -20,6 +20,8 @@ public enum ExceptionCode {
 	DUPLICATED_BOUQUET_NAME(HttpStatus.CONFLICT, "해당 유저가 이미 동일한 꽃다발 주문서 이름으로 등록한 이력이 있습니다."),
 
 	INVALID_MATCHING_WITH_CUSTOMIZING_PURPOSE_AND_KEYWORD(HttpStatus.NOT_FOUND, "구매 목적에 대응되는 꽃말의 키워드가 업습니다."),
+	INVALID_MATCHING_WITH_BOUQUET_SELECTED_COLORS_AND_FLOWEREXPRESSION_FLOWER_COLORS(HttpStatus.NOT_FOUND, "원하는 꽃다발 색상에 부합하는 색깔을 가진 꽃이 데이터베이스에 없습니다."),
+	INVALID_MATCHING_WITH_BOUQUET_SELECTED_COLORS_AND_FLOWER_COLORS_AND_KEYWORD_AND_CUSTOMIZING_PURPOSE(HttpStatus.NOT_FOUND, "구매 목적에 부합하는 키워드를 flowerLanguage로 가진 flowerExpression은 있으나 원하는 꽃다발 색상에 부합하지 않습니다."),
 
 	DUPLICATED_FILE_NAME(HttpStatus.CONFLICT, "이미 존재하는 파일 이름입니다."),
 	IMAGE_SIZE_LIMIT_ERROR(HttpStatus.FORBIDDEN, "이미지의 크기가 기준을 초과합니다."),
