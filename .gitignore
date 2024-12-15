@@ -46,3 +46,6 @@ out/
 
 ### QClass ###
 /src/main/generated
+
+### log files ###
+/logs
