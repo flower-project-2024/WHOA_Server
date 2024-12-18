@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.whoa.whoaserver.global.utils.LoggerUtils.logger;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,6 +49,7 @@ public class FlowerKeywordServiceV3 {
 
 	private Boolean hasCaseInsensitiveColorMatch(List<String> selectedColors) {
 		List<String> flowerColors = prepareTotalCaseInsensitiveFlowerExpressionColorList();
+		logger.info("db flowerExpression flowerColor values : {}", flowerColors);
 
 		List<String> selectedColorsForCaseInsensitiveComparsion = prepareCaseInsensitiveBouquetColorLists(selectedColors);
 
