@@ -15,7 +15,4 @@ public interface BouquetRepository extends JpaRepository<Bouquet, Long>, Bouquet
 	List<Bouquet> findAllByMemberIdOrderByIdDesc(Long memberId);
 
 	Optional<Bouquet> findByMemberIdAndBouquetName(Long memberId, String bouquetName);
-
-	List<Bouquet> findAllByMemberIdAndBouquetStatus(Long memberId, BouquetStatus bouquetStatus);
-
 }

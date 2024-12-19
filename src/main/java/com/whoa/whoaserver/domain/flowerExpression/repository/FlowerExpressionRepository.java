@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface FlowerExpressionRepository extends JpaRepository<FlowerExpression, Long>, FlowerExpressionRepositoryCustom {
-	List<FlowerExpression> findByFlowerLanguageContaining(String flowerKeyword);
 
 	@EntityGraph(attributePaths = {"flowerImage"})
 	FlowerExpression findByFlowerExpressionId(Long flowerExpressionid);
-
-	List<FlowerExpression> findByFlowerFlowerId(Long flowerId);
 }
