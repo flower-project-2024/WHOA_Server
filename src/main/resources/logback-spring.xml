@@ -9,7 +9,7 @@
     <appender name="log" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/Info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>log/LogInfo.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/whoaLogList/LogInfo/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -27,7 +27,7 @@
     <appender name="log-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/Error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/LogError.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/whoaLogList/LogError/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -45,7 +45,7 @@
     <appender name="log-warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/Warn.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/LogWarn.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/whoaLogList/LogWarn/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
