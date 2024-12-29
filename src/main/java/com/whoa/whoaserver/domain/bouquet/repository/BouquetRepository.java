@@ -1,8 +1,8 @@
 package com.whoa.whoaserver.domain.bouquet.repository;
 
 import com.whoa.whoaserver.domain.bouquet.domain.Bouquet;
-import com.whoa.whoaserver.domain.bouquet.domain.type.BouquetStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +15,7 @@ public interface BouquetRepository extends JpaRepository<Bouquet, Long>, Bouquet
 	List<Bouquet> findAllByMemberIdOrderByIdDesc(Long memberId);
 
 	Optional<Bouquet> findByMemberIdAndBouquetName(Long memberId, String bouquetName);
+
+	@Query(value = "SELECT flower_type FROM bouquet", nativeQuery = true)
+	List<String> findAllFlowerTypeInformation();
 }
