@@ -53,7 +53,7 @@ public class MemberServiceTest {
 		@Test
 		void 중복된_디바이스_기기_아이디_등록() {
 			// Given
-			Member existingMember = Member.createInitMemberStatus(TEST_DEVICE_ID);
+			Member existingMember = Member.createMember(TEST_DEVICE_ID);
 			given(memberRepository.findByDeviceId(TEST_DEVICE_ID)).willReturn(Optional.of(existingMember));
 
 			// When
