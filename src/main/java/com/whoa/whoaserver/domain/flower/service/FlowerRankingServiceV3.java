@@ -8,7 +8,9 @@ import com.whoa.whoaserver.domain.flowerExpression.repository.FlowerExpressionRe
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +23,8 @@ public class FlowerRankingServiceV3 {
 	private final BouquetRepository bouquetRepository;
 	private final FlowerExpressionRepository flowerExpressionRepository;
 
+	@Transactional(readOnly = true)
+	@Cacheable(cacheNames = "flowerPopularity")
 	public List<FlowerPopularityResponseDto> getFlowerPopularityRanking() {
 		List<String> allFlowerTypes = bouquetRepository.findAllFlowerTypeInformation();
 
@@ -43,7 +47,7 @@ public class FlowerRankingServiceV3 {
 
 		int flowerRanking = 1;
 		List<FlowerPopularityResponseDto> response = new ArrayList<>();
-		for(Flower popularFlower : keySetFlowerExpressionIdList) {
+		for (Flower popularFlower : keySetFlowerExpressionIdList) {
 			if (flowerRanking > 5) break;
 			response.add(FlowerPopularityResponseDto.from(popularFlower, flowerRanking));
 			flowerRanking++;
