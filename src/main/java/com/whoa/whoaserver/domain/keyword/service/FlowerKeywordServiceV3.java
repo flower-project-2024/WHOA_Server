@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.whoa.whoaserver.global.utils.LoggerUtils.logger;
 
@@ -21,6 +24,7 @@ public class FlowerKeywordServiceV3 {
 
 	private final FlowerExpressionRepository flowerExpressionRepository;
 	private final FlowerKeywordServiceV2 flowerKeywordServiceV2;
+	private final PaletteColors paletteColors;
 
 	@Transactional(readOnly = true)
 	public List<FlowerInfoByKeywordResponseV2> getFlowerInfoByKeywordAndCustomizingPurposeAndColor(Long customizingPurposeId, Long keywordId, List<String> selectedColors) {
@@ -66,17 +70,32 @@ public class FlowerKeywordServiceV3 {
 
 	private List<String> prepareTotalCaseInsensitiveFlowerExpressionColorList() {
 		 return flowerExpressionRepository.findDistinctFlowerColors().stream()
-			.map(String::toLowerCase)
+			.map(String::toUpperCase)
 			.toList();
 	}
 
 	private List<String> prepareCaseInsensitiveBouquetColorLists(List<String> selectedColors) {
-		return selectedColors.stream()
-			.map(String::toLowerCase)
+		ArrayList<String> allFamilyPalleteColors = getAllColorFamilyPaletteFromSelectedColors(selectedColors);
+		return allFamilyPalleteColors.stream()
+			.map(String::toUpperCase)
 			.toList();
 	}
 
 	private Boolean isValidColorMatch(FlowerExpression flowerExpression, List<String> normalizeColorLists) {
-		return normalizeColorLists.contains(flowerExpression.getFlowerColor().toLowerCase());
+		ArrayList<String> allFamilyPalleteColors = getAllColorFamilyPaletteFromSelectedColors(normalizeColorLists);
+		return allFamilyPalleteColors.contains(flowerExpression.getFlowerColor().toUpperCase());
+	}
+
+	private ArrayList<String> getAllColorFamilyPaletteFromSelectedColors(List<String> selectedColors) {
+		Map<String, String> paletteColorMap = paletteColors.getPaletteColorMap();
+		Map<String, List<String>> colorPaletteMap = paletteColors.getColorPaletteMap();
+
+		HashSet<String> allPalatte = new HashSet<>();
+
+		for (String selectedColor : selectedColors) {
+			allPalatte.addAll(colorPaletteMap.get(paletteColorMap.get(selectedColor.toUpperCase())));
+		}
+
+		return new ArrayList<>(allPalatte);
 	}
 }
