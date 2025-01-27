@@ -14,6 +14,6 @@ public class FlowerRankingServiceV3 {
 	private final FlowerPopularityRepository flowerPopularityRepository;
 
 	public List<FlowerPopularityResponseDto> getFlowerPopularityRanking() {
-		return flowerPopularityRepository.findAllFlowerPopularityRanking();
+		return flowerPopularityRepository.findTop5FlowerPopularityRanking();
 	}
 }

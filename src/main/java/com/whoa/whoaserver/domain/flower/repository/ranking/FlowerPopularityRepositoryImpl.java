@@ -15,16 +15,19 @@ public class FlowerPopularityRepositoryImpl implements FlowerPopularityRepositor
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<FlowerPopularityResponseDto> findAllFlowerPopularityRanking() {
+	public List<FlowerPopularityResponseDto> findTop5FlowerPopularityRanking() {
 		return jpaQueryFactory
 			.select(Projections.constructor(FlowerPopularityResponseDto.class,
 				flowerPopularity.flowerId,
 				flowerPopularity.flowerImageUrl,
 				flowerPopularity.flowerRanking,
 				flowerPopularity.flowerName,
-				flowerPopularity.flowerLanguage
+				flowerPopularity.flowerLanguage,
+				flowerPopularity.rankDifference
 				))
 			.from(flowerPopularity)
+			.orderBy(flowerPopularity.flowerRanking.asc())
+			.limit(5)
 			.fetch();
 	}
 }
