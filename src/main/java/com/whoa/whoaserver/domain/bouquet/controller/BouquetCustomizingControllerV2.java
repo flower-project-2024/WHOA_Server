@@ -82,12 +82,13 @@ public class BouquetCustomizingControllerV2 {
 
 	@PatchMapping("/status/{bouquetId}")
 	@Operation(summary = "꽃다발 실제 제작 완료 처리", description = "꽃다발 상세 조회 페이지에서 제작 완료 버튼을 누르면 전체 조회 시 제작 완료 항목으로 반환됩니다.")
-	public void updateBouquetStatus(
+	public ResponseEntity<Void> updateBouquetStatus(
 		@DeviceUser UserContext userContext,
 		@PathVariable("bouquetId") final Long bouquetId
 	) {
 		Long memberId = userContext.id();
 		bouquetCustomizingServiceV2.updateBouquetStatus(memberId, bouquetId);
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/all/status")
