@@ -28,32 +28,38 @@ public class FlowerPopularity {
 
 	String flowerLanguage;
 
+	@Column(nullable = false)
+	Integer rankDifference;
+
 	@Builder(access = AccessLevel.PRIVATE)
-	public FlowerPopularity(Long flowerId, String flowerImageUrl, Integer flowerRanking, String flowerName, String flowerLanguage) {
+	public FlowerPopularity(Long flowerId, String flowerImageUrl, Integer flowerRanking, String flowerName, String flowerLanguage, Integer rankDifference) {
 		this.flowerId = flowerId;
 		this.flowerImageUrl = flowerImageUrl;
 		this.flowerRanking = flowerRanking;
 		this.flowerName = flowerName;
 		this.flowerLanguage = flowerLanguage;
+		this.rankDifference = rankDifference;
 	}
 
 	public static FlowerPopularity initializeFlowerPopularityRanking(Long flowerId, String flowerImageUrl, Integer flowerRanking,
-																	 String flowerName, String flowerLanguage) {
+																	 String flowerName, String flowerLanguage, Integer rankDifference) {
 		return FlowerPopularity.builder()
 			.flowerId(flowerId)
 			.flowerImageUrl(flowerImageUrl)
 			.flowerRanking(flowerRanking)
 			.flowerName(flowerName)
 			.flowerLanguage(flowerLanguage)
+			.rankDifference(rankDifference)
 			.build();
 	}
 
 	public void updateFlowerPopularity(Long flowerId, String flowerImageUrl, Integer flowerRanking,
-									   String flowerName, String flowerLanguage) {
+									   String flowerName, String flowerLanguage, Integer rankDifference) {
 		this.flowerId = flowerId;
 		this.flowerImageUrl = flowerImageUrl;
 		this.flowerRanking = flowerRanking;
 		this.flowerName = flowerName;
 		this.flowerLanguage = flowerLanguage;
+		this.rankDifference = rankDifference;
 	}
 }

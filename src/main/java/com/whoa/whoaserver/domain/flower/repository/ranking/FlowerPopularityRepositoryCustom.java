@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface FlowerPopularityRepositoryCustom {
 
-	List<FlowerPopularityResponseDto> findAllFlowerPopularityRanking();
+	List<FlowerPopularityResponseDto> findTop5FlowerPopularityRanking();
 }

@@ -51,31 +51,33 @@ public class FlowerPopularityScheduler {
 		int flowerRanking = 1;
 		if (flowerPopularityRepository.count() == 0L) {
 			for(Flower popularFlower : keySetFlowerExpressionIdList) {
-				if (flowerRanking > 5) break;
 				FlowerPopularity newFlowerPopularity = FlowerPopularity.initializeFlowerPopularityRanking(
 					popularFlower.getFlowerId(),
 					getFlowerImageUrlByFlower(popularFlower),
 					flowerRanking,
 					popularFlower.getFlowerName(),
-					getFlowerExpressionByFlower(popularFlower)
+					getFlowerExpressionByFlower(popularFlower),
+					0
 				);
 				flowerPopularityRepository.save(newFlowerPopularity);
 				flowerRanking++;
 			}
 		} else {
+			ArrayList<FlowerPopularity> flowerPopularityList = new ArrayList<>();
 			for(Flower popularFlower : keySetFlowerExpressionIdList) {
-				if (flowerRanking > 5) break;
-				FlowerPopularity existingFlowerPopularity = flowerPopularityRepository.findByFlowerRanking(flowerRanking);
+				FlowerPopularity existingFlowerPopularity = flowerPopularityRepository.findByFlowerId(popularFlower.getFlowerId());
 				existingFlowerPopularity.updateFlowerPopularity(
 					popularFlower.getFlowerId(),
 					getFlowerImageUrlByFlower(popularFlower),
 					flowerRanking,
 					popularFlower.getFlowerName(),
-					getFlowerExpressionByFlower(popularFlower)
+					getFlowerExpressionByFlower(popularFlower),
+					flowerRanking - existingFlowerPopularity.getRankDifference()
 				);
-				flowerPopularityRepository.save(existingFlowerPopularity);
+				flowerPopularityList.add(existingFlowerPopularity);
 				flowerRanking++;
 			}
+			flowerPopularityRepository.saveAll(flowerPopularityList);
 		}
 
 	}
@@ -86,11 +88,11 @@ public class FlowerPopularityScheduler {
 	}
 
 	private String getFlowerImageUrlByFlower(Flower flower) {
-		return (flower.getFlowerImages() == null)? "" : flower.getFlowerImages().get(0).getImageUrl();
+		return (flower.getFlowerImages() == null || flower.getFlowerImages().isEmpty()) ? "" : flower.getFlowerImages().get(0).getImageUrl();
 	}
 
 	private String getFlowerExpressionByFlower(Flower flower) {
-		return (flower.getFlowerExpressions() == null)? "" : flower.getFlowerExpressions().get(0).getFlowerLanguage();
+		return (flower.getFlowerExpressions() == null || (flower.getFlowerExpressions().isEmpty()))? "" : flower.getFlowerExpressions().get(0).getFlowerLanguage();
 	}
 
 }
