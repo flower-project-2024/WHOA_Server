@@ -7,6 +7,7 @@ import com.whoa.whoaserver.domain.member.domain.QMember;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,4 +29,11 @@ public class BouquetRepositoryImpl implements BouquetRepositoryCustom {
 
         return Optional.ofNullable(result);
     }
+
+	@Override
+	public List<String> findAllFlowerTypeInformation() {
+		QBouquet bouquet = QBouquet.bouquet;
+
+		return jpaQueryFactory.select(bouquet.flowerType).from(bouquet).fetch();
+	}
 }
