@@ -3,7 +3,6 @@ package com.whoa.whoaserver.scheduler;
 import com.whoa.whoaserver.domain.bouquet.repository.BouquetRepository;
 import com.whoa.whoaserver.domain.flower.domain.Flower;
 import com.whoa.whoaserver.domain.flower.domain.FlowerPopularity;
-import com.whoa.whoaserver.domain.flower.dto.response.FlowerPopularityResponseDto;
 import com.whoa.whoaserver.domain.flower.repository.ranking.FlowerPopularityRepository;
 import com.whoa.whoaserver.domain.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.domain.flowerExpression.repository.FlowerExpressionRepository;
@@ -12,6 +11,7 @@ import com.whoa.whoaserver.global.exception.WhoaException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +27,7 @@ public class FlowerPopularityScheduler {
 	private final FlowerPopularityRepository flowerPopularityRepository;
 
 	@Scheduled(cron = "0 0 0 * * MON")
+	@Transactional
 	public void calculateFlowerPopularity() {
 		List<String> allFlowerTypes = bouquetRepository.findAllFlowerTypeInformation();
 
