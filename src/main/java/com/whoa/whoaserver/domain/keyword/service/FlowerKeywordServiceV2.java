@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.INVALID_MATCHING_WITH_CUSTOMIZING_PURPOSE_AND_KEYWORD;
+import static com.whoa.whoaserver.global.utils.ClientUtils.getClientIP;
 
 @Service
 @Transactional
@@ -36,6 +37,7 @@ public class FlowerKeywordServiceV2 {
 	}
 
 	public List<CustomizingPurposeKeyword> getCustomizingPurposeKeywordListByTotalKeywordFlag(Long customizingPurposeId, Long keywordId) {
+		String clientIP = getClientIP();
 		List<CustomizingPurposeKeyword> customizingPurposeKeywordList;
 		if (keywordId == TOTAL_FLOWER_INFORMATION_FLAG_BY_KEYWORD_ID) {
 			customizingPurposeKeywordList = customizingPurposeKeywordRepository.findAllByCustomizingPurpose_CustomizingPurposeId(customizingPurposeId);
@@ -43,7 +45,12 @@ public class FlowerKeywordServiceV2 {
 			customizingPurposeKeywordList = customizingPurposeKeywordRepository.findAllByCustomizingPurpose_CustomizingPurposeIdAndKeyword_KeywordId(customizingPurposeId, keywordId);
 
 			if (customizingPurposeKeywordList.isEmpty()) {
-				throw new WhoaException(INVALID_MATCHING_WITH_CUSTOMIZING_PURPOSE_AND_KEYWORD);
+				throw new WhoaException(
+					INVALID_MATCHING_WITH_CUSTOMIZING_PURPOSE_AND_KEYWORD,
+					"getCustomizingPurposeKeywordListByTotalKeywordFlag - controller에서 넘겨 받은 구매목적과 키워드 간 매칭되는 CustomizingPurposeKeyword를 찾을 수 없음",
+					clientIP,
+					"customizingPurposeId request : " + customizingPurposeId + ", keywordId request : " + keywordId
+				);
 			}
 		}
 
