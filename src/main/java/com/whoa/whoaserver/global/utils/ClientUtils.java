@@ -5,7 +5,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class ClientUtils {
-	public static String getClientIP() throws Exception {
+	public static String getClientIP() {
 		String ip = null;
 		HttpServletRequest request =
 			((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();

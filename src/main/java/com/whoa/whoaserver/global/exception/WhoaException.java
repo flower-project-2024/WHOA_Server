@@ -14,10 +14,17 @@ public class WhoaException extends RuntimeException {
         this.exceptionCode = exceptionCode;
     }
 
-	public WhoaException(ExceptionCode exceptionCode, String errorCause, String clientIP) {
+	public WhoaException(ExceptionCode exceptionCode, String errorCause, String clientIP, String request) {
 		super(exceptionCode.getMessage());
 		this.exceptionCode = exceptionCode;
-		logger.error("CustomException occurred : requestAddress = {}, errorMethod = {}, ExceptionCode = {}, Message = {}",
-			clientIP, errorCause, exceptionCode, exceptionCode.getMessage());
+		logger.error("CustomException occurred : requestAddress = {}, errorMethod = {}, request = {}, ExceptionCode = {}, Message = {}",
+			clientIP, errorCause, request, exceptionCode, exceptionCode.getMessage());
+	}
+
+	public WhoaException(ExceptionCode exceptionCode, String errorCause) {
+		super(exceptionCode.getMessage());
+		this.exceptionCode = exceptionCode;
+		logger.error("CustomException occurred : errorMethod = {}, ExceptionCode = {}, Message = {}",
+			errorCause, exceptionCode, exceptionCode.getMessage());
 	}
 }
