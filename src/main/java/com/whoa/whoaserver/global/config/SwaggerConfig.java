@@ -34,6 +34,6 @@ public class SwaggerConfig {
         return new Info()
             .title(title)
             .description("꽃다발 맞춤형 제작을 위한 서비스")
-            .version("3.0.0");
+            .version("4.0.0");
     }
 }
