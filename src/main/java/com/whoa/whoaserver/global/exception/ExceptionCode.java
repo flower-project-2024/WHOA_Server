@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 @Getter
 public enum ExceptionCode {
+	OBJECT_MAPPER_JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "json 처리 도중 에러가 발생했습니다."),
+
 	SCHEDULER_CLIENT_REQUEST_ERROR(HttpStatus.BAD_REQUEST, "스케쥴러로 외부 API를 호출할 때 whoa server에서 보내는 request가 올바르지 않습니다."),
 	SCHEDULER_FLOWER_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "화훼 유통 정보 시스템 사이트에서 response를 받아올 수 없습니다."),
 	SCHEDULER_WHOA_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "스케쥴러 동작 중 whoa server에서 에러가 발생했습니다."),

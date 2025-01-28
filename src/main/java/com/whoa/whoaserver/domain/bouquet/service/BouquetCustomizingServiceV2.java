@@ -1,5 +1,7 @@
 package com.whoa.whoaserver.domain.bouquet.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.domain.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.domain.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.domain.bouquet.domain.type.BouquetStatus;
@@ -17,8 +19,6 @@ import com.whoa.whoaserver.global.config.S3Config;
 import com.whoa.whoaserver.global.exception.ExceptionCode;
 import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.domain.member.domain.Member;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,13 +28,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.whoa.whoaserver.global.exception.ExceptionCode.*;
+import static com.whoa.whoaserver.global.utils.LoggerUtils.logger;
+import static com.whoa.whoaserver.global.utils.ClientUtils.getClientIP;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class BouquetCustomizingServiceV2 {
 
-	Logger logger = LoggerFactory.getLogger(BouquetCustomizingServiceV2.class);
 
 	private final BouquetRepository bouquetRepository;
 	private final BouquetImageRepository bouquetImageRepository;
@@ -42,6 +43,7 @@ public class BouquetCustomizingServiceV2 {
 	private final BouquetCustomizingService bouquetCustomizingService;
 	private final FlowerExpressionService flowerExpressionService;
 	private final S3Config s3Config;
+	private final ObjectMapper objectMapper;
 
 	public BouquetCustomizingResponseV2 registerBouquet(BouquetCustomizingRequest request, Long memberId, List<MultipartFile> multipartFiles) {
 
@@ -87,24 +89,54 @@ public class BouquetCustomizingServiceV2 {
 	}
 
 	private void saveMultipleFilesUrlWithBouquetAtOnce(Long memberId, List<String> imgPaths, Long bouquetId) {
+		String clientIP = getClientIP();
+		BouquetCustomizingResponseV2 clientRequest = new BouquetCustomizingResponseV2(bouquetId, imgPaths);
 
-		Bouquet bouquetWithImg = bouquetRepository.findByBouquetIdWithMember(memberId, bouquetId)
-			.orElseThrow(() -> new WhoaException(ExceptionCode.NOT_REGISTER_BOUQUET));
+		try {
+			String jsonString = objectMapper.writeValueAsString(clientRequest);
+			Bouquet bouquetWithImg = bouquetRepository.findByBouquetIdWithMember(memberId, bouquetId)
+				.orElseThrow(() -> new WhoaException(
+					ExceptionCode.NOT_REGISTER_BOUQUET,
+					"saveMultipleFilesUrlWithBouquetAtOnce - s3에 bouquet 이미지 업로드 이후 BouquetImage와 매핑할 Bouquet findBy 에러 발생",
+					clientIP,
+					jsonString
+				));
 
-		for (String imgUrl : imgPaths) {
-			BouquetImage bouquetImage = BouquetImage.create(bouquetWithImg, imgUrl);
-			bouquetImageRepository.save(bouquetImage);
+			for (String imgUrl : imgPaths) {
+				BouquetImage bouquetImage = BouquetImage.create(bouquetWithImg, imgUrl);
+				bouquetImageRepository.save(bouquetImage);
+			}
+		} catch (JsonProcessingException e) {
+			throw new WhoaException(
+				ExceptionCode.OBJECT_MAPPER_JSON_PROCESSING_ERROR,
+				"saveMultipleFilesUrlWithBouquetAtOnce - clientRequest dto를 json string으로 전환하면서 오류 발생"
+			);
 		}
 	}
 
 	public BouquetCustomizingResponseV2 updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId, List<MultipartFile> multipartFiles) {
+		String clientIP = getClientIP();
 		Member member = bouquetCustomizingService.getMemberByMemberId(memberId);
 
 		Bouquet existingBouquet = bouquetCustomizingService.getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
 
-		if (!existingBouquet.getMember().equals(member)) {
-			throw new WhoaException(NOT_MEMBER_BOUQUET);
+		try {
+			String jsonString = objectMapper.writeValueAsString(existingBouquet);
+			if (!existingBouquet.getMember().equals(member)) {
+				throw new WhoaException(
+					NOT_MEMBER_BOUQUET,
+					"updateBouquet - 실제 bouquet을 수정 요청을 한 memberId와 bouquet의 memberId가 불일치",
+					clientIP,
+					"memberId request : " + memberId + "\n" + "bouquet request : " + jsonString
+				);
+			}
+		} catch (JsonProcessingException e) {
+			throw new WhoaException(
+				ExceptionCode.OBJECT_MAPPER_JSON_PROCESSING_ERROR,
+				"updateBouquet - pathVariable로 받은 bouquetId와 controller memberId로 찾은 bouquet 객체를 json string으로 전환하면서 오류 발생"
+			);
 		}
+
 
 		existingBouquet.changeBouquet(
 			request.bouquetName(),
@@ -174,8 +206,14 @@ public class BouquetCustomizingServiceV2 {
 	}
 
 	public BouquetInfoDetailResponseV2 getBouquetDetails(Long memberId, Long bouquetId) {
+		String clientIP = getClientIP();
 		Bouquet bouquetToRead = bouquetRepository.findByMemberIdAndId(memberId, bouquetId)
-			.orElseThrow(() -> new WhoaException(NOT_REGISTER_BOUQUET));
+			.orElseThrow(() -> new WhoaException(
+				NOT_REGISTER_BOUQUET,
+				"getBouquetDetails - pathVariable bouquetId와 controller memberId로 bouquet findBy할 때 찾을 수 있는 객체가 없음",
+				clientIP,
+				"memberId request : " + memberId + ", bouquetId request : " + bouquetId
+			));
 
 		List<String> flowerExpressionStringIdsList = FlowerUtils.parseFlowerEnumerationColumn(bouquetToRead.getFlowerType());
 
