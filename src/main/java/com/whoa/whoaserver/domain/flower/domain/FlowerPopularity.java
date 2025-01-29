@@ -42,24 +42,19 @@ public class FlowerPopularity {
 	}
 
 	public static FlowerPopularity initializeFlowerPopularityRanking(Long flowerId, String flowerImageUrl, Integer flowerRanking,
-																	 String flowerName, String flowerLanguage, Integer rankDifference) {
+																	 String flowerName, String flowerLanguage) {
 		return FlowerPopularity.builder()
 			.flowerId(flowerId)
 			.flowerImageUrl(flowerImageUrl)
 			.flowerRanking(flowerRanking)
 			.flowerName(flowerName)
 			.flowerLanguage(flowerLanguage)
-			.rankDifference(rankDifference)
+			.rankDifference(0)
 			.build();
 	}
 
-	public void updateFlowerPopularity(Long flowerId, String flowerImageUrl, Integer flowerRanking,
-									   String flowerName, String flowerLanguage, Integer rankDifference) {
-		this.flowerId = flowerId;
-		this.flowerImageUrl = flowerImageUrl;
-		this.flowerRanking = flowerRanking;
-		this.flowerName = flowerName;
-		this.flowerLanguage = flowerLanguage;
+	public void updateFlowerPopularity(Integer currentRanking, Integer rankDifference) {
+		this.flowerRanking = currentRanking;
 		this.rankDifference = rankDifference;
 	}
 }
