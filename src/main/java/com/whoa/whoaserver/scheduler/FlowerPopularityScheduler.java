@@ -13,10 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -33,15 +30,14 @@ public class FlowerPopularityScheduler {
 
 		HashMap<Flower, Integer> allSelectedFlowerMapByFlowerExpressionIdsOfBouquet = new HashMap<>();
 		allFlowerTypes.forEach(flowerTypeCol -> {
-			String[] selectedFlowerExpressionOfEachBouquet = flowerTypeCol.split(", ");
-			for (String flowerExpressionId : selectedFlowerExpressionOfEachBouquet) {
-				Flower flower = getFlowerExpressionByFlowerExpressionId(Long.valueOf(flowerExpressionId)).getFlower();
-				if (!allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.containsKey(flower)) {
-					allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.put(flower, 0);
-				}
-
-				Integer frequency = allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(flower);
-				allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.put(flower, frequency + 1);
+			long[] selectedFlowerExpressionIdsOfEachBouquet = Arrays.stream(flowerTypeCol.split(", ")).mapToLong(Long::parseLong).toArray();
+			List<FlowerExpression> selectedFlowerExpression = flowerExpressionRepository.findByFlowerExpressionIdIn(selectedFlowerExpressionIdsOfEachBouquet);
+			for (FlowerExpression flowerExpression : selectedFlowerExpression) {
+				Flower flower = flowerExpression.getFlower();
+				allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.put(
+					flower,
+					allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.getOrDefault(flower, 0) + 1
+				);
 			}
 		});
 
@@ -56,8 +52,7 @@ public class FlowerPopularityScheduler {
 					getFlowerImageUrlByFlower(popularFlower),
 					flowerRanking,
 					popularFlower.getFlowerName(),
-					getFlowerExpressionByFlower(popularFlower),
-					0
+					getFlowerExpressionByFlower(popularFlower)
 				);
 				flowerPopularityRepository.save(newFlowerPopularity);
 				flowerRanking++;
@@ -66,13 +61,9 @@ public class FlowerPopularityScheduler {
 			ArrayList<FlowerPopularity> flowerPopularityList = new ArrayList<>();
 			for(Flower popularFlower : keySetFlowerExpressionIdList) {
 				FlowerPopularity existingFlowerPopularity = flowerPopularityRepository.findByFlowerId(popularFlower.getFlowerId());
+				Integer lastWeekRank = existingFlowerPopularity.getFlowerRanking();
 				existingFlowerPopularity.updateFlowerPopularity(
-					popularFlower.getFlowerId(),
-					getFlowerImageUrlByFlower(popularFlower),
-					flowerRanking,
-					popularFlower.getFlowerName(),
-					getFlowerExpressionByFlower(popularFlower),
-					flowerRanking - existingFlowerPopularity.getRankDifference()
+					flowerRanking, lastWeekRank - flowerRanking
 				);
 				flowerPopularityList.add(existingFlowerPopularity);
 				flowerRanking++;
@@ -80,11 +71,6 @@ public class FlowerPopularityScheduler {
 			flowerPopularityRepository.saveAll(flowerPopularityList);
 		}
 
-	}
-
-	private FlowerExpression getFlowerExpressionByFlowerExpressionId(Long flowerExpressionId) {
-		return flowerExpressionRepository.findById(flowerExpressionId)
-			.orElseThrow(() -> new WhoaException(ExceptionCode.FLOWER_EXPRESSION_NOT_FOUND));
 	}
 
 	private String getFlowerImageUrlByFlower(Flower flower) {

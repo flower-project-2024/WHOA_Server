@@ -19,3 +19,8 @@ logging:
         orm:
           jdbc:
             bind: trace
+
+
+springdoc:
+  swagger-ui:
+    enabled: false

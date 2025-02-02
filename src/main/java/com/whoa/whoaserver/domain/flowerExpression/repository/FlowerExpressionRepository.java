@@ -11,4 +11,6 @@ public interface FlowerExpressionRepository extends JpaRepository<FlowerExpressi
 
 	@EntityGraph(attributePaths = {"flowerImage"})
 	FlowerExpression findByFlowerExpressionId(Long flowerExpressionid);
+
+	List<FlowerExpression> findByFlowerExpressionIdIn(long[] flowerExpressionIds);
 }
