@@ -10,6 +10,7 @@ name: Spring Boot & Docker & Gradle CI/CD
 on:
  push:
    branches:
+     - main
      - server-migration
 
  pull_request:
