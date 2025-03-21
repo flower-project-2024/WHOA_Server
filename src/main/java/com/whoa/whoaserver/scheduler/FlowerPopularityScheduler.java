@@ -41,12 +41,12 @@ public class FlowerPopularityScheduler {
 			}
 		});
 
-		List<Flower> keySetFlowerExpressionIdList = new ArrayList<>(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.keySet());
-		Collections.sort(keySetFlowerExpressionIdList, (o1, o2) -> (allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o2).compareTo(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o1))));
+		List<Flower> flowerIdList = new ArrayList<>(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.keySet());
+		Collections.sort(flowerIdList, (o1, o2) -> (allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o2).compareTo(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o1))));
 
 		int flowerRanking = 1;
 		if (flowerPopularityRepository.count() == 0L) {
-			for(Flower popularFlower : keySetFlowerExpressionIdList) {
+			for(Flower popularFlower : flowerIdList) {
 				FlowerPopularity newFlowerPopularity = FlowerPopularity.initializeFlowerPopularityRanking(
 					popularFlower.getFlowerId(),
 					getFlowerImageUrlByFlower(popularFlower),
@@ -59,7 +59,7 @@ public class FlowerPopularityScheduler {
 			}
 		} else {
 			ArrayList<FlowerPopularity> flowerPopularityList = new ArrayList<>();
-			for(Flower popularFlower : keySetFlowerExpressionIdList) {
+			for(Flower popularFlower : flowerIdList) {
 				FlowerPopularity existingFlowerPopularity = flowerPopularityRepository.findByFlowerId(popularFlower.getFlowerId());
 				Integer lastWeekRank = existingFlowerPopularity.getFlowerRanking();
 				existingFlowerPopularity.updateFlowerPopularity(
