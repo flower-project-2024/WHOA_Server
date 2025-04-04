@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.domain.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.whoa.whoaserver.domain.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class Member extends BaseEntity {
     private String deviceId;
     private boolean registered;
 
+	@JsonBackReference
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bouquet> bouquet = new ArrayList<>();
 

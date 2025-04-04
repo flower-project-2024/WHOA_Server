@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.domain.bouquet.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public class BouquetImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@JsonBackReference("bouquet-image")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bouquet_id")
     private Bouquet bouquet;
