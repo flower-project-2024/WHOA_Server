@@ -1,5 +1,6 @@
 package com.whoa.whoaserver.domain.bouquet.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.whoa.whoaserver.domain.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.domain.bouquet.domain.type.ColorTypeOption;
 import com.whoa.whoaserver.domain.bouquet.domain.type.FlowerSubstitutionTypeOption;
@@ -23,6 +24,7 @@ public class Bouquet extends BaseEntity {
 	@Column(name = "bouquet_id")
 	private Long id;
 
+	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
@@ -60,12 +62,12 @@ public class Bouquet extends BaseEntity {
 	@Column(nullable = false)
 	private BouquetStatus bouquetStatus;
 
+	@JsonManagedReference("bouquet-image")
 	@OneToMany(mappedBy = "bouquet", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BouquetImage> images = new ArrayList<>();
 
 	private String realImageUrl;
 
-	public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
 	@Builder(access = AccessLevel.PRIVATE)
 	public Bouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType, String colorName,
@@ -88,9 +90,6 @@ public class Bouquet extends BaseEntity {
 	public static Bouquet orderBouquet(Member member, String bouquetName, String purpose, ColorTypeOption colorType,
 									   String colorName, String pointColor, String flowerType, FlowerSubstitutionTypeOption subsitutionType,
 									   String wrappingType, String priceRange, String requirement) {
-		if (wrappingType == null) {
-			wrappingType = DEFAULT_WRAPPING_TYPE;
-		}
 		return Bouquet.builder()
 			.member(member)
 			.bouquetName(bouquetName)
@@ -121,6 +120,10 @@ public class Bouquet extends BaseEntity {
 		this.wrappingType = wrappingType;
 		this.priceRange = priceRange;
 		this.requirement = requirement;
+	}
+
+	public void initializeBouquetWrappingType(String wrappingType) {
+		this.wrappingType = wrappingType;
 	}
 
 	public void updateBouquetStatus(BouquetStatus bouquetStatus) {

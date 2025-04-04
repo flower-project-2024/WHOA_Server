@@ -35,7 +35,7 @@ import static com.whoa.whoaserver.global.utils.ClientUtils.getClientIP;
 @Transactional
 @RequiredArgsConstructor
 public class BouquetCustomizingServiceV2 {
-
+	public static final String DEFAULT_WRAPPING_TYPE = "아니요, 사장님께 맡길게요";
 
 	private final BouquetRepository bouquetRepository;
 	private final BouquetImageRepository bouquetImageRepository;
@@ -50,6 +50,9 @@ public class BouquetCustomizingServiceV2 {
 		Member member = bouquetCustomizingService.getMemberByMemberId(memberId);
 
 		Bouquet newBouquet = createBouquetEntity(request, member);
+		if (newBouquet.getWrappingType() == null || newBouquet.getWrappingType().isBlank()) {
+			newBouquet.initializeBouquetWrappingType(DEFAULT_WRAPPING_TYPE);
+		}
 
 		Bouquet savedBouquet = bouquetRepository.save(newBouquet);
 
@@ -114,6 +117,7 @@ public class BouquetCustomizingServiceV2 {
 		}
 	}
 
+	@Transactional
 	public BouquetCustomizingResponseV2 updateBouquet(BouquetCustomizingRequest request, Long memberId, Long bouquetId, List<MultipartFile> multipartFiles) {
 		String clientIP = getClientIP();
 		Member member = bouquetCustomizingService.getMemberByMemberId(memberId);
@@ -131,6 +135,7 @@ public class BouquetCustomizingServiceV2 {
 				);
 			}
 		} catch (JsonProcessingException e) {
+			e.printStackTrace();
 			throw new WhoaException(
 				ExceptionCode.OBJECT_MAPPER_JSON_PROCESSING_ERROR,
 				"updateBouquet - pathVariable로 받은 bouquetId와 controller memberId로 찾은 bouquet 객체를 json string으로 전환하면서 오류 발생"
@@ -149,6 +154,10 @@ public class BouquetCustomizingServiceV2 {
 			request.wrappingType(),
 			request.price(),
 			request.requirement());
+
+		if (request.wrappingType() == null || request.wrappingType().isBlank()) {
+			existingBouquet.initializeBouquetWrappingType(DEFAULT_WRAPPING_TYPE);
+		}
 
 		Bouquet savedBouquet = bouquetRepository.save(existingBouquet);
 
