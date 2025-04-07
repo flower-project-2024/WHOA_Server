@@ -3,6 +3,7 @@ package com.whoa.whoaserver.domain.bouquet.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.whoa.whoaserver.domain.bouquet.dto.request.BouquetCustomizingRequest;
+import com.whoa.whoaserver.domain.bouquet.dto.request.BouquetNameUpdateRequest;
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetCustomizingResponseV2;
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetInfoDetailResponseV2;
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetOrderResponseV2;
@@ -108,6 +109,18 @@ public class BouquetCustomizingControllerV2 {
 	) {
 		BouquetInfoDetailResponseV2 response = bouquetCustomizingServiceV2.getBouquetDetails(userContext.id(), bouquetId);
 		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/{bouquetId}")
+	@Operation(summary = "꽃다발 주문서 제목 변경", description = "꽃다발 주문서의 제목만 변경합니다.")
+	public ResponseEntity<Void> updateBouquetName(
+		@DeviceUser UserContext userContext,
+		@PathVariable("bouquetId") final Long bouquetId,
+		@Valid @RequestBody BouquetNameUpdateRequest bouquetNameUpdateRequest
+		) {
+		Long memberId = userContext.id();
+		bouquetCustomizingServiceV2.updateBouquetName(memberId, bouquetId, bouquetNameUpdateRequest);
+		return ResponseEntity.ok().build();
 	}
 
 }

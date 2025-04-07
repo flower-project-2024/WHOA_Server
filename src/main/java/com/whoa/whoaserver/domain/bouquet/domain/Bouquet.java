@@ -134,5 +134,7 @@ public class Bouquet extends BaseEntity {
 		this.realImageUrl = realImageUrl;
 	}
 
-
+	public void updateBouquetName(String bouquetName) {
+		this.bouquetName = bouquetName;
+	}
 }

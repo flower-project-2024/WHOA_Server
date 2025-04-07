@@ -6,6 +6,7 @@ import com.whoa.whoaserver.domain.bouquet.domain.Bouquet;
 import com.whoa.whoaserver.domain.bouquet.domain.BouquetImage;
 import com.whoa.whoaserver.domain.bouquet.domain.type.BouquetStatus;
 import com.whoa.whoaserver.domain.bouquet.dto.request.BouquetCustomizingRequest;
+import com.whoa.whoaserver.domain.bouquet.dto.request.BouquetNameUpdateRequest;
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetCustomizingResponseV2;
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetInfoDetailResponseV2;
 import com.whoa.whoaserver.domain.bouquet.dto.response.BouquetOrderResponseV2;
@@ -232,5 +233,11 @@ public class BouquetCustomizingServiceV2 {
 			.collect(Collectors.toUnmodifiableList());
 
 		return BouquetInfoDetailResponseV2.of(bouquetToRead, flowerExpressionList);
+	}
+
+	public void updateBouquetName(Long memberId, Long bouquetId, BouquetNameUpdateRequest request) {
+		Bouquet existingBouquet = bouquetCustomizingService.getBouquetByMemberIdAndBouquetId(memberId, bouquetId);
+		existingBouquet.updateBouquetName(request.bouquetName());
+		bouquetRepository.save(existingBouquet);
 	}
 }
