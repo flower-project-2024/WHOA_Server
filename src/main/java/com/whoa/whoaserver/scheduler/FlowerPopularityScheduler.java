@@ -6,14 +6,14 @@ import com.whoa.whoaserver.domain.flower.domain.FlowerPopularity;
 import com.whoa.whoaserver.domain.flower.repository.ranking.FlowerPopularityRepository;
 import com.whoa.whoaserver.domain.flowerExpression.domain.FlowerExpression;
 import com.whoa.whoaserver.domain.flowerExpression.repository.FlowerExpressionRepository;
-import com.whoa.whoaserver.global.exception.ExceptionCode;
-import com.whoa.whoaserver.global.exception.WhoaException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import static com.whoa.whoaserver.global.utils.LoggerUtils.logger;
 
 @Component
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class FlowerPopularityScheduler {
 
 		int flowerRanking = 1;
 		if (flowerPopularityRepository.count() == 0L) {
-			for(Flower popularFlower : flowerIdList) {
+			for (Flower popularFlower : flowerIdList) {
 				FlowerPopularity newFlowerPopularity = FlowerPopularity.initializeFlowerPopularityRanking(
 					popularFlower.getFlowerId(),
 					getFlowerImageUrlByFlower(popularFlower),
@@ -59,13 +59,28 @@ public class FlowerPopularityScheduler {
 			}
 		} else {
 			ArrayList<FlowerPopularity> flowerPopularityList = new ArrayList<>();
-			for(Flower popularFlower : flowerIdList) {
-				FlowerPopularity existingFlowerPopularity = flowerPopularityRepository.findByFlowerId(popularFlower.getFlowerId());
-				Integer lastWeekRank = existingFlowerPopularity.getFlowerRanking();
-				existingFlowerPopularity.updateFlowerPopularity(
-					flowerRanking, lastWeekRank - flowerRanking
-				);
-				flowerPopularityList.add(existingFlowerPopularity);
+			for (Flower popularFlower : flowerIdList) {
+				FlowerPopularity existingFlowerPopularity = flowerPopularityRepository.findByFlowerId(popularFlower.getFlowerId())
+					.orElse(null);
+				if (existingFlowerPopularity == null) {
+					logger.info("flowerId -> {} : 새로운 꽃 선택으로 flowerPopularity에 추가해야 하는 상황", popularFlower.getFlowerId());
+					FlowerPopularity newFlowerPopularity = FlowerPopularity.initializeFlowerPopularityRanking(
+						popularFlower.getFlowerId(),
+						getFlowerImageUrlByFlower(popularFlower),
+						flowerRanking,
+						popularFlower.getFlowerName(),
+						getFlowerExpressionByFlower(popularFlower)
+					);
+					flowerPopularityList.add(newFlowerPopularity);
+				} else {
+					Integer lastWeekRank = existingFlowerPopularity.getFlowerRanking();
+					existingFlowerPopularity.updateFlowerPopularity(
+						flowerRanking, lastWeekRank - flowerRanking
+					);
+					flowerPopularityList.add(existingFlowerPopularity);
+				}
+
+
 				flowerRanking++;
 			}
 			flowerPopularityRepository.saveAll(flowerPopularityList);
@@ -78,7 +93,7 @@ public class FlowerPopularityScheduler {
 	}
 
 	private String getFlowerExpressionByFlower(Flower flower) {
-		return (flower.getFlowerExpressions() == null || (flower.getFlowerExpressions().isEmpty()))? "" : flower.getFlowerExpressions().get(0).getFlowerLanguage();
+		return (flower.getFlowerExpressions() == null || (flower.getFlowerExpressions().isEmpty())) ? "" : flower.getFlowerExpressions().get(0).getFlowerLanguage();
 	}
 
 }
