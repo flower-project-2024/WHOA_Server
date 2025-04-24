@@ -53,7 +53,7 @@ dependencies {
 	implementation 'org.jsoup:jsoup:1.14.3'
 
 	//mySQL
-	runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
+	runtimeOnly 'com.mysql:mysql-connector-j' // Cannot load driver class: mysql jdbc driver exception으로 버전 명시 해제
 
 	// QueryDSL
 	implementation 'com.querydsl:querydsl-core' // QueryDSL 라이브러리
