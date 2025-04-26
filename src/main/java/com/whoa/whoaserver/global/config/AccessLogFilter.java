@@ -10,6 +10,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
@@ -61,14 +62,20 @@ public class AccessLogFilter implements Filter {
 	}
 
 	private void writeLog(String logEntry) {
-		String logFileName = "logs/access_log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log";
+		String logDir = "logs";
+		String logFileName = "access_log_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ".log";
+		Path logFilePath = Paths.get(logDir, logFileName);
 
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(logFileName),
-			StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
-			writer.write(logEntry);
-			writer.newLine();
+		try {
+			Files.createDirectories(Paths.get(logDir));
+
+			try (BufferedWriter writer = Files.newBufferedWriter(logFilePath,
+				StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+				writer.write(logEntry);
+				writer.newLine();
+			}
 		} catch (IOException e) {
-			System.err.println("로그 파일 생성 실패: " + logFileName);
+			System.err.println("로그 파일 생성 실패: " + logFilePath);
 			e.printStackTrace(System.err);
 		}
 	}
