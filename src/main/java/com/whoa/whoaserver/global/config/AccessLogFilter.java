@@ -68,7 +68,8 @@ public class AccessLogFilter implements Filter {
 			writer.write(logEntry);
 			writer.newLine();
 		} catch (IOException e) {
-			// 로깅 실패 예외 무시
+			System.err.println("로그 파일 생성 실패: " + logFileName);
+			e.printStackTrace(System.err);
 		}
 	}
 
