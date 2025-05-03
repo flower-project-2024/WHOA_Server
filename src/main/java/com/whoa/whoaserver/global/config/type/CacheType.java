@@ -12,6 +12,8 @@ public enum CacheType {
 	FLOWER_POPULARITY_RANKING("flowerPopularity", 12, 200),
 	FLOWER_SEARCH_INFORMATION_ID_AND_NAME("flowerSearch", 168, 200);
 
+	public static final String FLOWER_SEARCH_CACHE_NAME = "flowerSearch";
+
 	private final String cacheName;
 	private final int expiredAfterWrite; // hour
 	private final int maximumSize; // dto count
