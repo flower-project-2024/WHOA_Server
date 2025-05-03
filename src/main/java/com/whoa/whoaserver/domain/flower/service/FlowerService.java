@@ -9,6 +9,7 @@ import com.whoa.whoaserver.domain.flower.domain.FlowerImage;
 import com.whoa.whoaserver.domain.flower.repository.FlowerRepository;
 import com.whoa.whoaserver.domain.flowerExpression.repository.FlowerExpressionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +58,7 @@ public class FlowerService {
 	}
 
 	@Transactional(readOnly = true)
+	@Cacheable(cacheNames = "flowerSearch")
 	public List<FlowerSearchResponseDto> getAllFlowers() {
 		return flowerRepository.findAllFlowers();
 	}
