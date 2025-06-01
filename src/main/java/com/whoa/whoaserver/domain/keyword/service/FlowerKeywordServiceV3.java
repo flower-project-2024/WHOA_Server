@@ -73,7 +73,7 @@ public class FlowerKeywordServiceV3 {
 		List<String> selectedColorsForCaseInsensitiveComparsion = prepareCaseInsensitiveBouquetColorLists(selectedColors);
 		logger.info("front selectedColors에서 각 색상이 속한 모든 색감군에 포함되는 색상 종류 전체 : {}", selectedColorsForCaseInsensitiveComparsion);
 
-		Boolean isContained = false;
+		boolean isContained = false;
 		for (String selectBouquetColor : selectedColorsForCaseInsensitiveComparsion) {
 			if (flowerColors.contains(selectBouquetColor)) {
 				isContained = true;
