@@ -7,7 +7,6 @@ import com.whoa.whoaserver.domain.flower.dto.response.FlowerResponseDto;
 import com.whoa.whoaserver.domain.flower.dto.response.FlowerSearchResponseDto;
 import com.whoa.whoaserver.domain.flower.domain.FlowerImage;
 import com.whoa.whoaserver.domain.flower.repository.FlowerRepository;
-import com.whoa.whoaserver.domain.flowerExpression.repository.FlowerExpressionRepository;
 import com.whoa.whoaserver.global.config.type.CacheType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,9 +21,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FlowerService {
 
-	final FlowerRepository flowerRepository;
-	final FlowerExpressionRepository flowerExpressionRepository;
-	final FlowerDataUploader s3Uploader;
+	private final FlowerRepository flowerRepository;
+	private final FlowerDataUploader s3Uploader;
 
 	@Transactional
 	public FlowerPostResponseDto postFlower(final List<MultipartFile> flowerImages, final Long flowerId) throws IOException {
@@ -48,13 +46,10 @@ public class FlowerService {
 	@Transactional
 	public FlowerRecommendResponseDto getRecommendFlower(final int month, final int date) {
 		String recommendDate = month + "/" + date;
-		Flower recommendFlower = null;
-		Optional<Flower> recommendAcceptFlower = flowerRepository.findFlowerByRecommendDate(recommendDate);
-		if (recommendAcceptFlower.isPresent())
-			recommendFlower = recommendAcceptFlower.get();
-		else {
-			recommendFlower = flowerRepository.findRandomFlower();
-		}
+
+		Flower recommendFlower = flowerRepository.findFlowerByRecommendDate(recommendDate)
+			.orElseGet(flowerRepository::findRandomFlower);
+
 		return FlowerRecommendResponseDto.of(recommendFlower);
 	}
 
