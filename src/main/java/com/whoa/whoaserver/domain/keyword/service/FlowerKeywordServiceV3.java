@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.whoa.whoaserver.global.utils.LoggerUtils.logger;
 import static com.whoa.whoaserver.global.utils.ClientUtils.getClientIP;
@@ -38,7 +37,7 @@ public class FlowerKeywordServiceV3 {
 				ExceptionCode.INVALID_MATCHING_WITH_BOUQUET_SELECTED_COLORS_AND_FLOWEREXPRESSION_FLOWER_COLORS,
 				"getFlowerInfoByKeywordAndCustomizingPurposeAndColor - requestParam으로 넘긴 원하는 색상들이 DB flowerExpression 색깔 계열 범주에 포함되는 색이 단 한 건도 없음",
 				clientIP,
-				"selectedColors list value : " + selectedColors.stream().collect(Collectors.joining(", "))
+				"selectedColors list value : " + String.join(", ", selectedColors)
 			);
 
 			List<CustomizingPurposeKeyword> customizingPurposeKeywordList = flowerKeywordServiceV2.getCustomizingPurposeKeywordListByTotalKeywordFlag(customizingPurposeId, keywordId);
