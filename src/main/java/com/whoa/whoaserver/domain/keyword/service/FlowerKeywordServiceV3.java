@@ -26,7 +26,6 @@ public class FlowerKeywordServiceV3 {
 
 	private final FlowerExpressionRepository flowerExpressionRepository;
 	private final FlowerKeywordServiceV2 flowerKeywordServiceV2;
-	private final PaletteColors paletteColors;
 
 	@Transactional(readOnly = true)
 	public List<FlowerInfoByKeywordResponseV2> getFlowerInfoByKeywordAndCustomizingPurposeAndColor(Long customizingPurposeId, Long keywordId, List<String> selectedColors) {
@@ -104,8 +103,8 @@ public class FlowerKeywordServiceV3 {
 	}
 
 	private ArrayList<String> getAllColorFamilyPaletteFromSelectedColors(List<String> selectedColors) {
-		Map<String, String> paletteColorMap = paletteColors.getPaletteColorMap();
-		Map<String, List<String>> colorPaletteMap = paletteColors.getColorPaletteMap();
+		Map<String, String> paletteColorMap = PaletteColors.getPaletteColorMap();
+		Map<String, List<String>> colorPaletteMap = PaletteColors.getColorPaletteMap();
 
 		HashSet<String> allPalatte = new HashSet<>();
 
