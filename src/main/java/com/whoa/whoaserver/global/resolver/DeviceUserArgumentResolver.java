@@ -22,9 +22,9 @@ public class DeviceUserArgumentResolver implements HandlerMethodArgumentResolver
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String userIdHeader = request.getHeader("MEMBER_ID"); 
+        String userIdHeader = request.getHeader("MEMBER_ID");
         Long userId = (userIdHeader != null) ? Long.parseLong(userIdHeader) : null;
         return UserContext.builder().id(userId).build();
     }
