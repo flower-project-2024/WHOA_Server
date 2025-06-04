@@ -42,7 +42,7 @@ public class FlowerPopularityScheduler {
 		});
 
 		List<Flower> flowerIdList = new ArrayList<>(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.keySet());
-		Collections.sort(flowerIdList, (o1, o2) -> (allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o2).compareTo(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o1))));
+		flowerIdList.sort((o1, o2) -> (allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o2).compareTo(allSelectedFlowerMapByFlowerExpressionIdsOfBouquet.get(o1))));
 
 		int flowerRanking = 1;
 		if (flowerPopularityRepository.count() == 0L) {
