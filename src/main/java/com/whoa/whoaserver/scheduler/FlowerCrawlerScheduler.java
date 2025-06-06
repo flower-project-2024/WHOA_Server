@@ -5,6 +5,7 @@ import com.whoa.whoaserver.global.exception.WhoaException;
 import com.whoa.whoaserver.scheduler.dto.WebClientResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -49,9 +50,9 @@ public class FlowerCrawlerScheduler {
 		try {
 			WebClientResponse response = webClient.get()
 				.retrieve()
-				.onStatus(status -> status.is4xxClientError(),
+				.onStatus(HttpStatusCode::is4xxClientError,
 					clientResponse -> Mono.error(new WhoaException(ExceptionCode.SCHEDULER_CLIENT_REQUEST_ERROR)))
-				.onStatus(status -> status.is5xxServerError(),
+				.onStatus(HttpStatusCode::is5xxServerError,
 					clientResponse -> Mono.error(new WhoaException(ExceptionCode.SCHEDULER_FLOWER_SERVER_ERROR)))
 				.bodyToMono(WebClientResponse.class)
 				.block();
