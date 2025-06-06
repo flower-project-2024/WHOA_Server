@@ -49,12 +49,10 @@ public class FlowerCrawlerScheduler {
 		try {
 			WebClientResponse response = webClient.get()
 				.retrieve()
-				.onStatus(status -> status.is4xxClientError(), clientResponse -> {
-					return Mono.error(new WhoaException(ExceptionCode.SCHEDULER_CLIENT_REQUEST_ERROR));
-				})
-				.onStatus(status -> status.is5xxServerError(), clientResponse -> {
-					return Mono.error(new WhoaException(ExceptionCode.SCHEDULER_FLOWER_SERVER_ERROR));
-				})
+				.onStatus(status -> status.is4xxClientError(),
+					clientResponse -> Mono.error(new WhoaException(ExceptionCode.SCHEDULER_CLIENT_REQUEST_ERROR)))
+				.onStatus(status -> status.is5xxServerError(),
+					clientResponse -> Mono.error(new WhoaException(ExceptionCode.SCHEDULER_FLOWER_SERVER_ERROR)))
 				.bodyToMono(WebClientResponse.class)
 				.block();
 
