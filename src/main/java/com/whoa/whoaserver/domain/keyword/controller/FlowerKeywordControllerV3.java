@@ -1,12 +1,10 @@
 package com.whoa.whoaserver.domain.keyword.controller;
 
 import com.whoa.whoaserver.domain.keyword.dto.response.FlowerInfoByKeywordResponseV2;
-import com.whoa.whoaserver.domain.keyword.service.FlowerKeywordServiceV2;
 import com.whoa.whoaserver.domain.keyword.service.FlowerKeywordServiceV3;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

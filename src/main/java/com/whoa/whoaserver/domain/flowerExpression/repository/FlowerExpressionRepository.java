@@ -3,7 +3,6 @@ package com.whoa.whoaserver.domain.flowerExpression.repository;
 import com.whoa.whoaserver.domain.flowerExpression.domain.FlowerExpression;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
