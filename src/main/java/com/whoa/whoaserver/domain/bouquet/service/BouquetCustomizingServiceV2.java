@@ -207,7 +207,7 @@ public class BouquetCustomizingServiceV2 {
 				if (flowerExpressionId == null) {
 					logger.debug("flowerExpressionId is null -> cacheable key null");
 				} else {
-					logger.info("flowerExpressionId: " + flowerExpressionId);
+					logger.info("flowerExpressionId: {}", flowerExpressionId);
 				}
 			})
 			.filter(Objects::nonNull)
